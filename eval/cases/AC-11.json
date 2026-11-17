@@ -1,0 +1,16 @@
+{
+  "id": "AC-11",
+  "title": "未年检条款问答",
+  "spec": "检索命中 wiki-annual-inspection，答案带 citation，不进入比价",
+  "steps": [
+    {"kind": "chat", "label": "t1", "session": "ac11", "owner": "OWN-1001",
+     "message": "车辆未年检出险，保险赔不赔"}
+  ],
+  "assertions": [
+    {"type": "retrieval_hit", "turn": "t1", "wiki_id": "wiki-annual-inspection", "desc": "BM25 Top-3 命中年检条目"},
+    {"type": "citation", "turn": "t1", "wiki_id": "wiki-annual-inspection", "desc": "message 事件 citations 带来源+版本"},
+    {"type": "tool_calls", "turn": "t1", "tool": "query_quote", "count": 0, "hard": true, "desc": "条款问答不进入比价"},
+    {"type": "sse_done", "turn": "t1", "reason": "end"},
+    {"type": "latency_budget", "turn": "t1", "budget_ms": 60000, "desc": "条款问答（检索+生成）端到端 ≤60s（软预算）"}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "AC-06",
+  "title": "三者险升保额 100万→200万（tiers 计价 + 幂等 + 复用）",
+  "spec": "报价按 tiers 计价，展示保费差；同参询价 quote_id 幂等、quote_version 不变",
+  "steps": [
+    {"kind": "chat", "label": "t1", "session": "ac06", "owner": "OWN-1001",
+     "message": "三者险保额从100万升到200万，给我续保报价"},
+    {"kind": "chat", "label": "t2", "session": "ac06", "owner": "OWN-1001",
+     "message": "预算5000元以内就行", "desc": "预算-only 变更：不重复询价（复用）"},
+    {"kind": "chat", "label": "t3", "session": "ac06b", "owner": "OWN-1001",
+     "message": "三者险保额从100万升到200万，给我续保报价", "desc": "新会话同参询价：服务层幂等"}
+  ],
+  "assertions": [
+    {"type": "quote_line_path", "turn": "t1", "index": 0, "code": "DSX", "path": "sum_insured", "value": 2000000, "desc": "DSX 升到 200 万档"},
+    {"type": "quote_line_path", "turn": "t1", "index": 0, "code": "DSX", "path": "premium", "value": 1292.0, "desc": "tiers[2000000]=1520 × NCD0.85 × 用途1.0"},
+    {"type": "tool_calls", "turn": "t1", "tool": "query_quote", "count": 2, "desc": "新方案 + 原方案对照各一次询价"},
+    {"type": "premium_manual", "turn": "t1", "hard": true},
+    {"type": "tool_calls", "turn": "t2", "tool": "query_quote", "count": 0, "desc": "需求未变（仅预算）：复用已有报价，询价次数=0"},
+    {"type": "idem_quote", "turn_a": "t1", "turn_b": "t2", "desc": "复用：quote_id 与 quote_version 不变"},
+    {"type": "idem_quote", "turn_a": "t1", "turn_b": "t3", "desc": "SPEC §3.2 规则2：24h 内同 vin+coverage_selection → 同一 quote_id 且版本不变（跨会话服务层幂等）"},
+    {"type": "quote_event_path", "turn": "t3", "index": 0, "path": "quote_version", "value": 1}
+  ]
+}

@@ -1,0 +1,154 @@
+# Kubernetes 部署清单（平台工程域 t8，2026-11-17）
+#
+# 探针依据：Kubernetes 官方《Configure Liveness, Readiness and Startup Probes》
+# （检索于 2026-11-17）：
+# - HTTP 探针 200≤code<400 视为成功；
+# - startupProbe 用 failureThreshold × periodSeconds 覆盖最坏启动时间，
+#   "Once the startup probe has succeeded once, the liveness probe takes over"，
+#   避免把慢启动误判为死锁；
+# - readiness 失败只摘流量不重启进程（本服务 /health 会加载 wiki 索引，
+#   用 readiness 保护冷启动）；
+# - 三类探针相互独立，readiness 不因 liveness 成功而自动延后。
+#
+# 扩容约束（重要）：server/metrics.py 是进程内聚合，副本之间各算各的。
+# 因此扩容单位是 **Pod 副本**（Prometheus 按 instance 聚合后 sum），
+# 不是容器内 --workers。副本数 > 1 时 SSE 会话粘性由上游 LB 负责。
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: renewal-assistant
+  labels:
+    app.kubernetes.io/name: renewal-assistant
+    app.kubernetes.io/component: api
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0      # SSE 长连接：先起新 Pod 就绪再摘旧 Pod
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: renewal-assistant
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: renewal-assistant
+      annotations:
+        # 非 Operator 环境（prometheus.io/scrape 约定）抓取提示；
+        # 若用 Prometheus Operator，改由 ServiceMonitor 选择器接管（见 README）。
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 30   # SSE 长连接：留给在途轮次收口
+      containers:
+        - name: app
+          image: registry.example.com/renewal-assistant:0.2.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "8000"
+            - name: TRACE_DIR
+              value: /app/traces
+            - name: RENEWAL_ENV
+              value: prod
+            - name: RENEWAL_RATE_LIMIT_PER_MIN
+              value: "60"
+            # 凭证/密钥一律走 Secret（键：RENEWAL_API_KEYS / ANTHROPIC_BASE_URL /
+            # ANTHROPIC_AUTH_TOKEN / MODEL_NAME），禁止写进镜像或 ConfigMap
+            - name: RENEWAL_API_KEYS
+              valueFrom:
+                secretKeyRef: {name: renewal-assistant-secrets, key: RENEWAL_API_KEYS}
+            - name: ANTHROPIC_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef: {name: renewal-assistant-secrets, key: ANTHROPIC_AUTH_TOKEN, optional: true}
+            - name: ANTHROPIC_BASE_URL
+              valueFrom:
+                secretKeyRef: {name: renewal-assistant-secrets, key: ANTHROPIC_BASE_URL, optional: true}
+            - name: MODEL_NAME
+              valueFrom:
+                secretKeyRef: {name: renewal-assistant-secrets, key: MODEL_NAME, optional: true}
+          startupProbe:
+            httpGet: {path: /health, port: http}
+            periodSeconds: 2
+            failureThreshold: 30      # 最多 60s 完成冷启动（wiki 索引 + 图编译）
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 250m, memory: 384Mi}
+            limits: {cpu: "1", memory: 1Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            # 轨迹目录：readOnlyRootFilesystem 下必须显式挂可写卷。
+            # emptyDir 随 Pod 删除而丢；留存方案（PVC 或 sidecar 导出）见 README。
+            - name: traces
+              mountPath: /app/traces
+            - name: tmp
+              mountPath: /tmp
+
+        # ----------------------------------------------------------------
+        # 轨迹导出 sidecar：与主容器共享同一个 traces 卷（同一 Pod ⇒ emptyDir 可见），
+        # 周期把 JSONL 转成 OTLP/HTTP 推给 collector。用 sidecar 而不是 CronJob，
+        # 因为 emptyDir 是 Pod 级卷，别的 Pod 看不见。
+        # 已知代价：同一个 spanId 会被重复导出（OTLP 规范 §Known Limitations/
+        # Duplicate Data 明确接受重复数据），后端按 spanId 去重即可。
+        - name: trace-export
+          image: registry.example.com/renewal-assistant:0.2.0
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                python -m server.otel_export --trace-dir /app/traces \
+                  --endpoint http://otel-collector.observability.svc.cluster.local:4318 \
+                  --batch 50 || true
+                sleep 120
+              done
+          env:
+            - name: TRACE_DIR
+              value: /app/traces
+            - name: RENEWAL_ENV
+              value: prod
+          volumeMounts:
+            - name: traces
+              mountPath: /app/traces
+              readOnly: true
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 300m, memory: 256Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+      volumes:
+        - name: traces
+          emptyDir:
+            sizeLimit: 2Gi
+        - name: tmp
+          emptyDir: {}

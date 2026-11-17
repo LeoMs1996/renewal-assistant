@@ -1,0 +1,17 @@
+{
+  "id": "AC-04",
+  "title": "查无此人：owner 不存在",
+  "spec": "owner_id/vin 不存在 → found=false，兜底提示，不编造",
+  "steps": [
+    {"kind": "chat", "label": "t1", "session": "ac04", "owner": "OWN-9999",
+     "message": "我的车快到期了，帮我续保"},
+    {"kind": "api", "label": "a1", "method": "GET", "path": "/policy/OWN-9999"}
+  ],
+  "assertions": [
+    {"type": "tool_result_path", "turn": "t1", "tool": "get_policy", "path": "found", "value": false, "desc": "SPEC §3.1：found=false"},
+    {"type": "tool_calls", "turn": "t1", "tool": "query_quote", "count": 0, "hard": true, "desc": "查无保单不得询价（编造数据=硬失败）"},
+    {"type": "sse_done", "turn": "t1", "reason": "end", "desc": "兜底提示后正常结束"},
+    {"type": "api_status", "label": "a1", "code": 404},
+    {"type": "api_path", "label": "a1", "path": "found", "value": false}
+  ]
+}

@@ -1,0 +1,65 @@
+# OpenTelemetry Collector 配置（平台工程域 t8，2026-11-17）
+#
+# 作用：接收 server/otel_export.py 导出的 OTLP/HTTP JSON span（默认端口 4318，
+# 见 OTLP 1.11.1 §OTLP/HTTP Default Port），做批量与内存保护后转出。
+# 本地链路的 exporter 用 debug（把 span 打到日志，零后端依赖即可验证链路通），
+# 接真实后端时换成 otlp/otlphttp 并把 endpoint 指向 Tempo/Jaeger/厂商。
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+        # OTLP/HTTP 同时接受 binary protobuf 与 JSON，按 Content-Type 分流；
+        # otel_export 发的是 application/json。
+
+processors:
+  # 内存保护：容器里必须先于 batch 生效，避免后端不可用时把内存吃满
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+  batch:
+    timeout: 5s
+    send_batch_size: 512
+    send_batch_max_size: 1024
+  # 资源补充：应用侧只标 service.name/version/env，集群维度在这里补齐
+  resource:
+    attributes:
+      - key: deployment.environment.name
+        value: dev
+        action: upsert
+
+exporters:
+  debug:
+    verbosity: normal
+  # 接真实后端时启用（示例：Tempo / Jaeger OTLP）
+  # otlp/tempo:
+  #   endpoint: tempo:4317
+  #   tls:
+  #     insecure: true
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+service:
+  extensions: [health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [debug]
+      # 接后端后：exporters: [debug, otlp/tempo]
+  telemetry:
+    logs:
+      level: info
+    metrics:
+      # Collector 自监控指标（Prometheus 抓取 8888）
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: 0.0.0.0
+                port: 8888

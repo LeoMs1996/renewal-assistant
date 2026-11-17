@@ -1,0 +1,9 @@
+# 开发/CI 依赖（不含生产运行时依赖，生产不要装这个文件）
+#
+# 用途：§CI 流水线的 lint / 类型检查 / 测试收集
+#   ruff  —— lint + format check（替代 flake8+isort+black 三件套）
+#   mypy  —— 静态类型检查（渐进式，先从 E501 之外的明显错误抓起）
+#   pytest —— 单元测试收集
+pytest>=9.2,<10
+ruff>=0.17,<0.18
+mypy>=2.4,<3

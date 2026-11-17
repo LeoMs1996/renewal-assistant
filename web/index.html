@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>车险续保助手 · 对话工作台</title>
+<style>
+  :root{
+    --bg:#f4f6f8; --card:#ffffff; --ink:#1c2733; --muted:#68788a;
+    --line:#dfe6ec; --brand:#0f5fa8; --brand-soft:#e8f1fa;
+    --warn:#b45309; --warn-soft:#fef3c7; --ok:#15803d; --ok-soft:#dcfce7;
+    --err:#b91c1c; --err-soft:#fee2e2; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg)}
+  header{display:flex;align-items:center;gap:12px;padding:10px 18px;background:#0d2b4e;color:#fff;flex-wrap:wrap}
+  header h1{font-size:16px;margin:0;font-weight:600;letter-spacing:.5px}
+  .badge{background:var(--warn);color:#fff;border-radius:4px;padding:2px 10px;font-size:12px;font-weight:700;letter-spacing:1px}
+  header .spacer{flex:1}
+  header label{font-size:12px;color:#c9d8ea}
+  select,button,input{font:inherit}
+  select{padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:#fff}
+  header button{padding:4px 12px;border-radius:6px;border:1px solid #3a5a80;background:#1b3f6e;color:#fff;cursor:pointer}
+  header button:hover{background:#28518a}
+  .session-chip{font-size:11px;font-family:var(--mono);color:#9fb8d4}
+
+  main{display:flex;gap:14px;max-width:1280px;margin:14px auto;padding:0 14px;height:calc(100vh - 60px);min-height:560px}
+  #chatPane{flex:1.5;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  #sidePane{flex:1;display:flex;flex-direction:column;gap:14px;min-width:360px;overflow:auto}
+
+  #msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .row{display:flex;gap:8px}
+  .row.user{justify-content:flex-end}
+  .bubble{max-width:82%;padding:9px 13px;border-radius:10px;white-space:pre-wrap;word-break:break-word}
+  .row.user .bubble{background:var(--brand);color:#fff;border-bottom-right-radius:2px}
+  .row.bot  .bubble{background:#f0f3f6;border-bottom-left-radius:2px}
+  .row.sys  {justify-content:center}
+  .row.sys .bubble{background:transparent;color:var(--muted);font-size:12px;padding:2px}
+  .citations{margin-top:8px;padding-top:6px;border-top:1px dashed var(--line);font-size:12px;color:var(--muted)}
+  .citations .cit{display:block}
+  .citations .cit b{color:var(--brand)}
+  .status-line{font-size:12px;color:var(--muted);padding:0 4px}
+  .status-line .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--brand);margin-right:6px;animation:pulse 1s infinite alternate}
+  @keyframes pulse{from{opacity:.3}to{opacity:1}}
+
+  .card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--card)}
+  .card h3{margin:0 0 8px;font-size:13px;color:var(--muted);font-weight:600;letter-spacing:.5px}
+  .card.await{border-color:#f0c36d;background:#fffdf5}
+  .card.quote{border-color:#b9d4ef}
+  .card.order{border-color:#8fd4a6;background:#f6fef8}
+  .card.err{border-color:#e7a1a1;background:#fdf4f4}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:13px}
+  .kv div:nth-child(odd){color:var(--muted)}
+  .kv div:nth-child(even){font-family:var(--mono);font-size:12.5px;word-break:break-all}
+  table.t{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0 4px}
+  table.t th,table.t td{border:1px solid var(--line);padding:4px 8px;text-align:left}
+  table.t th{background:#f0f4f8;font-weight:600}
+  table.t td.num{text-align:right;font-family:var(--mono)}
+  .pill{display:inline-block;border-radius:10px;padding:1px 9px;font-size:11.5px;font-weight:600}
+  .pill.warn{background:var(--warn-soft);color:var(--warn)}
+  .pill.ok{background:var(--ok-soft);color:var(--ok)}
+  .pill.err{background:var(--err-soft);color:var(--err)}
+  .actions{margin-top:10px;display:flex;gap:8px}
+  .btn{padding:6px 16px;border-radius:7px;border:1px solid var(--brand);background:var(--brand);color:#fff;cursor:pointer}
+  .btn:hover{opacity:.88}
+  .btn.ghost{background:#fff;color:var(--brand)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .confirmables{margin:6px 0 0;padding-left:18px;font-size:13px}
+  .confirmables li{margin:2px 0}
+
+  #composer{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:#fafcfe}
+  #input{flex:1;padding:8px 12px;border-radius:8px;border:1px solid var(--line);resize:none;height:44px;font-size:14px}
+  #send{padding:0 22px;border-radius:8px;border:none;background:var(--brand);color:#fff;cursor:pointer;font-weight:600}
+  #send:disabled{opacity:.45;cursor:not-allowed}
+
+  .policy-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .policy-head .name{font-size:16px;font-weight:700}
+  .countdown{font-size:13px;font-weight:700}
+  .countdown.warn{color:var(--warn)}
+  .countdown.ok{color:var(--ok)}
+  .policy-note{font-size:11.5px;color:var(--muted);margin-top:6px}
+  .placeholder{color:var(--muted);font-size:13px;padding:6px 0}
+
+  details.drawer{border:1px solid var(--line);border-radius:10px;background:var(--card)}
+  details.drawer summary{cursor:pointer;padding:10px 14px;font-weight:600;color:var(--muted);font-size:13px;list-style:none;display:flex;align-items:center;gap:8px}
+  details.drawer summary::before{content:"▸";transition:transform .15s}
+  details.drawer[open] summary::before{transform:rotate(90deg)}
+  .drawer-body{padding:0 14px 12px}
+  .trace-load{display:flex;gap:6px;margin-bottom:8px}
+  .trace-load input{flex:1;padding:5px 9px;border-radius:6px;border:1px solid var(--line);font-family:var(--mono);font-size:12px}
+  .trace-load button{padding:5px 12px;border-radius:6px;border:1px solid var(--brand);background:#fff;color:var(--brand);cursor:pointer}
+  .tl{list-style:none;margin:0;padding:0 0 0 10px;border-left:2px solid var(--line)}
+  .tl li{position:relative;padding:3px 0 3px 14px;font-size:12px}
+  .tl li::before{content:"";position:absolute;left:-6px;top:10px;width:8px;height:8px;border-radius:50%;background:var(--brand)}
+  .tl li .t{color:var(--muted);font-family:var(--mono);font-size:11px;margin-right:6px}
+  .tl li.tool::before{background:#7c3aed}
+  .tl li.llm::before{background:#0e9488}
+  .tl li.err::before{background:var(--err)}
+  .tl li .meta{color:var(--muted)}
+  footer{max-width:1280px;margin:0 auto 10px;padding:0 14px;font-size:11.5px;color:var(--muted)}
+  footer{max-width:1280px;margin:0 auto 10px;padding:0 14px;font-size:11.5px;color:var(--muted)}
+  /* 尊重系统"减少动态效果"偏好，关闭非必要动画（MDN prefers-reduced-motion，检索 2026-11-13） */
+  @media (prefers-reduced-motion: reduce){
+    .status-line .dot{animation:none;opacity:.9}
+    *{transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="badge">模拟报价 · 合成数据</span>
+  <h1>车险续保助手</h1>
+  <span class="session-chip" id="sessionChip"></span>
+  <span class="spacer"></span>
+  <label for="ownerSel">身份</label>
+  <select id="ownerSel">
+    <option value="OWN-1001">OWN-1001 · 张伟（沪AD12345 · 帕萨特）</option>
+    <option value="OWN-1002">OWN-1002 · 李静（粤BF67890 · 宝马 325Li）</option>
+  </select>
+  <button id="refreshPolicy" title="重新加载原保单">刷新保单</button>
+</header>
+
+<main>
+  <section id="chatPane">
+    <div id="msgs" aria-live="polite"></div>
+    <div id="composer">
+      <textarea id="input" placeholder="例如：我的车快到期了，帮我看看续保方案（Enter 发送 / Shift+Enter 换行）"></textarea>
+      <button id="send">发送</button>
+    </div>
+  </section>
+
+  <aside id="sidePane">
+    <div class="card" id="policyCard">
+      <h3>原保单（GET /policy）</h3>
+      <div id="policyBody"><div class="placeholder">加载中…</div></div>
+    </div>
+
+    <details class="drawer" id="traceDrawer" open>
+      <summary>轨迹回放（GET /trace）</summary>
+      <div class="drawer-body">
+        <div class="trace-load">
+          <input id="traceInput" placeholder="trace_id，如 tr-xxxx">
+          <button id="traceLoadBtn">加载</button>
+        </div>
+        <ul class="tl" id="traceList"><li class="meta">暂无轨迹记录</li></ul>
+      </div>
+    </details>
+  </aside>
+</main>
+
+<footer>所有保单 / 报价 / 条款均为虚构合成数据，仅用于教学演示，不构成任何保险建议。保费一律由报价服务计算，模型不编造数字。</footer>
+
+<script>
+"use strict";
+/* Trusted Types 默认策略（Baseline 2026 新可用，MDN Trusted Types API，检索 2026-11-13）：
+   本页所有 innerHTML 插值均已过 esc()/fmtMoney() 白名单转义，此处注册 default 策略透传，
+   为后端未来下发 CSP require-trusted-types-for 'script' 预留兼容；未启用 CSP 时零行为差异。 */
+if (window.trustedTypes && trustedTypes.createPolicy){
+  trustedTypes.createPolicy("default", {
+    createHTML: (s) => s,
+    createScriptURL: (s) => s,
+  });
+}
+/* ================= 工具 ================= */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g,
+  (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmtMoney = (n) => (typeof n === "number" ? n.toLocaleString("zh-CN", {minimumFractionDigits: 2, maximumFractionDigits: 2}) : esc(n));
+
+const state = {
+  sessionId: "sess-" + Math.random().toString(36).slice(2, 10),
+  ownerId: $("ownerSel").value,
+  latestQuote: null,   // {quote_id, quote_version, ...} 来自 quote / await_confirm 事件
+  streaming: false,
+  aborter: null,
+};
+
+/* ================= 对话流渲染 ================= */
+const msgs = $("msgs");
+function scrollBottom(){ msgs.scrollTop = msgs.scrollHeight; }
+
+function addRow(kind, html){
+  const row = document.createElement("div");
+  row.className = "row " + kind;
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.innerHTML = html;
+  row.appendChild(bubble);
+  msgs.appendChild(row);
+  scrollBottom();
+  return bubble;
+}
+function addUser(text){ addRow("user", esc(text)); }
+function addSys(text){ addRow("sys", esc(text)); }
+
+function citationsHtml(citations){
+  if (!Array.isArray(citations) || !citations.length) return "";
+  const items = citations.map(c =>
+    `<span class="cit">📚 <b>${esc(c.source || c.wiki_id)}</b>（版本 ${esc(c.version)}）</span>`).join("");
+  return `<div class="citations">条款依据：${items}</div>`;
+}
+
+/* 流式状态行（node_start 时更新文字） */
+let statusEl = null;
+function ensureStatus(){
+  if (!statusEl || !statusEl.isConnected){
+    statusEl = document.createElement("div");
+    statusEl.className = "status-line";
+    msgs.appendChild(statusEl);
+  }
+  return statusEl;
+}
+function setStatus(text){
+  ensureStatus().innerHTML = `<span class="dot"></span>${esc(text)}`;
+  scrollBottom();
+}
+function clearStatus(){ if (statusEl && statusEl.isConnected) statusEl.remove(); }
+
+/* token 增量气泡 */
+let tokenBubble = null;
+function appendToken(delta){
+  if (!tokenBubble || !tokenBubble.isConnected){
+    const b = addRow("bot", "");
+    b.id = "streaming-" + Date.now();
+    tokenBubble = b;
+  }
+  tokenBubble.appendChild(document.createTextNode(delta));
+  scrollBottom();
+}
+function finalizeTokenBubble(){
+  if (tokenBubble && tokenBubble.isConnected && tokenBubble.textContent === "") tokenBubble.remove();
+  tokenBubble = null;
+}
+
+/* 报价卡 */
+function quoteCardHtml(q){
+  const rows = (q.line_items || []).map(it =>
+    `<tr><td>${esc(it.name)}<span class="meta"> (${esc(it.code)})</span></td>` +
+    `<td class="num">${fmtMoney(it.sum_insured)}</td>` +
+    `<td class="num">${fmtMoney(it.premium)}</td></tr>`).join("");
+  return `<div class="card quote">
+    <h3>报价（模拟）</h3>
+    <div class="kv">
+      <div>报价单号</div><div>${esc(q.quote_id)}</div>
+      <div>版本</div><div>v${esc(q.quote_version)}</div>
+      <div>有效期至</div><div>${esc(q.valid_until)}</div>
+      <div>总价</div><div><b>${fmtMoney(q.premium_total)}</b> 元</div>
+    </div>
+    <table class="t"><tr><th>险种</th><th>保额(元)</th><th>保费(元)</th></tr>${rows}</table>
+    <div class="policy-note">保费由报价服务计算（模拟报价 · 合成数据）</div>
+  </div>`;
+}
+
+/* ================= SSE 消费（fetch + ReadableStream，手写解析 event:/data:） ================= */
+function parseSSEChunkDispatcher(onEvent){
+  /* 返回一个喂入文本 chunk 的函数；跨 chunk 的半行与多行事件均正确处理 */
+  let buf = "";
+  let ev = "", dataLines = [], idVal = "";
+  let hold = ""; /* 跨 chunk 暂留的孤立 \r（可能是被拆开的 CRLF），供 flush 使用 */
+  function dispatch(){
+    if (ev !== "" || dataLines.length){
+      /* id 字段：事件序号，断线重连时以 Last-Event-ID 请求头回传（W3C/MDN，检索 2026-11-13） */
+      onEvent({ event: ev || "message", data: dataLines.join("\n"), id: idVal });
+    }
+    ev = ""; dataLines = []; idVal = "";
+  }
+  function feed(text){
+    buf += text;
+    /* WHATWG：行尾可为 CRLF / LF / 单独 CR（检索 2026-11-13）。
+       先归一 CRLF；若缓冲末尾是孤立 \r，可能是被拆开的 CRLF，暂保留待下一块再判定；
+       其余单独 CR 也视为行尾归一为 LF。 */
+    buf = buf.replace(/\r\n/g, "\n");
+    hold = "";
+    if (buf.endsWith("\r")){ hold = "\r"; buf = buf.slice(0, -1); }
+    buf = buf.replace(/\r/g, "\n") + hold;
+    let idx;
+    while ((idx = buf.indexOf("\n")) !== -1){
+      const line = buf.slice(0, idx);
+      buf = buf.slice(idx + 1);
+      if (line === ""){ dispatch(); }
+      else if (line.startsWith(":")){ /* SSE 注释行（含心跳），忽略 */ }
+      else if (line.startsWith("event:")){ ev = line.slice(6).trim(); }
+      else if (line.startsWith("data:")){ dataLines.push(line.slice(5).replace(/^ /, "")); }
+      else if (line.startsWith("id:")){ idVal = line.slice(3).trim(); }
+      else if (line.startsWith("retry:")){ /* EventSource 专用重连间隔字段；fetch 方案自行做退避，忽略 */ }
+    }
+  };
+  /* 流结束时调用：被暂留的孤立 \r 此时不可能再与 \n 配对，按单独 CR 行尾归一处理。
+     若它之前恰好终结一个空行（如服务器以 CR 行尾发 "\r\r"），事件按规范应被派发；
+     否则行内容归一但无空行，不完整事件按规范丢弃。 */
+  feed.flush = function(){
+    if (hold === "\r"){ hold = ""; buf += "\n"; feed(""); }
+  };
+  return feed;
+}
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function chat(message, opts){
+  const o = opts || {};
+  const resumeId = o.resumeId || "";
+  if (!o.silent) addUser(message);
+  state.streaming = true;
+  $("send").disabled = true;
+
+  let lastEventId = resumeId;
+  let lastTraceId = "";
+
+  const doAttempt = async () => {
+    state.aborter = new AbortController();
+    setStatus("连接服务…");
+    const headers = { "Content-Type": "application/json" };
+    /* 断线重发带 Last-Event-ID，供后端续传；当前后端声明 X-Resume-Supported: false，
+       会安全忽略该头并全量重跑（见 server/app.py /chat 注释） */
+    if (lastEventId) headers["Last-Event-ID"] = lastEventId;
+    const resp = await fetch("/chat", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        session_id: state.sessionId,
+        owner_id: state.ownerId,
+        message,
+      }),
+      signal: state.aborter.signal,
+    });
+    if (!resp.ok){
+      const txt = await resp.text().catch(() => "");
+      const e = new Error(`HTTP ${resp.status} ${txt.slice(0, 200)}`);
+      e.name = "HTTPError";
+      throw e;
+    }
+    if (!resp.body) throw new Error("当前浏览器不支持流式响应（ReadableStream）");
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    /* 心跳看门狗：30s 未收到任何字节（含 ": ping" 注释行）即判定断线。
+       后端空闲时每 15s 下发一次心跳（server/app.py），正常链路不会触发。 */
+    let lastByteAt = Date.now();
+    const HEARTBEAT_TIMEOUT_MS = 30000;
+    const watchdog = setInterval(() => {
+      if (Date.now() - lastByteAt > HEARTBEAT_TIMEOUT_MS){
+        state.aborter.abort(new DOMException(
+          "SSE 连接 30s 无任何字节（含心跳），判定断线", "HeartbeatTimeoutError"));
+      }
+    }, 3000);
+    try{
+      const feed = parseSSEChunkDispatcher((e) => {
+        let d = {};
+        try { d = JSON.parse(e.data); } catch { d = { raw: e.data }; }
+        handleEvent(e.event, d);
+        if (d.trace_id) lastTraceId = d.trace_id;
+        if (e.id) lastEventId = e.id;
+      });
+
+      for(;;){
+        const { value, done } = await reader.read();
+        lastByteAt = Date.now(); /* 任意字节（含心跳注释行）都刷新看门狗 */
+        if (done) break;
+        feed(decoder.decode(value, { stream: true }));
+      }
+      feed.flush && feed.flush(); /* 流结束：归一被暂留的孤立 CR（WHATWG，检索 2026-11-13） */
+    } finally { clearInterval(watchdog); }
+  };
+
+  try{
+    for (let attempt = 0; ; attempt++){
+      try{
+        await doAttempt();
+        finishStream(lastTraceId); /* 连接正常关闭：收尾 */
+        break;
+      }catch(err){
+        if (err && err.name === "AbortError"){
+          clearStatus();
+          addSys("已取消本次请求。");
+          break;
+        }
+        /* HTTP 业务错误不自动重试；心跳超时/网络中断（TypeError）才指数退避重试，最多 3 次 */
+        const retriable = !(err && err.name === "HTTPError");
+        if (!retriable || attempt >= 3){
+          if (retriable) showDisconnectBar(message, lastEventId, err);
+          else {
+            clearStatus();
+            addRow("sys", `<div class="card err" style="max-width:420px">
+              <h3>⚠️ 服务返回错误</h3>
+              <div style="font-size:13px">/chat 请求失败。<br>
+              <span style="color:var(--muted);font-size:12px">${esc(err.message)}</span></div></div>`);
+          }
+          break;
+        }
+        const delay = 1000 * Math.pow(2, attempt); /* 指数退避：1s / 2s / 4s */
+        setStatus(`连接中断，${delay / 1000}s 后自动重试（${attempt + 1}/3）…`);
+        await sleep(delay);
+      }
+    }
+  }finally{
+    state.streaming = false;
+    $("send").disabled = false;
+    state.aborter = null;
+  }
+}
+
+/* 断线条：保留用户输入与已收部分结果，提供一键重发（携带 Last-Event-ID） */
+function showDisconnectBar(message, resumeId, err){
+  clearStatus();
+  finalizeTokenBubble();
+  if (!$("input").value.trim()) $("input").value = message; /* 保留用户输入 */
+  const bubble = addRow("sys", `<div class="card err" style="max-width:440px">
+    <h3>⚠️ 连接中断</h3>
+    <div style="font-size:13px">已保留你的输入与已收到的部分结果；自动重试 3 次仍未恢复，可手动重发。<br>
+    <span style="color:var(--muted);font-size:12px">${esc(err && err.message || String(err))}</span></div>
+    <div class="actions"><button class="btn" data-resend>重新发送</button></div></div>`);
+  const btn = bubble.querySelector("[data-resend]");
+  btn.addEventListener("click", () => {
+    btn.disabled = true; btn.textContent = "重发中…";
+    chat(message, { silent: true, resumeId });
+  });
+}
+
+function finishStream(lastTraceId){
+  clearStatus();
+  finalizeTokenBubble();
+  if (lastTraceId){
+    $("traceInput").value = lastTraceId;
+    loadTrace(lastTraceId).catch(() => {});
+  }
+}
+
+function handleEvent(event, d){
+  switch(event){
+    case "node_start":
+      setStatus("状态机 → " + (d.node || "?")); break;
+    case "node_end":
+      break;
+    case "tool_call":
+      setStatus("调用工具 " + (d.tool || "?") + " …"); break;
+    case "tool_result":
+      if (d.error) setStatus("工具 " + (d.tool || "?") + " 返回错误"); break;
+    case "token":
+      clearStatus();
+      if (typeof d.delta === "string") appendToken(d.delta);
+      break;
+    case "message": {
+      clearStatus(); finalizeTokenBubble();
+      addRow("bot", esc(d.content || "") + citationsHtml(d.citations));
+      break;
+    }
+    case "quote": {
+      clearStatus(); finalizeTokenBubble();
+      if (d.quote_id){
+        state.latestQuote = { quote_id: d.quote_id, quote_version: d.quote_version };
+        addRow("bot", quoteCardHtml(d));
+      }
+      break;
+    }
+    case "clarify": {
+      clearStatus(); finalizeTokenBubble();
+      const qs = (d.questions || []).map(q => `<li>${esc(q)}</li>`).join("");
+      addRow("bot", `<div class="card await"><h3>需要澄清</h3><ul class="confirmables">${qs}</ul>
+        <div class="policy-note">请在下方输入框回复以继续</div></div>`);
+      break;
+    }
+    case "await_confirm": {
+      clearStatus(); finalizeTokenBubble();
+      const items = (d.confirmables || []).map(c => `<li>${esc(c)}</li>`).join("");
+      const bubble = addRow("bot",
+        `<div class="card await"><h3>待确认投保方案（模拟）</h3>
+         <div>${esc(d.summary || "")}</div><ul class="confirmables">${items}</ul>
+         <div class="actions"><button class="btn" data-confirm>确认投保</button></div></div>`);
+      const btn = bubble.querySelector("[data-confirm]");
+      const q = state.latestQuote;
+      if (!q){ btn.disabled = true; btn.title = "缺少报价信息"; }
+      btn.addEventListener("click", () => doConfirm(btn));
+      break;
+    }
+    case "confirmed": {
+      clearStatus(); finalizeTokenBubble();
+      addRow("bot", `<div class="card order"><h3>✅ 投保成功（模拟订单 · 合成数据）</h3>
+        <div class="kv"><div>订单号</div><div>${esc(d.order_id)}</div>
+        <div>报价单号</div><div>${esc(d.quote_id)}</div></div></div>`);
+      break;
+    }
+    case "error": {
+      clearStatus(); finalizeTokenBubble();
+      addRow("bot", `<div class="card err"><h3>错误</h3>
+        <div><span class="pill err">${esc(d.code || "ERROR")}</span> ${esc(d.message || "")}
+        ${d.node ? `<span class="meta">（节点 ${esc(d.node)}）</span>` : ""}</div></div>`);
+      break;
+    }
+    case "done": {
+      clearStatus(); finalizeTokenBubble();
+      const reason = d.finish_reason === "await_user"
+        ? "（等待你的下一条消息）" : d.finish_reason === "error" ? "（异常结束）" : "";
+      addSys("—— 流结束" + reason + " ——");
+      break;
+    }
+    default: break;
+  }
+}
+
+/* ================= 确认投保（POST /confirm） ================= */
+async function doConfirm(btn){
+  const q = state.latestQuote;
+  if (!q || !q.quote_id) return;
+  btn.disabled = true; btn.textContent = "提交中…";
+  try{
+    const resp = await fetch("/confirm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        session_id: state.sessionId,
+        quote_id: q.quote_id,
+        quote_version: q.quote_version,
+        owner_id: state.ownerId,
+      }),
+    });
+    const body = await resp.json().catch(() => ({}));
+    if (resp.ok){
+      handleEvent("confirmed", { order_id: body.order_id, quote_id: body.quote_id });
+    }else{
+      const code = body.error && body.error.code || body.detail || ("HTTP " + resp.status);
+      const msg = body.error && body.error.message || body.message || "";
+      const hint = code === "QUOTE_EXPIRED" ? "报价已过期（24h 有效期），请重新询价。"
+        : code === "QUOTE_VERSION_STALE" ? "报价版本已更新，请以最新报价确认。"
+        : code === "QUOTE_NOT_FOUND" ? "未找到该报价，请重新询价。"
+        : code === "OWNER_MISMATCH" ? "报价与当前身份不匹配，请切换身份后重试。" : esc(msg);
+      handleEvent("error", { code: String(code), message: hint });
+    }
+  }catch(err){
+    handleEvent("error", { code: "NETWORK", message: "确认请求失败：" + err.message });
+  }finally{
+    if (btn.isConnected){ btn.disabled = false; btn.textContent = "确认投保"; }
+  }
+}
+
+/* ================= 右栏：原保单卡 ================= */
+function coverageRows(coverages){
+  if (!Array.isArray(coverages) || !coverages.length) return "";
+  const rows = coverages.map(c =>
+    `<tr><td>${esc(c.name)}<span class="meta"> (${esc(c.code)})</span></td>` +
+    `<td class="num">${fmtMoney(c.sum_insured)}</td>` +
+    `<td class="num">${fmtMoney(c.premium)}</td>` +
+    `<td class="num">${esc(c.deductible ?? "-")}</td></tr>`).join("");
+  return `<table class="t"><tr><th>险种</th><th>保额</th><th>保费</th><th>免赔</th></tr>${rows}</table>`;
+}
+
+async function loadPolicy(ownerId){
+  const body = $("policyBody");
+  body.innerHTML = `<div class="placeholder">加载中…</div>`;
+  try{
+    const resp = await fetch("/policy/" + encodeURIComponent(ownerId));
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok || data.found === false){
+      body.innerHTML = `<div class="placeholder">未找到保单${data.message ? "：" + esc(data.message) : ""}</div>`;
+      return;
+    }
+    const o = data.owner || {}, p = data.policy || {};
+    const soon = !!data.expiring_soon;
+    const days = data.days_to_expiry;
+    const cd = typeof days === "number"
+      ? `<span class="pill ${soon ? "warn" : "ok"}">${soon ? "临近到期" : "有效期充足"}</span>
+         <span class="countdown ${soon ? "warn" : "ok"}">${days} 天后到期</span>`
+      : "";
+    body.innerHTML = `
+      <div class="policy-head"><span class="name">${esc(o.name || ownerId)}</span>${cd}</div>
+      <div class="kv">
+        <div>车主ID</div><div>${esc(o.owner_id || ownerId)}</div>
+        <div>车型</div><div>${esc(o.vehicle_model || "-")}</div>
+        <div>车牌</div><div>${esc(o.plate_no || "-")}</div>
+        <div>VIN</div><div>${esc(o.vin || "-")}</div>
+        <div>使用性质</div><div>${esc(o.use_nature || "-")}</div>
+        <div>保单号</div><div>${esc(p.policy_id || "-")}（${esc(p.policy_version || "")}）</div>
+        <div>承保公司</div><div>${esc(p.insurer || "-")}</div>
+        <div>产品</div><div>${esc(p.product_name || "-")}</div>
+        <div>保障期间</div><div>${esc(p.start_date || "?")} ~ ${esc(p.end_date || "?")}</div>
+        <div>当前总保费</div><div>${fmtMoney(p.premium_total)} 元</div>
+      </div>
+      ${coverageRows(p.coverages)}
+      <div class="policy-note">身份证号 / 手机号已按隐私规范脱敏，接口不返回。数据为合成数据。</div>`;
+    if (soon) $("policyCard").style.borderColor = "#f0c36d"; else $("policyCard").style.borderColor = "";
+  }catch(err){
+    body.innerHTML = `<div class="placeholder">⚠️ 无法加载保单（服务未就绪？）<br>
+      <span style="font-size:12px">${esc(err.message)}</span></div>`;
+  }
+}
+
+/* ================= 右栏：轨迹抽屉 ================= */
+const REC_LABEL = {
+  node_start: "进入节点", node_end: "完成节点", tool_call: "工具调用",
+  tool_result: "工具返回", llm_call: "LLM 调用", llm_response: "LLM 返回",
+  retrieval: "条款检索", user_message: "用户消息", assistant_message: "助手消息", error: "错误",
+};
+function traceItemHtml(r){
+  const t = (r.ts || "").slice(11, 23);
+  const label = REC_LABEL[r.record_type] || r.record_type || "?";
+  let meta = "";
+  if (r.node) meta += `节点 ${esc(r.node)} `;
+  if (typeof r.latency_ms === "number") meta += `${r.latency_ms}ms `;
+  if (r.record_type === "tool_call" && r.input) meta += `· ${esc(JSON.stringify(r.input)).slice(0, 80)}`;
+  if (r.record_type === "retrieval" && Array.isArray(r.output))
+    meta += "· 命中 " + r.output.map(h => esc(h.wiki_id)).join(", ");
+  if (r.record_type === "error" && r.error) meta += `· ${esc(r.error.code)} ${esc(r.error.message)}`;
+  const cls = r.record_type === "error" ? "err"
+    : r.record_type.startsWith("tool") ? "tool"
+    : (r.record_type.startsWith("llm") ? "llm" : "");
+  return `<li class="${cls}"><span class="t">${esc(t)}</span><b>${esc(label)}</b> <span class="meta">${meta}</span></li>`;
+}
+
+async function loadTrace(traceId){
+  const list = $("traceList");
+  if (!traceId){ list.innerHTML = `<li class="meta">请输入 trace_id</li>`; return; }
+  list.innerHTML = `<li class="meta">加载中…</li>`;
+  try{
+    const resp = await fetch("/trace/" + encodeURIComponent(traceId));
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const arr = await resp.json();
+    if (!Array.isArray(arr) || !arr.length){
+      list.innerHTML = `<li class="meta">该轨迹无记录</li>`; return;
+    }
+    list.innerHTML = arr.map(traceItemHtml).join("");
+  }catch(err){
+    list.innerHTML = `<li class="meta">⚠️ 加载失败：${esc(err.message)}（服务未就绪？）</li>`;
+  }
+}
+
+/* ================= 事件绑定 ================= */
+$("sessionChip").textContent = "会话 " + state.sessionId;
+
+$("ownerSel").addEventListener("change", (e) => {
+  state.ownerId = e.target.value;
+  /* 切换身份即切换会话，避免跨车主串上下文 */
+  state.sessionId = "sess-" + Math.random().toString(36).slice(2, 10);
+  $("sessionChip").textContent = "会话 " + state.sessionId;
+  state.latestQuote = null;
+  addSys(`已切换身份为 ${state.ownerId}，新会话已开启。`);
+  loadPolicy(state.ownerId);
+});
+
+$("refreshPolicy").addEventListener("click", () => loadPolicy(state.ownerId));
+$("traceLoadBtn").addEventListener("click", () => loadTrace($("traceInput").value.trim()));
+$("traceInput").addEventListener("keydown", (e) => { if (e.key === "Enter") loadTrace(e.target.value.trim()); });
+
+$("send").addEventListener("click", () => {
+  const text = $("input").value.trim();
+  if (text && !state.streaming){ $("input").value = ""; chat(text); }
+});
+$("input").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey){
+    e.preventDefault();
+    const text = $("input").value.trim();
+    if (text && !state.streaming){ $("input").value = ""; chat(text); }
+  }
+});
+
+/* ================= 初始化 ================= */
+addSys("欢迎使用车险续保助手（模拟报价 · 合成数据）。示例提问：\n① 我的车快到期了，帮我看看续保方案\n② 三者险升到 200 万要多少钱？\n③ 未年检出事故赔不赔？");
+loadPolicy(state.ownerId);
+</script>
+</body>
+</html>

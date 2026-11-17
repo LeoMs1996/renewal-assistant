@@ -1,0 +1,15 @@
+{
+  "id": "AC-03",
+  "title": "非临期：OWN-1002 询价",
+  "spec": "expiring_soon=false，正常走比价流程",
+  "steps": [
+    {"kind": "chat", "label": "t1", "session": "ac03", "owner": "OWN-1002",
+     "message": "帮我把续保方案报个价"}
+  ],
+  "assertions": [
+    {"type": "tool_calls", "turn": "t1", "tool": "get_policy", "count": 1},
+    {"type": "tool_result_path", "turn": "t1", "tool": "get_policy", "path": "expiring_soon", "value": false, "desc": "OWN-1002 到期 2027-06-20，非临期"},
+    {"type": "sse_has", "turn": "t1", "event": "quote", "desc": "SPEC：正常走比价流程（quote 事件产出）"},
+    {"type": "premium_manual", "turn": "t1", "hard": true, "desc": "premium_total 与费率表手算一致（保费不得编造）"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "AC-07",
+  "title": "医保外用药附加险前置缺失",
+  "spec": "无三者险时投保 YWYW → RIDER_PREREQUISITE_MISSING 纠正",
+  "steps": [
+    {"kind": "chat", "label": "t1", "session": "ac07", "owner": "OWN-1001",
+     "message": "去掉三者险，去掉司机险，去掉乘客险，加个医保外用药"}
+  ],
+  "assertions": [
+    {"type": "correction", "turn": "t1", "code": "RIDER_PREREQUISITE_MISSING", "hard": true,
+     "desc": "SPEC §3.2 规则6：YWYW 需 DSX/SJRX/CKRX 同单在场"},
+    {"type": "tool_calls", "turn": "t1", "tool": "query_quote", "count": 0, "hard": true, "desc": "不可行动作不进入询价"},
+    {"type": "citation", "turn": "t1", "wiki_id": "wiki-ywyw"},
+    {"type": "sse_done", "turn": "t1", "reason": "end"}
+  ]
+}

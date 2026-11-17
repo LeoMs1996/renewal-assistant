@@ -1,0 +1,33 @@
+{
+  "dataset": "synthetic",
+  "version": "v1.0.0",
+  "generated_at": "2026-11-11T00:00:00+08:00",
+  "owners": [
+    {
+      "owner_id": "OWN-1001",
+      "name": "张伟",
+      "id_number": "310101198503157731",
+      "phone": "13801610001",
+      "vin": "LSVAA26E2NE100001",
+      "plate_no": "沪AD12345",
+      "vehicle_model": "大众 帕萨特 2023款 330TSI",
+      "first_registration_date": "2023-03-15",
+      "use_nature": "家庭自用（非营运）",
+      "current_policy_id": "POL-2026-0001",
+      "policy_expire_date": "2026-12-05"
+    },
+    {
+      "owner_id": "OWN-1002",
+      "name": "李静",
+      "id_number": "440304199207228842",
+      "phone": "13975510002",
+      "vin": "LBV5S3102NME00002",
+      "plate_no": "粤BF67890",
+      "vehicle_model": "宝马 325Li 2024款",
+      "first_registration_date": "2024-07-20",
+      "use_nature": "家庭自用（非营运）",
+      "current_policy_id": "POL-2027-0002",
+      "policy_expire_date": "2027-06-20"
+    }
+  ]
+}

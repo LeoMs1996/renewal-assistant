@@ -1,0 +1,15 @@
+{
+  "id": "AC-08",
+  "title": "停售险种：发动机进水险",
+  "spec": "标注已停售，指向并入 CSX，引 wiki-csx",
+  "steps": [
+    {"kind": "chat", "label": "t1", "session": "ac08", "owner": "OWN-1001",
+     "message": "我想买发动机进水险"}
+  ],
+  "assertions": [
+    {"type": "correction", "turn": "t1", "code": "COVERAGE_DISCONTINUED", "hard": true,
+     "desc": "SPEC §3.2 规则5a：停售险种 → COVERAGE_DISCONTINUED"},
+    {"type": "tool_calls", "turn": "t1", "tool": "query_quote", "count": 0, "hard": true},
+    {"type": "citation", "turn": "t1", "wiki_id": "wiki-csx", "desc": "指向并入 CSX，引 wiki-csx"}
+  ]
+}

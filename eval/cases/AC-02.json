@@ -1,0 +1,18 @@
+{
+  "id": "AC-02",
+  "title": "读取原保单：结构完整 + 身份证号/手机号脱敏",
+  "spec": "正确返回险种结构/保额/保费/policy_version，身份证号脱敏",
+  "steps": [
+    {"kind": "api", "label": "a1", "method": "GET", "path": "/policy/OWN-1001"}
+  ],
+  "assertions": [
+    {"type": "api_status", "label": "a1", "code": 200},
+    {"type": "api_path", "label": "a1", "path": "found", "value": true, "desc": "保单存在：found=true"},
+    {"type": "api_path", "label": "a1", "path": "policy.policy_version", "value": "v2024.3", "desc": "SPEC §3.1：返回 policy_version"},
+    {"type": "api_path", "label": "a1", "path": "policy.premium_total", "value": 4612.0, "desc": "原保单保费总额一致（不重算、不编造）"},
+    {"type": "api_path", "label": "a1", "path": "policy.coverages.#", "op": "eq", "value": 6, "desc": "险种结构完整（6 个险种）"},
+    {"type": "api_key_absent", "label": "a1", "path": "owner.id_number", "desc": "SPEC §3.1：出参剔除 owner.id_number"},
+    {"type": "api_key_absent", "label": "a1", "path": "owner.phone", "desc": "SPEC §3.1：出参剔除 owner.phone"},
+    {"type": "no_pii", "hard": true, "desc": "响应体与全部轨迹中不出现任何真实证件号/手机号字面值（合成数据原值也不得泄漏）"}
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "AC-14",
+  "title": "轨迹完整性",
+  "spec": "每轮对话 traces/{trace_id}.jsonl 存在且 seq 连续，GET /trace 可回放",
+  "steps": [],
+  "assertions": [
+    {"type": "traces_replayable", "hard": true,
+     "desc": "本次运行全部轮次：轨迹文件存在、seq 从 1 连续递增、GET /trace/{id} 回放行数一致"}
+  ]
+}

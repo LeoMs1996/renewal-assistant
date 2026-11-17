@@ -1,0 +1,40 @@
+# Service（平台工程域 t8，2026-11-17）
+#
+# 说明：轨迹导出不再用 CronJob（emptyDir 是 Pod 级卷，跨 Pod 不可见），
+# 改为 Deployment 内的 sidecar 容器，见 deployment.yaml。
+# 若需要长期留存轨迹，把 Deployment 的 traces 卷换成 PVC
+# （ReadWriteMany，或在每 Pod 独立 PVC 上由 sidecar 导出到 OTLP 后端）。
+apiVersion: v1
+kind: Service
+metadata:
+  name: renewal-assistant
+  labels:
+    app.kubernetes.io/name: renewal-assistant
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: renewal-assistant
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+# 可选：Prometheus Operator 的 ServiceMonitor（用 Operator 时删掉
+# deployment.yaml 里的 prometheus.io/* 注解，避免两套服务发现重复抓取）。
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: renewal-assistant
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: renewal-assistant
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames: [default]

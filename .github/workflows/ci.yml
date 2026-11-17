@@ -1,0 +1,139 @@
+# CI 流水线（2026-11-13 评审整改 P0：项目此前零 CI）
+#
+# 四道闸门，按「便宜的先失败」排序：
+#   lint  → lint + 类型检查（秒级，语法/导入错误最先暴露）
+#   test  → pytest 单测 + 两个脚本式测试（分钟级）
+#   eval  → 19 条评测用例全量回归（规则模式，确定性、不依赖外部 LLM）
+#   gate  → 汇总结果，供分支保护作为必需检查项
+#
+# 关键设计：
+# - 全程 RENEWAL_FORCE_RULE_MODE=1：评测不依赖 .env 里的 LLM 凭证，
+#   结果可重现（LLM 模式的不确定性由人工/定时任务单独跑）。
+# - 本工作流不验证模型链路。要真正验证模型链路，请以 RENEWAL_LLM_STRICT=1
+#   运行 eval（nightly）：严格模式下 /chat 开流前探活，LLM 不可用时返回
+#   503 LLM_UNAVAILABLE，评测以 --fail-on-degraded 明确失败（退出码 1），
+#   而非静默通过。宽松模式下若发生降级，也会被断言判为 LLM_DEGRADED 失败。
+# - 依赖用 requirements.lock.txt 安装，构建可重现。
+# - eval 自带 uvicorn 子进程（eval/run.py 自管端口），评测结束自动收尾。
+
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUNBUFFERED: "1"
+  RENEWAL_FORCE_RULE_MODE: "1"   # 规则模式：确定性评测，无需 LLM 凭证
+
+jobs:
+  lint:
+    name: Lint & 类型检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: 安装开发依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock.txt -r requirements-dev.txt
+      - name: ruff（lint）
+        run: ruff check .
+      - name: ruff（格式检查，仅提示）
+        run: ruff format --check . || echo "::warning::格式与 ruff format 不一致（不阻断）"
+      - name: mypy（渐进式）
+        run: mypy
+      # 安全域（t9，2026-11-17）：把安全契约变成可执行断言，而不是文档承诺。
+      # 覆盖：凭证不入库 / .gitignore 覆盖 PII 产物 / 轨迹零 PII 原文 /
+      # CSP(Trusted Types) / PII 端点 no-store / 422 契约错误体 / 鉴权 / 脱敏自测。
+      # 浏览器 CSP+SSE 实测需本机 Chrome，CI 里跳过（本地用 --browser 跑）。
+      - name: 安全自检（凭证 / PII / CSP / 脱敏）
+        run: python scripts/security_check.py
+
+  test:
+    name: 单元测试
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: 安装运行时依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock.txt -r requirements-dev.txt
+      - name: pytest（含安全中间件与 checkpointer 持久化）
+        run: pytest tests/ mcp_servers/
+      - name: 脚本式测试 1 —— LLM 归一化 + quote_id 跨进程不撞号
+        run: python tests/test_llm_normalization.py
+      - name: 脚本式测试 2 —— 报价服务（54 项核心断言）
+        run: python mcp_servers/test_quote_server.py
+
+  eval:
+    name: 评测回归（19 条用例）
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: 安装运行时依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock.txt
+      - name: 用例静态校验（case 设计质量门禁：断言器/参数/label/desc/维度/SPEC 对齐）
+        run: python eval/lint_cases.py --json > eval/lint-report.json
+      - name: 全量评测（AC-01~14 + SEC-01~05，规则模式；runner 自带四道 CI 门禁）
+        # 门禁：hard 断言零容忍 + LLM 降级（规则模式 no-op）+ 全量通过率 + 相对基线成对显著退化
+        # 统计口径：arXiv:2602.10144v2（McNemar 精确检验）；基线更新方式见 eval/README-eval.md
+        # 想验证模型链路：改用 RENEWAL_LLM_STRICT=1（nightly），LLM 不可用会明确失败（503 + exit 1）
+        run: |
+          python eval/run.py --port 8123 --repeat 2 \
+            --fail-on-hard --fail-on-degraded --min-pass-rate 1.0 --fail-on-regression
+      - name: MCP stdio 协议链路（真实子进程 + JSON-RPC 握手）
+        run: MCP_TRANSPORT=stdio python mcp_servers/test_quote_server.py
+      # （报告/快照统一由下方「上传评测报告与快照」一步上传，避免 artifact 重名）
+      - name: 上传评测报告与快照
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: |
+            eval/report-*.md
+            eval/report.md
+            eval/results.json
+            eval/lint-report.json
+          if-no-files-found: warn
+      - name: 断言 0 失败（双保险：runner 门禁已退出码 1，此处防遗漏漏网）
+        run: |
+          if grep -qE "^## (AC|SEC)-.*— (FAIL|FAIL 🔴)" eval/report.md; then
+            echo "::error::评测存在失败用例，见 eval/report.md"
+            grep -E "^## (AC|SEC)-.*— FAIL" eval/report.md
+            exit 1
+          fi
+          echo "评测全部通过"
+
+  gate:
+    name: 汇总闸门
+    runs-on: ubuntu-latest
+    needs: [lint, test, eval]
+    if: always()
+    steps:
+      - name: 任一前置作业失败即失败
+        run: |
+          echo "lint=${{ needs.lint.result }} test=${{ needs.test.result }} eval=${{ needs.eval.result }}"
+          test "${{ needs.lint.result }}" = "success"
+          test "${{ needs.test.result }}" = "success"
+          test "${{ needs.eval.result }}" = "success"

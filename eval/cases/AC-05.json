@@ -1,0 +1,18 @@
+{
+  "id": "AC-05",
+  "title": "险种结构差异表",
+  "spec": "输出逐险种\"原方案 vs 新方案\"对照表",
+  "steps": [
+    {"kind": "chat", "label": "t1", "session": "ac05", "owner": "OWN-1001",
+     "message": "帮我对比原方案和新方案的续保差异"}
+  ],
+  "assertions": [
+    {"type": "tool_calls", "turn": "t1", "tool": "query_quote", "count": 1, "desc": "无需求变化：新方案=原方案，仅询价 1 次"},
+    {"type": "line_items_codes", "turn": "t1", "index": 0,
+     "codes": ["JQX", "CSX", "DSX", "YWYW", "SJRX", "CKRX"],
+     "desc": "报价逐险种覆盖原保单全部 6 个险种（差异表数据源）"},
+    {"type": "sse_has", "turn": "t1", "event": "message", "desc": "对照表以 message 事件产出"},
+    {"type": "sse_has", "turn": "t1", "event": "await_confirm"},
+    {"type": "premium_manual", "turn": "t1", "hard": true}
+  ]
+}

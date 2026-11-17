@@ -1,0 +1,31 @@
+.env
+traces/*.jsonl
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+# 安全域（t9，2026-11-17）：凡是含 PII / 凭证 / 运行态的产物一律不入库。
+# 已有：轨迹 JSONL。本次补齐：会话快照（含保单与对话原文）、checkpointer
+# 数据库、报价序号账本——它们与轨迹同属可观测/运行态数据，不应进版本库。
+traces/sessions/
+traces/checkpoints.sqlite
+traces/quote_seq.json
+traces/quotes.json
+.env.*
+!.env.example
+
+# ---------- 2026-11-17 基线入库时补齐（captain） ----------
+# 运行态与工具缓存一概不入库；traces/ 整体排除（轨迹、会话、记忆、
+# checkpointer、序号账本全是运行数据，含 PII，属可观测面而非源码）。
+traces/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# 评测产物：只保留“基线快照”（baseline*.json），其余报告/结果是每次跑的产物，
+# 入库只会制造噪声与冲突（INDEX N-03 已登记 40+ 份未归档）。
+eval/report-*.md
+eval/report.md
+eval/results*.json
+eval/*-eval-*.json
+eval/knowledge-retrieval-eval-*.json

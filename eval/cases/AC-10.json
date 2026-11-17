@@ -1,0 +1,20 @@
+{
+  "id": "AC-10",
+  "title": "网约车用途变更：超范围转人工（SPEC v1.0.1 裁决口径）",
+  "spec": "不按家用车报价；提示用途变更超范围、转人工核保，引 wiki-ride-hailing（SPEC v1.0.1 §7 AC-10）",
+  "steps": [
+    {"kind": "chat", "label": "t1", "session": "ac10", "owner": "OWN-1001",
+     "message": "我的车要改成网约车营运，帮我算保费"}
+  ],
+  "assertions": [
+    {"type": "tool_calls", "turn": "t1", "tool": "query_quote", "count": 0, "hard": true,
+     "desc": "SPEC v1.0.1：营运用途不按家用车费率自动报价（询价 0 次）"},
+    {"type": "sse_absent", "turn": "t1", "event": "quote", "hard": true,
+     "desc": "无 quote 事件（不产出自动报价）"},
+    {"type": "sse_absent", "turn": "t1", "event": "await_confirm", "hard": true,
+     "desc": "无 await_confirm 事件（不进入待确认）"},
+    {"type": "citation", "turn": "t1", "wiki_id": "wiki-ride-hailing",
+     "desc": "引用 wiki-ride-hailing（用途变更条款依据）"}
+  ],
+  "notes": "SPEC v1.0.1（2026-11-12）书面裁决：网约车需求一律『不按家用车报价、提示超范围转人工、引 wiki-ride-hailing』，1.6 营运系数仅保留在 rates.json 数据层，不进续保对话链路。本用例按裁决后口径断言。"
+}

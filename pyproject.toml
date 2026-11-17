@@ -1,0 +1,57 @@
+# 项目级工具配置（2026-11-13 评审整改：CI 工程化）
+#
+# 目标：把「本地能跑」升级为「每次 push/PR 自动验证」。
+# - ruff：lint + 语法/import 排序（替代 flake8/isort，单工具、快）
+# - pytest：单元测试收集；脚本式测试由 CI 单独以 `python <file>` 运行
+# - mypy：渐进式类型检查（先只覆盖纯逻辑模块，业务图的动态 State 暂不纳入）
+
+[project]
+name = "renewal-assistant"
+version = "1.0.4"
+description = "车险续保助手（模拟报价 · 合成数据）"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+# 只检查项目代码；评测报告、轨迹、venv 不参与
+extend-exclude = [".venv", "traces", "wiki", "synthetic", "eval/report-*.md"]
+
+[tool.ruff.lint]
+# E/F：pycodestyle/pyflakes 基础；I：import 排序；B：bugbear；UP：pyupgrade
+select = ["E", "F", "I", "B", "UP"]
+ignore = [
+    "E501",  # 行长由 line-length 提示，中文注释/报告表格易超，不阻断 CI
+    "B008",  # FastAPI 依赖注入惯用法（Depends() 在默认值里）
+    "UP031",  # 脚本模板里用 % 拼接含大量 {} 的内嵌 JSON，可读性更好
+]
+
+[tool.ruff.lint.per-file-ignores]
+# 脚本式测试：顶层断言 + sys.exit 是设计选择
+"tests/test_llm_normalization.py" = ["E402"]
+"mcp_servers/test_quote_server.py" = ["E402"]
+# 评测 runner：为可读性保留长表与常量
+"eval/run.py" = ["E402"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "mcp_servers"]
+addopts = "-q"
+# 脚本式测试不计入 pytest 收集（见各目录 conftest.py 的 collect_ignore）
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+warn_unused_ignores = false
+# 渐进式：先纳入纯逻辑模块，避免一次性被 LangGraph 动态类型淹没
+files = [
+    "server/config.py", "server/middleware.py", "server/sessions.py",
+    "server/trace.py",
+    # 平台工程域（t8，2026-11-17）：观测面代码并入类型门禁。此前 metrics.py 只被
+    # trace.py 的延迟导入间接检查，otel_export.py 完全在门禁之外（11 处类型错误
+    # 就是这样漏进主干）。两者现已 mypy 全绿。
+    "server/metrics.py", "server/otel_export.py",
+    # 记忆域（t16，2026-11-17）：memory.py 未列入时仅被 sessions.py 的导入间接检查，
+    # 14 处类型错误一次漏进主干。显式纳入，避免再依赖「被导入才被查」的巧合。
+    "server/memory.py",
+]

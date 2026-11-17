@@ -1,0 +1,117 @@
+# 记录规则 + 告警规则（平台工程域 t8，2026-11-17）
+#
+# 全部指标名来自 server/metrics.py 的实际暴露面（semconv 命名 + renewal_ 前缀）：
+#   renewal_chat_requests_total{outcome="done|error"}
+#   renewal_chat_duration_seconds_bucket
+#   gen_ai_client_inference_duration_seconds_bucket{gen_ai_provider_name,gen_ai_request_model,error_type}
+#   gen_ai_invoke_agent_duration_seconds_bucket{gen_ai_agent_name,gen_ai_operation_name}
+#   renewal_node_duration_seconds_bucket{node}
+#   renewal_errors_total{code}
+#
+# 设计原则（Prometheus 官方「Metric and label naming」+ alerting 实践）：
+# - 告警用 rate()/histogram_quantile() 而不是裸计数器；
+# - 每条告警都带 for，避免抖动；severity 分 warning/critical；
+# - 用 up==0 区分"进程挂了"和"业务变差"，前者由抓取侧负责。
+groups:
+  - name: renewal-recording
+    interval: 15s
+    rules:
+      - record: job:renewal_chat_error_ratio:rate5m
+        expr: |
+          sum(rate(renewal_chat_requests_total{outcome="error"}[5m]))
+            /
+          clamp_min(sum(rate(renewal_chat_requests_total[5m])), 1e-9)
+
+      - record: job:gen_ai_inference_p95_seconds:rate5m
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum by (le) (rate(gen_ai_client_inference_duration_seconds_bucket[5m]))
+          )
+
+      - record: job:renewal_chat_p95_seconds:rate5m
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum by (le) (rate(renewal_chat_duration_seconds_bucket[5m]))
+          )
+
+      - record: job:renewal_node_p95_seconds:rate5m
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum by (le, node) (rate(renewal_node_duration_seconds_bucket[5m]))
+          )
+
+  - name: renewal-alerts
+    rules:
+      - alert: RenewalInstanceDown
+        expr: up{job="renewal-assistant"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "续保助手实例抓取失败（{{ $labels.instance }}）"
+          description: "Prometheus 连续 2 分钟抓不到 /metrics：进程崩溃、端口不通或 Content-Type 非法。"
+
+      - alert: RenewalNoTraffic
+        # 有进程但 10 分钟没有任何 /chat 收口样本 → 上游路由/前端/鉴权链路可能断了
+        expr: sum(rate(renewal_chat_requests_total[10m])) == 0 and up{job="renewal-assistant"} == 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "续保助手 10 分钟无对话流量"
+          description: "服务在跑但没有任何 chat 轮次收口，检查前端 SSE 与反代。"
+
+      - alert: RenewalHighChatErrorRatio
+        expr: job:renewal_chat_error_ratio:rate5m > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "/chat 错误率 > 5%（当前 {{ $value | humanizePercentage }}）"
+          description: "看 renewal_errors_total 的 code 分布与 gen_ai_client_inference_duration 的 error_type 定位。"
+
+      - alert: RenewalInferenceSlow
+        # 推理 p95 超过 10s：LLM 供应商变慢 / 重试 / 网络问题（OTel 桶上限 81.92s）
+        expr: job:gen_ai_inference_p95_seconds:rate5m > 10
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "LLM 推理 p95 {{ $value | humanizeDuration }} 超阈值"
+          description: "对照 gen_ai_provider_name/gen_ai_request_model 判断是单一模型还是全局。"
+
+      - alert: RenewalChatSlow
+        # 一轮对话 p95 超过 30s：SSE 用户可感知的长尾
+        expr: job:renewal_chat_p95_seconds:rate5m > 30
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "/chat 轮次 p95 {{ $value | humanizeDuration }} 超阈值"
+
+      - alert: RenewalNodeSlow
+        # 单节点 p95 > 2s：编排层某一步（检索/报价/LLM）拖慢整轮
+        expr: job:renewal_node_p95_seconds:rate5m > 2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "图节点 {{ $labels.node }} p95 {{ $value | humanizeDuration }} 超阈值"
+
+      - alert: RenewalGenAIMetricsMissing
+        # 规则模式（无 LLM 凭证）时 gen_ai.* 不产出，这是设计行为，故只在
+        # LLM 模式期望值存在时启用：先用 renewal_inference_requests_total 判断
+        # 是否有真实推理调用，再比对 gen_ai.* 是否缺席。
+        expr: |
+          sum(rate(renewal_inference_requests_total[10m])) > 0
+            and
+          absent(rate(gen_ai_client_inference_duration_seconds_count[10m]))
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "有推理调用但缺 gen_ai.* 指标"
+          description: "检查 server/metrics.py 的 llm_identity()：provider/model 缺失会整段跳过 gen_ai.* 产出。"

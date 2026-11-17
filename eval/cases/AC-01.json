@@ -1,0 +1,18 @@
+{
+  "id": "AC-01",
+  "title": "临期提醒：OWN-1001 发起续保",
+  "spec": "get_policy 返回 expiring_soon=true，助手主动提示临近到期",
+  "steps": [
+    {"kind": "chat", "label": "t1", "session": "ac01", "owner": "OWN-1001",
+     "message": "我的车快到期了，帮我看看续保方案"}
+  ],
+  "assertions": [
+    {"type": "tool_calls", "turn": "t1", "tool": "get_policy", "count": 1},
+    {"type": "tool_result_path", "turn": "t1", "tool": "get_policy", "path": "expiring_soon", "value": true, "desc": "SPEC §3.1：days_to_expiry<=30 → expiring_soon=true"},
+    {"type": "tool_result_path", "turn": "t1", "tool": "get_policy", "path": "days_to_expiry", "op": "le", "value": 30, "desc": "到期日 2026-12-05，距到期 ≤30 天"},
+    {"type": "sse_has", "turn": "t1", "event": "message", "desc": "临期主动提示以助手消息推送（事件存在性，不读文字内容）"},
+    {"type": "sse_has", "turn": "t1", "event": "quote"},
+    {"type": "sse_done", "turn": "t1", "reason": "await_user"},
+    {"type": "latency_budget", "turn": "t1", "budget_ms": 60000, "desc": "临期提醒主链路端到端 ≤60s（软预算：只拦挂死/严重退化，不卡抖动）"}
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "dataset": "synthetic",
+  "version": "v1.0.0",
+  "generated_at": "2026-11-11T00:00:00+08:00",
+  "policies": [
+    {
+      "policy_id": "POL-2026-0001",
+      "policy_version": "v2024.3",
+      "owner_id": "OWN-1001",
+      "vin": "LSVAA26E2NE100001",
+      "plate_no": "沪AD12345",
+      "insurer": "合成财险股份有限公司（虚构）",
+      "product_name": "个人汽车综合保障计划-家庭自用款",
+      "start_date": "2025-12-06",
+      "end_date": "2026-12-05",
+      "premium_total": 4612.0,
+      "ncd_factor": 0.85,
+      "coverages": [
+        {
+          "code": "JQX",
+          "name": "交强险",
+          "sum_insured": 200000,
+          "premium": 950.0,
+          "deductible": 0
+        },
+        {
+          "code": "CSX",
+          "name": "机动车损失险",
+          "sum_insured": 128000,
+          "premium": 1820.0,
+          "deductible": 0,
+          "note": "含2020综改后默认并入的盗抢/自燃/玻璃/涉水等责任"
+        },
+        {
+          "code": "DSX",
+          "name": "第三者责任险",
+          "sum_insured": 1000000,
+          "premium": 1180.0,
+          "deductible": 0
+        },
+        {
+          "code": "YWYW",
+          "name": "医保外用药责任险",
+          "sum_insured": 50000,
+          "premium": 62.0,
+          "deductible": 0
+        },
+        {
+          "code": "SJRX",
+          "name": "车上人员责任险（司机）",
+          "sum_insured": 20000,
+          "premium": 120.0,
+          "deductible": 0
+        },
+        {
+          "code": "CKRX",
+          "name": "车上人员责任险（乘客）",
+          "sum_insured": 20000,
+          "premium": 480.0,
+          "deductible": 0
+        }
+      ]
+    },
+    {
+      "policy_id": "POL-2027-0002",
+      "policy_version": "v2024.3",
+      "owner_id": "OWN-1002",
+      "vin": "LBV5S3102NME00002",
+      "plate_no": "粤BF67890",
+      "insurer": "合成财险股份有限公司（虚构）",
+      "product_name": "个人汽车综合保障计划-家庭自用款",
+      "start_date": "2026-06-21",
+      "end_date": "2027-06-20",
+      "premium_total": 8960.0,
+      "ncd_factor": 0.95,
+      "coverages": [
+        {
+          "code": "JQX",
+          "name": "交强险",
+          "sum_insured": 200000,
+          "premium": 950.0,
+          "deductible": 0
+        },
+        {
+          "code": "CSX",
+          "name": "机动车损失险",
+          "sum_insured": 265000,
+          "premium": 4820.0,
+          "deductible": 0,
+          "note": "含2020综改后默认并入的盗抢/自燃/玻璃/涉水等责任"
+        },
+        {
+          "code": "DSX",
+          "name": "第三者责任险",
+          "sum_insured": 1000000,
+          "premium": 1080.0,
+          "deductible": 0
+        },
+        {
+          "code": "YWYW",
+          "name": "医保外用药责任险",
+          "sum_insured": 50000,
+          "premium": 58.0,
+          "deductible": 0
+        },
+        {
+          "code": "BLPS",
+          "name": "车身划痕损失险",
+          "sum_insured": 5000,
+          "premium": 2052.0,
+          "deductible": 0,
+          "note": "车主坚持附加的高价附加险"
+        }
+      ]
+    }
+  ]
+}

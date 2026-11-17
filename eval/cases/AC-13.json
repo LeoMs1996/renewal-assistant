@@ -1,0 +1,38 @@
+{
+  "id": "AC-13",
+  "title": "确认投保：版本校验 + 订单幂等 + 越权防护",
+  "spec": "quote_version 校验通过 → 生成 order_id，SSE 推 confirmed",
+  "steps": [
+    {"kind": "chat", "label": "t1", "session": "ac13", "owner": "OWN-1001",
+     "message": "帮我算一下今年的续保报价"},
+    {"kind": "chat", "label": "t2", "session": "ac13", "owner": "OWN-1001",
+     "message": "确认投保吧"},
+    {"kind": "api", "label": "a1", "method": "POST", "path": "/confirm",
+     "json": {"session_id": "ac13", "quote_id": "$t1_quote_id", "quote_version": "$t1_quote_version", "owner_id": "OWN-1001"}},
+    {"kind": "api", "label": "a2", "method": "POST", "path": "/confirm",
+     "json": {"session_id": "ac13", "quote_id": "$t1_quote_id", "quote_version": "$t1_quote_version", "owner_id": "OWN-1001"},
+     "desc": "重复确认：幂等，只保存一份订单"},
+    {"kind": "api", "label": "a3", "method": "POST", "path": "/confirm",
+     "json": {"session_id": "ac13", "quote_id": "$t1_quote_id", "quote_version": 99, "owner_id": "OWN-1001"},
+     "desc": "旧版本号 → 409 QUOTE_VERSION_STALE"},
+    {"kind": "api", "label": "a4", "method": "POST", "path": "/confirm",
+     "json": {"session_id": "ac13", "quote_id": "$t1_quote_id", "quote_version": "$t1_quote_version", "owner_id": "OWN-1002"},
+     "desc": "他人保单报价越权确认 → 422 OWNER_MISMATCH"},
+    {"kind": "api", "label": "a5", "method": "POST", "path": "/confirm",
+     "json": {"session_id": "ac13", "quote_id": "QT-20990101-9999", "quote_version": 1, "owner_id": "OWN-1001"},
+     "desc": "不存在的报价 → 404 QUOTE_NOT_FOUND"}
+  ],
+  "assertions": [
+    {"type": "sse_has", "turn": "t2", "event": "confirmed", "desc": "SPEC §4.1：确认成功推 confirmed"},
+    {"type": "sse_done", "turn": "t2", "reason": "end"},
+    {"type": "api_status", "label": "a1", "code": 200, "desc": "a1 首次确认 → 200"},
+    {"type": "api_path_nonempty", "label": "a1", "path": "order_id"},
+    {"type": "order_idempotent", "label_a": "a1", "label_b": "a2", "hard": true, "desc": "重复确认同一 quote → 同一 order_id（保存次数=1）"},
+    {"type": "api_status", "label": "a3", "code": 409, "desc": "a3 旧版本号 → 409"},
+    {"type": "api_error_code", "label": "a3", "code": "QUOTE_VERSION_STALE", "desc": "a3 错误码 QUOTE_VERSION_STALE"},
+    {"type": "api_status", "label": "a4", "code": 422, "hard": true, "desc": "a4 跨车主确认 → 422（越权防线）"},
+    {"type": "api_error_code", "label": "a4", "code": "OWNER_MISMATCH", "hard": true, "desc": "越权读取/确认他人保单 = 硬失败防线"},
+    {"type": "api_status", "label": "a5", "code": 404, "desc": "a5 不存在的报价 → 404"},
+    {"type": "api_error_code", "label": "a5", "code": "QUOTE_NOT_FOUND", "desc": "a5 错误码 QUOTE_NOT_FOUND"}
+  ]
+}

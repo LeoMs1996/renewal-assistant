@@ -1,0 +1,110 @@
+{
+  "dataset": "synthetic",
+  "version": "v2025.1",
+  "effective_date": "2025-01-01",
+  "generated_at": "2026-11-11T00:00:00+08:00",
+  "base_premium": {
+    "JQX": {
+      "name": "交强险",
+      "base_premium_home_private": 950.0,
+      "sum_insured": 200000
+    },
+    "CSX": {
+      "name": "机动车损失险",
+      "base_rate_per_10k_sum": 1.42,
+      "formula": "premium = sum_insured / 10000 * base_rate_per_10k_sum * ncd_factor"
+    },
+    "DSX": {
+      "name": "第三者责任险",
+      "tiers": {
+        "500000": 780.0,
+        "1000000": 1180.0,
+        "2000000": 1520.0,
+        "3000000": 1780.0
+      }
+    },
+    "YWYW": {
+      "name": "医保外用药责任险",
+      "base_premium": 60.0,
+      "sum_insured": 50000
+    },
+    "SJRX": {
+      "name": "车上人员责任险（司机）",
+      "base_premium_per_10k_seat": 60.0
+    },
+    "CKRX": {
+      "name": "车上人员责任险（乘客）",
+      "base_premium_per_10k_seat": 40.0
+    },
+    "BLPS": {
+      "name": "车身划痕损失险",
+      "base_premium": 400.0,
+      "sum_insured": 5000,
+      "note": "v1.0.1 补录：固定基准保费（合成数据），附加险需 CSX 前置"
+    }
+  },
+  "factors": {
+    "ncd_coefficient": {
+      "description": "无赔款优待系数（NCD），按连续无出险年数浮动",
+      "tiers": [
+        { "years_no_claim": 0, "coefficient": 1.0 },
+        { "years_no_claim": 1, "coefficient": 0.95 },
+        { "years_no_claim": 2, "coefficient": 0.85 },
+        { "years_no_claim": 3, "coefficient": 0.75 },
+        { "years_no_claim": 4, "coefficient": 0.65 },
+        { "claims_last_year": 1, "coefficient": 1.1 },
+        { "claims_last_year": 2, "coefficient": 1.25 },
+        { "claims_last_year": 3, "coefficient": 1.5 }
+      ]
+    },
+    "use_nature_factor": {
+      "家庭自用（非营运）": 1.0,
+      "网约车（营运）": 1.6,
+      "货车（营运）": 1.8
+    },
+    "vehicle_age_factor": {
+      "description": "车损险车龄系数",
+      "tiers": [
+        { "age_range": "0-1年", "coefficient": 1.0 },
+        { "age_range": "2-5年", "coefficient": 1.05 },
+        { "age_range": "6-10年", "coefficient": 1.15 },
+        { "age_range": "10年以上", "coefficient": 1.3 }
+      ]
+    }
+  },
+  "riders": {
+    "YWYW": {
+      "name": "医保外用药责任险",
+      "available": true,
+      "note": "附加险，需投保三者险后方可附加"
+    },
+    "BLPS": {
+      "name": "车身划痕损失险",
+      "available": true,
+      "note": "附加险，需投保车损险后方可附加"
+    }
+  },
+  "discontinued_coverages": [
+    {
+      "code": "FDJJS",
+      "name": "发动机进水险-已停售",
+      "discontinued_since": "2020-09-19",
+      "note": "2020年9月车险综合改革后并入机动车损失险责任范围，不再单独销售",
+      "replacement": "CSX"
+    },
+    {
+      "code": "ZRRS",
+      "name": "自燃损失险-已停售",
+      "discontinued_since": "2020-09-19",
+      "note": "综改后并入机动车损失险",
+      "replacement": "CSX"
+    },
+    {
+      "code": "BLDPOX",
+      "name": "玻璃单独破碎险-已停售",
+      "discontinued_since": "2020-09-19",
+      "note": "综改后并入机动车损失险",
+      "replacement": "CSX"
+    }
+  ]
+}

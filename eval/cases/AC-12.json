@@ -1,0 +1,21 @@
+{
+  "id": "AC-12",
+  "title": "报价 24h 有效期：过期 confirm 409 + 重新报价",
+  "spec": "过期后 POST /confirm → 409 QUOTE_EXPIRED，重新报价",
+  "steps": [
+    {"kind": "expired_quote", "label": "exp", "owner": "OWN-1001",
+     "desc": "构造 created_at 调整后的 quote：真实调用 query_quote（DSX 300 万档唯一入参）后，把 created_at/valid_until 前移 25h 重写报价登记簿，等价于隔天时钟（见 run.py 实现说明）"},
+    {"kind": "api", "label": "a1", "method": "POST", "path": "/confirm",
+     "json": {"session_id": "ac12", "quote_id": "$exp_quote_id", "quote_version": 1, "owner_id": "OWN-1001"}},
+    {"kind": "requote", "label": "rq", "owner": "OWN-1001",
+     "desc": "同参数重新报价（24h 窗口已过 → 新 quote_id）"},
+    {"kind": "api", "label": "a2", "method": "POST", "path": "/confirm",
+     "json": {"session_id": "ac12", "quote_id": "$rq_quote_id", "quote_version": 1, "owner_id": "OWN-1001"}}
+  ],
+  "assertions": [
+    {"type": "api_status", "label": "a1", "code": 409},
+    {"type": "api_error_code", "label": "a1", "code": "QUOTE_EXPIRED", "desc": "SPEC §4.4：超 24h → 409 QUOTE_EXPIRED"},
+    {"type": "quote_fresh", "label_a": "exp", "label_b": "rq", "desc": "重新报价生成新 quote_id（旧报价过期不复用）"},
+    {"type": "api_status", "label": "a2", "code": 200, "desc": "新报价可正常确认"}
+  ]
+}

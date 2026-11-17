@@ -1,0 +1,16 @@
+# 构建上下文裁剪（deploy/Dockerfile 使用仓库根作为上下文）
+.venv/
+.env
+.env.*
+traces/
+reviews/
+docs/
+eval/
+tests/
+.github/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.DS_Store

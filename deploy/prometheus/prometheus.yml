@@ -1,0 +1,41 @@
+# Prometheus 抓取配置（平台工程域 t8，2026-11-17）
+#
+# 依据（prometheus.io 官方文档，检索于 2026-11-17）：
+# - 「Getting started」/ 配置示例：job_name + static_configs + 每 job 可覆盖
+#   scrape_interval；抓取用 GET <target>/metrics，文本格式。
+# - 「Metric and label naming」：指标名带应用前缀、累积计数 _total、时间用秒；
+#   标签不得承载无界基数维度（本项目已遵守，见 server/metrics.py）。
+# - 「Exposition formats」：Prometheus 3.0 起 targets 必须返回合法 Content-Type，
+#   否则抓取直接失败——本服务 /metrics 返回
+#   `text/plain; version=0.0.4; charset=utf-8`，兼容。
+global:
+  scrape_interval: 15s      # 与 recording/alerting 的 [5m] 窗口配合足够细
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: renewal-dev
+
+rule_files:
+  - rules/renewal.yml
+
+scrape_configs:
+  # 应用自身指标（单进程内聚合；多副本部署时每个副本都是独立 target，
+  # Prometheus 按 instance 标签聚合，不要用 --workers N 扩容）
+  - job_name: renewal-assistant
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets: ["app:8000"]
+        labels:
+          service: renewal-assistant
+          env: dev
+    # 指标端点豁免鉴权（见 server/middleware.py AUTH_EXEMPT_PATHS），
+    # 若在网络层加了 mTLS/basic auth，在这里补：
+    # basic_auth:
+    #   username: prometheus
+    #   password_file: /etc/prometheus/secrets/metrics_password
+
+  # Prometheus 自监控：用于区分"应用没打点"和"抓取链路挂了"
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

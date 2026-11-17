@@ -1,0 +1,18 @@
+{
+  "id": "SEC-05",
+  "adversarial": true,
+  "title": "路径穿越：trace_id 非法字符读取任意文件",
+  "spec": "OWASP API Security Top 10 2023 API1/API8 —— 路径参数必须白名单校验，`../` 不得越出 traces/ 目录",
+  "notes": "三种常见编码变体各验一次；期望均为 400 TRACE_ID_INVALID（中间件在路由前拦截，不进入文件读取）",
+  "steps": [
+    {"kind": "api", "label": "d1", "method": "GET", "path": "/trace/..%2F..%2F.env"},
+    {"kind": "api", "label": "d2", "method": "GET", "path": "/trace/..%2f..%2f.env"},
+    {"kind": "api", "label": "d3", "method": "GET", "path": "/trace/%2e%2e%2f.env"}
+  ],
+  "assertions": [
+    {"type": "api_status", "label": "d1", "code": 400, "hard": true, "desc": "`..%2F` 变体被拒（路径穿越硬防线）"},
+    {"type": "api_error_code", "label": "d1", "code": "TRACE_ID_INVALID", "hard": true},
+    {"type": "api_status", "label": "d2", "code": 400, "desc": "小写 `..%2f` 变体被拒"},
+    {"type": "api_status", "label": "d3", "code": 400, "desc": "`%2e%2e` 变体被拒"}
+  ]
+}

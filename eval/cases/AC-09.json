@@ -1,0 +1,15 @@
+{
+  "id": "AC-09",
+  "title": "删除交强险",
+  "spec": "JQX_REQUIRED，交强险不可删，引 wiki-jqx",
+  "steps": [
+    {"kind": "chat", "label": "t1", "session": "ac09", "owner": "OWN-1001",
+     "message": "续保时不要交强险"}
+  ],
+  "assertions": [
+    {"type": "correction", "turn": "t1", "code": "JQX_REQUIRED", "hard": true,
+     "desc": "SPEC §3.2 规则5b：coverage_selection 缺 JQX → JQX_REQUIRED"},
+    {"type": "tool_calls", "turn": "t1", "tool": "query_quote", "count": 0, "hard": true},
+    {"type": "citation", "turn": "t1", "wiki_id": "wiki-jqx"}
+  ]
+}
