@@ -1,0 +1,94 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-health-0005",
+  "unit": {
+    "unit_id": "raw-health-0005",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 30
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "health",
+    "source_file": "multi_step_health.tsv",
+    "source_index": "5",
+    "record_id": "health_5",
+    "records_path": "data/ins-mmbench/raw/health/records.jsonl",
+    "records_line": 6,
+    "record_line_sha256": "5f75d2fbfaf8ab0fc3c46eafb29c848fa45311d99550bac939d302e6ba5d1a00"
+  },
+  "sample": {
+    "insurance_type": "health",
+    "task_layer": "scenario",
+    "task_name": "health_risk_assessment",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in health insurance underwriting. Here is X-ray images and its associated radiology report.\nreport: Heart size within normal limits. Mediastinal contours unremarkable. Pulmonary vascularity is normal. Right lung is clear. XXXX opacities left lung base may represent atelectasis versus scarring. No focal consolidation. No pleural effusion, no pneumothorax. Bony structures unremarkable.\nBased on the visual and textual information provided, please perform a step-by-step evaluation as follows:\n1. Scan Region: Determine the scanned region in the X-ray image.\n2. Scan Result Match: Determine whether the scan result (findings on the image) matches the findings described in the report (Yes/No). \n3. Health Risk Severity: Assess the overall health risk based on the X-ray image and report. Classify the risk as Low, Moderate, or High. \n4. Underwriting Evaluation: Based on your evaluation, decide the appropriate underwriting outcome (Declined, Standard, or Higher Premium). Provide a brief explanation.\n\nPlease strictly output in the following format:\n1. Scan Region: <Scan Region>\n2. Scan Result Match: Yes/No.\n3. Health Risk Severity: Low/Moderate/High.\n4. Underwriting Evaluation: Declined/Standard/Higher Premium. Reason: <Reason>",
+      "chars": 1251,
+      "lines": 13,
+      "sha256": "78d7684dd921fee4a3e9b793161cad1062035e3569b3222867fc7555f651d8ad"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "part": "chest",
+    "original_report": "Heart size within normal limits. Mediastinal contours unremarkable. Pulmonary vascularity is normal. Right lung is clear. XXXX opacities left lung base may represent atelectasis versus scarring. No focal consolidation. No pleural effusion, no pneumothorax. Bony structures unremarkable.",
+    "adjusted_report": "Heart size within normal limits. Mediastinal contours unremarkable. Pulmonary vascularity is normal. Right lung is clear. XXXX opacities left lung base may represent atelectasis versus scarring. No focal consolidation. No pleural effusion, no pneumothorax. Bony structures unremarkable.",
+    "match": "yes",
+    "risk_level": "mild risk",
+    "underwriting_decision": "Higher Premium"
+  },
+  "images": [
+    {
+      "path": "health/5/0.png",
+      "bytes": 213145,
+      "sha256": "1dc7ae781eb77263aca988a77a867f151e6b4e7a87a087d9517a58304b894356",
+      "asset_ref": "data/ins-mmbench/raw/health/5/0.png",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "health/5/1.png",
+      "bytes": 185645,
+      "sha256": "0ee32fac53e7e78360952b46249708d9581e9c75b40ea02682b65ae61e32cfa0",
+      "asset_ref": "data/ins-mmbench/raw/health/5/1.png",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 13,
+      "char_start": 0,
+      "char_end": 1251
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.part",
+        "labels.original_report",
+        "labels.adjusted_report",
+        "labels.match",
+        "labels.risk_level",
+        "labels.underwriting_decision"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/health/5/0.png",
+        "data/ins-mmbench/raw/health/5/1.png"
+      ]
+    }
+  }
+}

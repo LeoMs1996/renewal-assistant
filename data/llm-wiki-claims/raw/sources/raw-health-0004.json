@@ -1,0 +1,94 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-health-0004",
+  "unit": {
+    "unit_id": "raw-health-0004",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 29
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "health",
+    "source_file": "multi_step_health.tsv",
+    "source_index": "4",
+    "record_id": "health_4",
+    "records_path": "data/ins-mmbench/raw/health/records.jsonl",
+    "records_line": 5,
+    "record_line_sha256": "b7bb4cad6621bbed8ec1d1aede0361f87af73204694f15718ad4a479832add26"
+  },
+  "sample": {
+    "insurance_type": "health",
+    "task_layer": "scenario",
+    "task_name": "health_risk_assessment",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in health insurance underwriting. Here is X-ray images and its associated radiology report.\nreport: 4 images. There is a large hydropneumothorax within the left chest. There is essentially complete collapse of the left lung. Within the right lung, there are increased interstitial opacities within the medial right lung base and right upper lobe, with patchy airspace opacity within the right lung apex. At the right lung apex, there is a more focal ovoid lucency which measures approximately 1.3 cm. This could indicate cavitation. Left-sided cardiomediastinal contours are obscured by collapse of the left lung. No convincing acute bony findings.\nBased on the visual and textual information provided, please perform a step-by-step evaluation as follows:\n1. Scan Region: Determine the scanned region in the X-ray image.\n2. Scan Result Match: Determine whether the scan result (findings on the image) matches the findings described in the report (Yes/No). \n3. Health Risk Severity: Assess the overall health risk based on the X-ray image and report. Classify the risk as Low, Moderate, or High. \n4. Underwriting Evaluation: Based on your evaluation, decide the appropriate underwriting outcome (Declined, Standard, or Higher Premium). Provide a brief explanation.\n\nPlease strictly output in the following format:\n1. Scan Region: <Scan Region>\n2. Scan Result Match: Yes/No.\n3. Health Risk Severity: Low/Moderate/High.\n4. Underwriting Evaluation: Declined/Standard/Higher Premium. Reason: <Reason>",
+      "chars": 1513,
+      "lines": 13,
+      "sha256": "77bf7001ee5fa53171e927e7c184b79eac1278ec4e41fd667646f15fcf51f6aa"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "part": "chest",
+    "original_report": "4 images. There is a large hydropneumothorax within the left chest. There is essentially complete collapse of the left lung. Within the right lung, there are increased interstitial opacities within the medial right lung base and right upper lobe, with patchy airspace opacity within the right lung apex. At the right lung apex, there is a more focal ovoid lucency which measures approximately 1.3 cm. This could indicate cavitation. Left-sided cardiomediastinal contours are obscured by collapse of the left lung. No convincing acute bony findings.",
+    "adjusted_report": "4 images. There is a large hydropneumothorax within the left chest. There is essentially complete collapse of the left lung. Within the right lung, there are increased interstitial opacities within the medial right lung base and right upper lobe, with patchy airspace opacity within the right lung apex. At the right lung apex, there is a more focal ovoid lucency which measures approximately 1.3 cm. This could indicate cavitation. Left-sided cardiomediastinal contours are obscured by collapse of the left lung. No convincing acute bony findings.",
+    "match": "yes",
+    "risk_level": "severe risk",
+    "underwriting_decision": "Declined"
+  },
+  "images": [
+    {
+      "path": "health/4/0.png",
+      "bytes": 144938,
+      "sha256": "a5ae9146a6c48cb63dedcf473451feb5fdcdb6e0856aa76606f16d6a512a64f4",
+      "asset_ref": "data/ins-mmbench/raw/health/4/0.png",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "health/4/1.png",
+      "bytes": 146452,
+      "sha256": "243325d4449d6bde64b5e42525858f9a8ffae8f666e85173efce2ededbc43c38",
+      "asset_ref": "data/ins-mmbench/raw/health/4/1.png",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 13,
+      "char_start": 0,
+      "char_end": 1513
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.part",
+        "labels.original_report",
+        "labels.adjusted_report",
+        "labels.match",
+        "labels.risk_level",
+        "labels.underwriting_decision"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/health/4/0.png",
+        "data/ins-mmbench/raw/health/4/1.png"
+      ]
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-liability-0016",
+  "unit": {
+    "unit_id": "raw-liability-0016",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 45
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "liability",
+    "source_file": "multi_step_liability.tsv",
+    "source_index": "16",
+    "record_id": "liability_16",
+    "records_path": "data/ins-mmbench/raw/liability/records.jsonl",
+    "records_line": 9,
+    "record_line_sha256": "352ac8fa74bed45fb1f4c08c8c45015d563cb23ebc12887bfd94a65ebf50d0db"
+  },
+  "sample": {
+    "insurance_type": "auto",
+    "task_layer": "scenario",
+    "task_name": "auto_liability_determination",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in auto insurance claim processing. You are provided with a sequence of continuous dashcam images. Based on the visual information provided by these images, please perform a step-by-step evaluation as follows:\n1. Weather: Identify the prevailing weather conditions in the images. (sunny, rainy, snowy, foggy)\n2. Scene: Determine the type of scene where the vehicle is operating. (highway, tunnel, mountain, urban, rural)\n3. Linear: Identify the road layout. (arterials, curve, intersection, T-junction, ramp)\n4. Accident Occurred: Determine whether an accident occurred. (Yes/No)\n5. Accident Cause: If an accident occurred, provide a brief one-sentence description of the accident cause.\n6. Main Responsible Party: If an accident occurred, identify the primary responsible party. (Ego-car, Pedestrian, Other car, Both)\n\nPlease strictly output in the following format:\n1. Weather: sunny/rainy/snowy/foggy\n2. Scene: highway/tunnel/mountain/urban/rural\n3. Linear: arterials/curve/intersection/T-junction/ramp\n4. Accident Occurred: Yes/No.\n5. Accident Cause: one sentence brief description\n6. Main Responsible Party: Ego-car/Pedestrian/Other car/Both",
+      "chars": 1164,
+      "lines": 15,
+      "sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "weather": "sunny",
+    "light": "day",
+    "scenes": "rural",
+    "linear": "intersection",
+    "whether an accident occurred": "Yes",
+    "causes": "Ego-car drives too fast and the braking distance is short",
+    "primary_responsibility": "Ego-car"
+  },
+  "images": [
+    {
+      "path": "liability/16/0.jpg",
+      "bytes": 161805,
+      "sha256": "79d3f74d3b191e2d971c0a8d93f951a050bde9484b85edbbc48537e72f2910dd",
+      "asset_ref": "data/ins-mmbench/raw/liability/16/0.jpg",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "liability/16/1.jpg",
+      "bytes": 155143,
+      "sha256": "46c0decb9619084d709a039489d087f4e61bdb2dd1e1b54173a2e65670777aa5",
+      "asset_ref": "data/ins-mmbench/raw/liability/16/1.jpg",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "liability/16/2.jpg",
+      "bytes": 160397,
+      "sha256": "e49e27adc3257074163e3698b753922916794c3ebb1adf4c11a99ca95d48cf36",
+      "asset_ref": "data/ins-mmbench/raw/liability/16/2.jpg",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "liability/16/3.jpg",
+      "bytes": 167535,
+      "sha256": "5c5dadd467b4582553e55f02fdb7cea9b09362b55b29e898a791ba077f03a09e",
+      "asset_ref": "data/ins-mmbench/raw/liability/16/3.jpg",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "liability/16/4.jpg",
+      "bytes": 155475,
+      "sha256": "d8def32dc58147ed5b49955c9f202d3b867ed4214c7065dec5b03acd1d0e9cdc",
+      "asset_ref": "data/ins-mmbench/raw/liability/16/4.jpg",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 15,
+      "char_start": 0,
+      "char_end": 1164
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.weather",
+        "labels.light",
+        "labels.scenes",
+        "labels.linear",
+        "labels.whether an accident occurred",
+        "labels.causes",
+        "labels.primary_responsibility"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/liability/16/0.jpg",
+        "data/ins-mmbench/raw/liability/16/1.jpg",
+        "data/ins-mmbench/raw/liability/16/2.jpg",
+        "data/ins-mmbench/raw/liability/16/3.jpg",
+        "data/ins-mmbench/raw/liability/16/4.jpg"
+      ]
+    }
+  }
+}

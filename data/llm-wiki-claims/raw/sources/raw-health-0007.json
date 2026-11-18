@@ -1,0 +1,94 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-health-0007",
+  "unit": {
+    "unit_id": "raw-health-0007",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 32
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "health",
+    "source_file": "multi_step_health.tsv",
+    "source_index": "7",
+    "record_id": "health_7",
+    "records_path": "data/ins-mmbench/raw/health/records.jsonl",
+    "records_line": 8,
+    "record_line_sha256": "ff47cd6127f573f3a8f1e52b912e6ad6f0b124d2b8cd6c4a3b9137449a0afab0"
+  },
+  "sample": {
+    "insurance_type": "health",
+    "task_layer": "scenario",
+    "task_name": "health_risk_assessment",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in health insurance underwriting. Here is X-ray images and its associated radiology report.\nreport: The heart size and mediastinal contours appear within normal limits. Low lung volumes on the AP view with bronchovascular crowding and bibasilar atelectasis. No focal airspace consolidation, pleural effusions or pneumothorax. No acute bony abnormalities.\nBased on the visual and textual information provided, please perform a step-by-step evaluation as follows:\n1. Scan Region: Determine the scanned region in the X-ray image.\n2. Scan Result Match: Determine whether the scan result (findings on the image) matches the findings described in the report (Yes/No). \n3. Health Risk Severity: Assess the overall health risk based on the X-ray image and report. Classify the risk as Low, Moderate, or High. \n4. Underwriting Evaluation: Based on your evaluation, decide the appropriate underwriting outcome (Declined, Standard, or Higher Premium). Provide a brief explanation.\n\nPlease strictly output in the following format:\n1. Scan Region: <Scan Region>\n2. Scan Result Match: Yes/No.\n3. Health Risk Severity: Low/Moderate/High.\n4. Underwriting Evaluation: Declined/Standard/Higher Premium. Reason: <Reason>",
+      "chars": 1219,
+      "lines": 13,
+      "sha256": "d9cdc9f9bc9a75bec8b66f189fee15056f6ad4b6ffa23f83247510afb44780a0"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "part": "chest",
+    "original_report": "The heart size and mediastinal contours appear within normal limits. Low lung volumes on the AP view with bronchovascular crowding and bibasilar atelectasis. No focal airspace consolidation, pleural effusions or pneumothorax. No acute bony abnormalities.",
+    "adjusted_report": "The heart size and mediastinal contours appear within normal limits. Low lung volumes on the AP view with bronchovascular crowding and bibasilar atelectasis. No focal airspace consolidation, pleural effusions or pneumothorax. No acute bony abnormalities.",
+    "match": "yes",
+    "risk_level": "mild risk",
+    "underwriting_decision": "Higher Premium"
+  },
+  "images": [
+    {
+      "path": "health/7/0.png",
+      "bytes": 173770,
+      "sha256": "52dfd40d8824f5307240b33b64c54bb164e946e74ec68038d2d26ae7c580887d",
+      "asset_ref": "data/ins-mmbench/raw/health/7/0.png",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "health/7/1.png",
+      "bytes": 225657,
+      "sha256": "ddf47deed65b540daa348d71724d535153733f5392075c40f4cce6079ac503b2",
+      "asset_ref": "data/ins-mmbench/raw/health/7/1.png",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 13,
+      "char_start": 0,
+      "char_end": 1219
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.part",
+        "labels.original_report",
+        "labels.adjusted_report",
+        "labels.match",
+        "labels.risk_level",
+        "labels.underwriting_decision"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/health/7/0.png",
+        "data/ins-mmbench/raw/health/7/1.png"
+      ]
+    }
+  }
+}

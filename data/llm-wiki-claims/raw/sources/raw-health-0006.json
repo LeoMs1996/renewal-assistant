@@ -1,0 +1,94 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-health-0006",
+  "unit": {
+    "unit_id": "raw-health-0006",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 31
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "health",
+    "source_file": "multi_step_health.tsv",
+    "source_index": "6",
+    "record_id": "health_6",
+    "records_path": "data/ins-mmbench/raw/health/records.jsonl",
+    "records_line": 7,
+    "record_line_sha256": "a8586680e8123aa2f7dd7783abb62cd9f39661b059a4afcc8399eb139f679753"
+  },
+  "sample": {
+    "insurance_type": "health",
+    "task_layer": "scenario",
+    "task_name": "health_risk_assessment",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in health insurance underwriting. Here is X-ray images and its associated radiology report.\nreport: Heart size and mediastinal contour are normal. Pulmonary vascularity is normal. Lungs are clear. No pleural effusions or pneumothoraces.\nBased on the visual and textual information provided, please perform a step-by-step evaluation as follows:\n1. Scan Region: Determine the scanned region in the X-ray image.\n2. Scan Result Match: Determine whether the scan result (findings on the image) matches the findings described in the report (Yes/No). \n3. Health Risk Severity: Assess the overall health risk based on the X-ray image and report. Classify the risk as Low, Moderate, or High. \n4. Underwriting Evaluation: Based on your evaluation, decide the appropriate underwriting outcome (Declined, Standard, or Higher Premium). Provide a brief explanation.\n\nPlease strictly output in the following format:\n1. Scan Region: <Scan Region>\n2. Scan Result Match: Yes/No.\n3. Health Risk Severity: Low/Moderate/High.\n4. Underwriting Evaluation: Declined/Standard/Higher Premium. Reason: <Reason>",
+      "chars": 1101,
+      "lines": 13,
+      "sha256": "b672b14c05026aa71e02bda834c9927f61f78bfea29c88ad63b4ae238eb78995"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "part": "chest",
+    "original_report": "Heart size and mediastinal contour are normal. Pulmonary vascularity is normal. Lungs are clear. No pleural effusions or pneumothoraces.",
+    "adjusted_report": "Heart size and mediastinal contour are normal. Pulmonary vascularity is normal. Lungs are clear. No pleural effusions or pneumothoraces.",
+    "match": "yes",
+    "risk_level": "no risk",
+    "underwriting_decision": "Standard"
+  },
+  "images": [
+    {
+      "path": "health/6/0.png",
+      "bytes": 163523,
+      "sha256": "9bad2d6d2e8f0eeeff422c56003ef6bcc6939b1484d0107f995a903d2f911885",
+      "asset_ref": "data/ins-mmbench/raw/health/6/0.png",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "health/6/1.png",
+      "bytes": 223281,
+      "sha256": "b4008919fd1889014ccbb831cc5242ce899b333679293b7d0eeb30c923a7c4f0",
+      "asset_ref": "data/ins-mmbench/raw/health/6/1.png",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 13,
+      "char_start": 0,
+      "char_end": 1101
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.part",
+        "labels.original_report",
+        "labels.adjusted_report",
+        "labels.match",
+        "labels.risk_level",
+        "labels.underwriting_decision"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/health/6/0.png",
+        "data/ins-mmbench/raw/health/6/1.png"
+      ]
+    }
+  }
+}

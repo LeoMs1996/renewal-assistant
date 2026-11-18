@@ -1,0 +1,94 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-health-0002",
+  "unit": {
+    "unit_id": "raw-health-0002",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 27
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "health",
+    "source_file": "multi_step_health.tsv",
+    "source_index": "2",
+    "record_id": "health_2",
+    "records_path": "data/ins-mmbench/raw/health/records.jsonl",
+    "records_line": 3,
+    "record_line_sha256": "fb3e50e063cf768fd830ca36c85347bd7137f55facb3f0ceb17f6033b2c319b8"
+  },
+  "sample": {
+    "insurance_type": "health",
+    "task_layer": "scenario",
+    "task_name": "health_risk_assessment",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in health insurance underwriting. Here is X-ray images and its associated radiology report.\nreport: Stable, normal cardiac size, mediastinum, and central pulmonary vasculature. Interval development of mild patchy airspace opacities within the posterior aspect of the right upper lobe, concerning for underlying pneumonia. Stable mild background chronic interstitial changes. No evidence of associated pleural effusion or pneumothorax. Multilevel midthoracic degenerative changes, with prominent anterolateral marginal osteophytes.\nBased on the visual and textual information provided, please perform a step-by-step evaluation as follows:\n1. Scan Region: Determine the scanned region in the X-ray image.\n2. Scan Result Match: Determine whether the scan result (findings on the image) matches the findings described in the report (Yes/No). \n3. Health Risk Severity: Assess the overall health risk based on the X-ray image and report. Classify the risk as Low, Moderate, or High. \n4. Underwriting Evaluation: Based on your evaluation, decide the appropriate underwriting outcome (Declined, Standard, or Higher Premium). Provide a brief explanation.\n\nPlease strictly output in the following format:\n1. Scan Region: <Scan Region>\n2. Scan Result Match: Yes/No.\n3. Health Risk Severity: Low/Moderate/High.\n4. Underwriting Evaluation: Declined/Standard/Higher Premium. Reason: <Reason>",
+      "chars": 1395,
+      "lines": 13,
+      "sha256": "98ab3cff94845a96d8fd2818db44b49de639ea744650f970a0e5a6f72bec1701"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "part": "chest",
+    "original_report": "Stable, normal cardiac size, mediastinum, and central pulmonary vasculature. Interval development of mild patchy airspace opacities within the posterior aspect of the right upper lobe, concerning for underlying pneumonia. Stable mild background chronic interstitial changes. No evidence of associated pleural effusion or pneumothorax. Multilevel midthoracic degenerative changes, with prominent anterolateral marginal osteophytes.",
+    "adjusted_report": "Stable, normal cardiac size, mediastinum, and central pulmonary vasculature. Interval development of mild patchy airspace opacities within the posterior aspect of the right upper lobe, concerning for underlying pneumonia. Stable mild background chronic interstitial changes. No evidence of associated pleural effusion or pneumothorax. Multilevel midthoracic degenerative changes, with prominent anterolateral marginal osteophytes.",
+    "match": "yes",
+    "risk_level": "mild risk",
+    "underwriting_decision": "Higher Premium"
+  },
+  "images": [
+    {
+      "path": "health/2/0.png",
+      "bytes": 120114,
+      "sha256": "177ecfa78a8b2c98c622c6c7b472e67a01ab92756d5959c37fcaa6cfd837ebe2",
+      "asset_ref": "data/ins-mmbench/raw/health/2/0.png",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "health/2/1.png",
+      "bytes": 132190,
+      "sha256": "6211e6298865074b82d7095a659354e622f2d1c3373c2eaec475c8d35767d8de",
+      "asset_ref": "data/ins-mmbench/raw/health/2/1.png",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 13,
+      "char_start": 0,
+      "char_end": 1395
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.part",
+        "labels.original_report",
+        "labels.adjusted_report",
+        "labels.match",
+        "labels.risk_level",
+        "labels.underwriting_decision"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/health/2/0.png",
+        "data/ins-mmbench/raw/health/2/1.png"
+      ]
+    }
+  }
+}

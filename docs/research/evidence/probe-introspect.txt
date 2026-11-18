@@ -1,0 +1,27 @@
+== versions
+  langgraph==1.2.20
+  langgraph-checkpoint==4.3.1
+  langgraph-checkpoint-sqlite==3.1.3
+  langgraph-prebuilt==1.1.1
+  langchain-core==1.8.0
+  aiosqlite==0.22.1
+  langgraph.__file__=None
+== signatures
+StateGraph.__init__(self, state_schema: 'type[StateT]', context_schema: 'type[ContextT] | None' = None, *, input_schema: 'type[InputT] | None' = None, output_schema: 'type[OutputT] | None' = None, **kwargs: 'Unpack[DeprecatedKwargs]') -> 'None'
+StateGraph.add_node(self, node: 'str | StateNode[NodeInputT, ContextT]', action: 'StateNode[NodeInputT, ContextT] | None' = None, *, defer: 'bool' = False, metadata: 'dict[str, Any] | None' = None, input_schema: 'type[NodeInputT] | None' = None, retry_policy: 'RetryPolicy | Sequence[RetryPolicy] | None' = None, cache_policy: 'CachePolicy | None' = None, error_handler: 'StateNode[Any, ContextT] | None' = None, destinations: 'dict[str, str] | tuple[str, ...] | None' = None, timeout: 'float | timedelta | TimeoutPolicy | None' = None, trace_policy: 'TracePolicy | None' = None, **kwargs: 'Unpack[DeprecatedKwargs]') -> 'Self'
+StateGraph.add_conditional_edges(self, source: 'str', path: 'Callable[..., Hashable | Sequence[Hashable]] | Callable[..., Awaitable[Hashable | Sequence[Hashable]]] | Runnable[Any, Hashable | Sequence[Hashable]]', path_map: 'dict[Hashable, str] | list[str] | None' = None) -> 'Self'
+StateGraph.add_edge(self, start_key: 'str | list[str]', end_key: 'str') -> 'Self'
+StateGraph.compile(self, checkpointer: 'Checkpointer' = None, *, cache: 'BaseCache | None' = None, store: 'BaseStore | None' = None, interrupt_before: 'All | list[str] | None' = None, interrupt_after: 'All | list[str] | None' = None, debug: 'bool' = False, name: 'str | None' = None, transformers: 'Sequence[Callable[[tuple[str, ...]], Any]] | None' = None) -> 'CompiledStateGraph[StateT, ContextT, InputT, OutputT]'
+interrupt(value: 'Any', *, response_schema: 'dict[str, Any] | type | None' = None) -> 'Any'
+Command(*, graph: 'str | None' = None, update: 'Any | None' = None, resume: 'dict[str, Any] | Any | None' = None, goto: 'Send | Sequence[Send | N] | N' = ()) -> None
+SqliteSaver.__init__(self, conn: 'sqlite3.Connection', *, serde: 'SerializerProtocol | None' = None) -> 'None'
+RetryPolicy(initial_interval: float = 0.5, backoff_factor: float = 2.0, max_interval: float = 128.0, max_attempts: int = 3, jitter: bool = True, retry_on: type[Exception] | Sequence[type[Exception]] | Callable[[Exception], bool] = <function default_retry_on at 0x10a96d430>)
+TimeoutPolicy(*, run_timeout: 'float | timedelta | None' = None, idle_timeout: 'float | timedelta | None' = None, refresh_on: "Literal['auto', 'heartbeat']" = 'auto') -> None
+CompiledStateGraph.invoke(self, input: 'InputT | Command | None', config: 'RunnableConfig | None' = None, *, context: 'ContextT | None' = None, stream_mode: 'StreamMode' = 'values', print_mode: 'StreamMode | Sequence[StreamMode]' = (), output_keys: 'str | Sequence[str] | None' = None, interrupt_before: 'All | Sequence[str] | None' = None, interrupt_after: 'All | Sequence[str] | None' = None, durability: 'Durability | None' = None, control: 'RunControl | None' = None, version: "Literal['v1', 'v2']" = 'v1', **kwargs: 'Any') -> 'dict[str, Any] | Any'
+CompiledStateGraph.stream(self, input: 'InputT | Command | None', config: 'RunnableConfig | None' = None, *, context: 'ContextT | None' = None, stream_mode: 'StreamMode | Sequence[StreamMode] | None' = None, print_mode: 'StreamMode | Sequence[StreamMode]' = (), output_keys: 'str | Sequence[str] | None' = None, interrupt_before: 'All | Sequence[str] | None' = None, interrupt_after: 'All | Sequence[str] | None' = None, durability: 'Durability | None' = None, control: 'RunControl | None' = None, subgraphs: 'bool' = False, debug: 'bool | None' = None, version: "Literal['v1', 'v2']" = 'v1', **kwargs: 'Unpack[DeprecatedKwargs]') -> 'Iterator[dict[str, Any] | Any]'
+CompiledStateGraph.get_state(self, config: 'RunnableConfig', *, subgraphs: 'bool' = False) -> 'StateSnapshot'
+CompiledStateGraph.update_state(self, config: 'RunnableConfig', values: 'dict[str, Any] | Any | None', as_node: 'str | None' = None, task_id: 'str | None' = None) -> 'RunnableConfig'
+CompiledStateGraph.get_state_history(self, config: 'RunnableConfig', *, filter: 'dict[str, Any] | None' = None, before: 'RunnableConfig | None' = None, limit: 'int | None' = None) -> 'Iterator[StateSnapshot]'
+  Interrupt fields: {'value': 'Any', 'id': 'str', 'response_schema': 'type[ResponseT] | dict[str, Any] | None'}
+== interrupt() docstring head
+  Interrupt the graph with a resumable exception from within a node.

@@ -1,0 +1,92 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-claim-0009",
+  "unit": {
+    "unit_id": "raw-claim-0009",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 10
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "claim",
+    "source_file": "multi_step_claim.tsv",
+    "source_index": "9",
+    "record_id": "claim_9",
+    "records_path": "data/ins-mmbench/raw/claim/records.jsonl",
+    "records_line": 10,
+    "record_line_sha256": "67b1fae9577057d761495878ddd0edaf695a29b398d9240b81d39981871a2be6"
+  },
+  "sample": {
+    "insurance_type": "auto",
+    "task_layer": "scenario",
+    "task_name": "auto_claim_processing",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in auto insurance claim processing, here is an image of a vehicle and basic information: cost of vehicle is $43400.0, the expired date of insurance is 2025-04-17, the min and max coverage of the vehicle is $1085.0 and $10928.0. Based on the textual and visual information, please provide a step-by-step evaluation of the vehicle's condition and make an insurance claim decision. Follow these steps:  \n\n1. Determine whether the vehicle is damaged (Yes/No). \n2. If damaged, assess the severity of the damage (Minor, Moderate, Severe). \n3. Estimate the expected repair cost based on the damage. \n4. Determine whether the damage qualifies for an insurance claim (Yes/No), with a short and brief explanation. \n5. If eligible for a claim, calculate the final claimable amount, with a short and brief explanation.  \n\nplease strictly output in this format:\n1. Yes/No \n2. Minor/Moderate/Severe  \n3. Cost Amount \n4. Yes/No. Reason: <Reason>  \n5. Final Claim Amount. Reason: <Reason>",
+      "chars": 990,
+      "lines": 14,
+      "sha256": "337264ba3099be97fd5ed055d4b21793ca41ba6dcf31744d21b709f022128906"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "Cost_of_vehicle": "43400.0",
+    "Min_coverage": "1085.0",
+    "Expiry_date": "2025-04-17",
+    "Max_coverage": "10928.0",
+    "Condition": "1",
+    "Amount": "3090.0",
+    "Severity": "minor",
+    "expired": "0",
+    "claim": "3090.0"
+  },
+  "images": [
+    {
+      "path": "claim/9/0.jpg",
+      "bytes": 5062,
+      "sha256": "83b0ae289f62cd5a6c689db67c44e4af21115365f807943e2f549c04dd3a4cd7",
+      "asset_ref": "data/ins-mmbench/raw/claim/9/0.jpg",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 14,
+      "char_start": 0,
+      "char_end": 990
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.Cost_of_vehicle",
+        "labels.Min_coverage",
+        "labels.Expiry_date",
+        "labels.Max_coverage",
+        "labels.Condition",
+        "labels.Amount",
+        "labels.Severity",
+        "labels.expired",
+        "labels.claim"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/claim/9/0.jpg"
+      ]
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-agri-0004",
+  "unit": {
+    "unit_id": "raw-agri-0004",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 17
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "agri",
+    "source_file": "multi_step_agri.tsv",
+    "source_index": "4",
+    "record_id": "agri_4",
+    "records_path": "data/ins-mmbench/raw/agri/records.jsonl",
+    "records_line": 5,
+    "record_line_sha256": "d6cce9fc4b65e78349be79edde4b6866ec49440f64560def35aabb4274eb63ed"
+  },
+  "sample": {
+    "insurance_type": "agricultural",
+    "task_layer": "scenario",
+    "task_name": "agri_claim_processing",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in agricultural insurance claim processing, here is an image of crop field and corresponding insurance policy information:\n    Insured Subject: This contract covers the main crops planted by the policyholder in the designated agricultural area during the insurance period, with the actual yield and crop quality serving as the insured subject.\n    Scope of Insurance Coverage:\n    1. Natural Disaster Liability: Crop damage or yield reduction directly caused by natural disasters such as heavy rain, floods, drought, frost, hail, typhoon, etc.\n    2. Pest and Disease Liability: Crop losses caused by sudden and severe pest or disease outbreaks confirmed by agricultural experts. For mild pest or disease damage where the loss does not meet the minimum compensation standard stipulated in the contract, only partial compensation is provided; for severe pest or disease damage that results in large-scale crop damage or a significant decline in yield, full or maximum compensation is provided in accordance with the contract.\n    3. Other Accident Liability: Crop losses directly caused by other special factors such as force majeure (e.g., fire, explosion) that, upon investigation and confirmation, meet the compensation conditions, will be compensated in accordance with the contract terms.\n    \n    Based on the textual and visual information, please provide a step-by-step evaluation of the crop's condition and determine an insurance claim decision. Follow these steps:\n    1. Identify the Crop Species: Analyze the image and determine the specific crop species.\n    2. Estimate the Number of Fruit Clusters: Based on the image, estimate the number of fruit clusters present.\n    3. Detect Pest/Disease Presence: Determine whether there is any pest or disease infection in the crop (Yes/No).\n    4. Insurance Claim Decision: Based on your evaluation and the insurance policy, decide on the claim outcome: No Compensation, Partial Compensation, or Full Compensation. Provide a short and brief explanation.\n    Please strictly output in this format:\n    1. Crop species: <species>\n    2. Fruit cluster count: <a specific number>\n    3. Pest/Disease infection: Yes/No\n    4. Insurance decision: No Compensation/Partial Compensation/Full Compensation. Reason: <Reason>",
+      "chars": 2287,
+      "lines": 17,
+      "sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "species": "grape",
+    "count": "9",
+    "infection": "NO",
+    "claim": "No Compensation"
+  },
+  "images": [
+    {
+      "path": "agri/4/0.jpg",
+      "bytes": 124921,
+      "sha256": "0625bbdfe5489121c7fdf3c82b5d89235b89e9d1bb9b27ebd0abe018e539f83f",
+      "asset_ref": "data/ins-mmbench/raw/agri/4/0.jpg",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 17,
+      "char_start": 0,
+      "char_end": 2287
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.species",
+        "labels.count",
+        "labels.infection",
+        "labels.claim"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/agri/4/0.jpg"
+      ]
+    }
+  }
+}

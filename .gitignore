@@ -29,3 +29,48 @@ eval/report.md
 eval/results*.json
 eval/*-eval-*.json
 eval/knowledge-retrieval-eval-*.json
+
+# ---------- 2026-11-17 理赔域（方案 C · C0）----------
+# 为什么单列一段：理赔域是本仓库内新增子域（claims/ + data/ + traces-claims/），
+# 它的数据与运行态必须与续保域物理隔离（traces-claims ≠ traces、
+# data/llm-wiki-claims/wiki ≠ wiki）。隔离靠路径边界 + 白名单，不靠口头约定。
+# 依据（2026-11-17 检索）：Git 官方 gitignore 的 pattern 与 ! 例外语义
+#   https://git-scm.com/docs/gitignore
+#   GitHub 大文件上限（>50 MiB 告警、>100 MiB 拒收、仓库建议 <1 GB）：
+#   https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github
+# 详见 docs/log/step-c0-baseline.md 第 7、8 节。
+
+# INS-MMBench 数据集：第三方大文件、可重新获取，不入库；只保留目录占位。
+data/ins-mmbench/**
+!data/ins-mmbench/.gitkeep
+!data/ins-mmbench/README.md
+
+# 理赔轨迹：运行态 + 含报案人 PII；与续保 traces/ 分离，同样不入库。
+traces-claims/**
+!traces-claims/.gitkeep
+!traces-claims/README.md
+
+# 注意：data/llm-wiki-claims/ 故意不忽略——raw/（溯源证据）与 wiki/（LLM-Wiki 条目）
+# 都是交付物。仅当 raw/ 单文件超过 10 MiB 时才另行裁剪，阈值与处置见 data/README.md。
+
+# ---------- 2026-11-18 研究证据（docs/research/evidence）----------
+# 为什么只忽略 html：检索留证的价值在于「读到了什么」。mdx/json/probe 是文本源
+# （708K + 1.3M，可 grep、可 diff、可复核），而 html 快照（7.1M/21 文件）只是
+# 同一页面的渲染副本，入库既挤占仓库又难以审阅。
+# 体积判定依据（GitHub 大文件规则：>50 MiB 告警、>100 MiB 拒收、仓库建议 <1 GB）：
+#   https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github
+# 约束：每个 evidence 目录必须带 MANIFEST.md（文件名 + URL + 抓取时间 + sha256 +
+# 用途），MANIFEST 入库、html 快照不入库——审计依赖「可复现的清单 + 文本源」，
+# 而不是「会腐烂的渲染副本」。
+docs/research/evidence/**/*.html
+docs/research/evidence/**/*.html.txt
+
+# ---------- 2026-11-18 理赔运行时数据（claims/data）----------
+# 为什么整个目录忽略：这里全是**运行态**，不是交付物——
+#   materials/    报案材料工作区（当事人可能含 PII）
+#   checkpoints.sqlite  索赔流程 checkpoint（体积随每次 invoke 膨胀）
+#   cache/        分析结果缓存（以 analysis_key 命名，可重算）
+# 与 traces-claims/ 同理：运行态不入库，否则仓库会随测试次数无限膨胀。
+# 边界：claims/ 下的源码、SPEC、测试**必须入库**，所以用子路径 ^claims/data/ 而非 ^claims/。
+claims/data/**
+!claims/data/README.md

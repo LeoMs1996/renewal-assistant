@@ -1,0 +1,2253 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "generator": "data/llm-wiki-claims/scripts/normalize_raw.py",
+  "dataset": "FDU-INS/INS-MMBench",
+  "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+  "license": "apache-2.0",
+  "source_of_truth": "data/ins-mmbench/raw/<split>/records.jsonl（本清单由它派生，不是手写）",
+  "unit_policy": {
+    "unit": "record",
+    "unit_id": "raw-<split>-<source_index:04d>",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest": "serial，一次一个 unit，顺序见 ingest_order"
+  },
+  "counts": {
+    "sources": 54,
+    "images": 120,
+    "by_split": {
+      "claim": 12,
+      "agri": 12,
+      "health": 12,
+      "liability": 12,
+      "property": 6
+    },
+    "by_insurance_type": {
+      "auto": 24,
+      "agricultural": 12,
+      "health": 12,
+      "property": 6
+    },
+    "by_task_name": {
+      "auto_claim_processing": 12,
+      "agri_claim_processing": 12,
+      "health_risk_assessment": 12,
+      "auto_liability_determination": 12,
+      "property_risk_management": 6
+    },
+    "planned_pages": 36
+  },
+  "coverage": {
+    "units_referenced_by_plan": 54,
+    "units_total": 54,
+    "insurance_types": [
+      "agricultural",
+      "auto",
+      "health",
+      "property"
+    ]
+  },
+  "ingest_order": [
+    "raw-claim-0000",
+    "raw-claim-0001",
+    "raw-claim-0002",
+    "raw-claim-0003",
+    "raw-claim-0004",
+    "raw-claim-0005",
+    "raw-claim-0006",
+    "raw-claim-0007",
+    "raw-claim-0008",
+    "raw-claim-0009",
+    "raw-claim-0010",
+    "raw-claim-0011",
+    "raw-agri-0000",
+    "raw-agri-0001",
+    "raw-agri-0002",
+    "raw-agri-0003",
+    "raw-agri-0004",
+    "raw-agri-0005",
+    "raw-agri-0006",
+    "raw-agri-0007",
+    "raw-agri-0008",
+    "raw-agri-0009",
+    "raw-agri-0010",
+    "raw-agri-0011",
+    "raw-health-0000",
+    "raw-health-0001",
+    "raw-health-0002",
+    "raw-health-0003",
+    "raw-health-0004",
+    "raw-health-0005",
+    "raw-health-0006",
+    "raw-health-0007",
+    "raw-health-0008",
+    "raw-health-0009",
+    "raw-health-0010",
+    "raw-health-0011",
+    "raw-liability-0000",
+    "raw-liability-0001",
+    "raw-liability-0003",
+    "raw-liability-0004",
+    "raw-liability-0006",
+    "raw-liability-0008",
+    "raw-liability-0010",
+    "raw-liability-0012",
+    "raw-liability-0016",
+    "raw-liability-0017",
+    "raw-liability-0019",
+    "raw-liability-0020",
+    "raw-property-0000",
+    "raw-property-0001",
+    "raw-property-0002",
+    "raw-property-0003",
+    "raw-property-0004",
+    "raw-property-0005"
+  ],
+  "sources": [
+    {
+      "raw_id": "raw-claim-0000",
+      "file": "raw/sources/raw-claim-0000.json",
+      "sha256": "534b18e76bd57e3ef1a47611d598ab16c8ecfce1cbf2e1d4bb1e45f2544cc48e",
+      "split": "claim",
+      "source_index": "0",
+      "record_id": "claim_0",
+      "records_line": 1,
+      "record_line_sha256": "1f5d162d177d5c00f0ee885d0ea21f26e89cccf2a3a941209ba9f164debe2b2e",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 990,
+      "question_lines": 14,
+      "question_sha256": "a59e6c36620054fe10343a2e36acd105bb4022381cce59d174150fdf14f97ffa",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/0/0.jpg",
+          "bytes": 8004,
+          "sha256": "056d2489be28e55f76c326ba5b99a2c678c836ea2a5d2aae144e0fdad2e8d64e",
+          "asset_ref": "data/ins-mmbench/raw/claim/0/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-claim-0001",
+      "file": "raw/sources/raw-claim-0001.json",
+      "sha256": "05ba455de663aa2e157f3b91be10a09954700f5ab69998a166e2bb621312738d",
+      "split": "claim",
+      "source_index": "1",
+      "record_id": "claim_1",
+      "records_line": 2,
+      "record_line_sha256": "b08fc5ea588c58939ac89e3eee8d2082836231d086875fa7a57aab3ef2d1a78d",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 988,
+      "question_lines": 14,
+      "question_sha256": "1fc4ebcd33c7c32e65ea1f8f0b4630f981609d4b864bf68732bf1382f50d7d91",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/1/0.jpg",
+          "bytes": 12188,
+          "sha256": "6b5b67a8e344479d6d6ccfbd4a4d9c6717efb41c59b779d110527fb70e391ed9",
+          "asset_ref": "data/ins-mmbench/raw/claim/1/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-claim-0002",
+      "file": "raw/sources/raw-claim-0002.json",
+      "sha256": "cf59745a5a25491a1f13074563679b94c20a2e14059c94b64cdc895161cc5301",
+      "split": "claim",
+      "source_index": "2",
+      "record_id": "claim_2",
+      "records_line": 3,
+      "record_line_sha256": "04d393c990eea43bf4ecaf4c661f7b54e40b011ab29ee2b60764009ca76f3efb",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 988,
+      "question_lines": 14,
+      "question_sha256": "875b4d8c42fd0b4d3f34ec4c70e32272350060bcf8ac86a4c451a1a2b7d72b9c",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/2/0.jpg",
+          "bytes": 4394,
+          "sha256": "2fbce06888d237253adb68dd3807ea52635116d0df7184ac7c2847829d5fd879",
+          "asset_ref": "data/ins-mmbench/raw/claim/2/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-claim-0003",
+      "file": "raw/sources/raw-claim-0003.json",
+      "sha256": "90f43c6b0a15785ba58abc06723dacb8b39334cb412dd2b63371ae4f9f245cd4",
+      "split": "claim",
+      "source_index": "3",
+      "record_id": "claim_3",
+      "records_line": 4,
+      "record_line_sha256": "f7ff7642d49529e92fd18a06d1497159fe885032a98d4879604b93315020111a",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 990,
+      "question_lines": 14,
+      "question_sha256": "cb00434d86213a4477925cd8d808f91b13c630fa60bce27c52ba11d9f9a3584f",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/3/0.jpg",
+          "bytes": 279189,
+          "sha256": "03ac56705c00c76e350d2c0e5713f0f4e2b53ae94155584f12982b203d60af0f",
+          "asset_ref": "data/ins-mmbench/raw/claim/3/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-claim-0004",
+      "file": "raw/sources/raw-claim-0004.json",
+      "sha256": "0e59310262d91c5cdb4877ae23377fc565bc1fbb72f810d24cf878e49e548c1e",
+      "split": "claim",
+      "source_index": "4",
+      "record_id": "claim_4",
+      "records_line": 5,
+      "record_line_sha256": "95aa4b5d59e4dd771f911f0b525b630a9e3e36ad75975f5361a2cd79f9869152",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 988,
+      "question_lines": 14,
+      "question_sha256": "8b68ae20971ef4f18c999b47de31db36f876bb95a05192009d0805ea7eedd0da",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/4/0.jpg",
+          "bytes": 132492,
+          "sha256": "4b57fb79a2f1d6ac1a678afdec2900f088b6f79975fd423fc9031c2885b4565a",
+          "asset_ref": "data/ins-mmbench/raw/claim/4/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-claim-0005",
+      "file": "raw/sources/raw-claim-0005.json",
+      "sha256": "4587e92b44b1e90f4ddb4feaa52fedbdb816baf1cba5fb644ec7eef00cafe935",
+      "split": "claim",
+      "source_index": "5",
+      "record_id": "claim_5",
+      "records_line": 6,
+      "record_line_sha256": "94f6c5c84d5b4e01ebc8a0799a4d90533ce7f5950c9d4232751ba974070e54cb",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 988,
+      "question_lines": 14,
+      "question_sha256": "efb02ffcf4495e77d2da530513b0e320117a43b469941e1f7235a3294344867d",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/5/0.jpg",
+          "bytes": 17341,
+          "sha256": "4dc302742dcb11ec4f8371226b43e2b4771cd594ea372af2210daf79bcdcbc1b",
+          "asset_ref": "data/ins-mmbench/raw/claim/5/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-claim-0006",
+      "file": "raw/sources/raw-claim-0006.json",
+      "sha256": "ebe110b77696613b28b2a9c5b7545d7d9bebc771dd437b84ca164ba583e3b8fd",
+      "split": "claim",
+      "source_index": "6",
+      "record_id": "claim_6",
+      "records_line": 7,
+      "record_line_sha256": "110cd28458f420c706ee79345fde8910b44a5c0993d0bdacd4e42e1f4ce5f08c",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 988,
+      "question_lines": 14,
+      "question_sha256": "66c753b88e0c9b90eaa379a29c807bb474cf96f00af2bf8eb8a6d3f7521a9f92",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/6/0.jpg",
+          "bytes": 10812,
+          "sha256": "e2b309a1bc1f66d89ff57302520e4c195e66c5d82aabe4712553f114e285a87d",
+          "asset_ref": "data/ins-mmbench/raw/claim/6/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-claim-0007",
+      "file": "raw/sources/raw-claim-0007.json",
+      "sha256": "36716baf78a650df2a78767b41402658c1eafc4c15f84bc0bbbc30fc85e6fd5d",
+      "split": "claim",
+      "source_index": "7",
+      "record_id": "claim_7",
+      "records_line": 8,
+      "record_line_sha256": "2a84979a2056fc0008afe60b9b3233266a4dfab595001bbe021264d31f5b8745",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 990,
+      "question_lines": 14,
+      "question_sha256": "9c5bff1280be76dec28c0aa2c737b01051b9d557ca45f2a6a02c4ace95a7ce42",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/7/0.jpg",
+          "bytes": 34089,
+          "sha256": "e502ceb7589ea3b71fefa79e42858a2e0f5097abb2f577167f381fa1cbb3b29f",
+          "asset_ref": "data/ins-mmbench/raw/claim/7/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-claim-0008",
+      "file": "raw/sources/raw-claim-0008.json",
+      "sha256": "3f6995e8c68166c5153f6fb5e0cdc746afc0f193d30f5d672c02d09751fe0e2f",
+      "split": "claim",
+      "source_index": "8",
+      "record_id": "claim_8",
+      "records_line": 9,
+      "record_line_sha256": "8a9aaf7922916d1ce1df6a39ea9c82e97edf34da1be58a68c9de54f1913338cd",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 988,
+      "question_lines": 14,
+      "question_sha256": "14f4c30e34409857fcd5ae6db8093d7973a54f2966b887f1b7a8daf73a6a6b9d",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/8/0.jpg",
+          "bytes": 610155,
+          "sha256": "aacaa2da60a2cf439e7ddd877f389cae74e6093921c4dc8ba83247e93e30f3c3",
+          "asset_ref": "data/ins-mmbench/raw/claim/8/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-claim-0009",
+      "file": "raw/sources/raw-claim-0009.json",
+      "sha256": "5015a8dd92bc0239f019de5918e696f0b42ff9c9478352682318f7b5ce45b9f4",
+      "split": "claim",
+      "source_index": "9",
+      "record_id": "claim_9",
+      "records_line": 10,
+      "record_line_sha256": "67b1fae9577057d761495878ddd0edaf695a29b398d9240b81d39981871a2be6",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 990,
+      "question_lines": 14,
+      "question_sha256": "337264ba3099be97fd5ed055d4b21793ca41ba6dcf31744d21b709f022128906",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/9/0.jpg",
+          "bytes": 5062,
+          "sha256": "83b0ae289f62cd5a6c689db67c44e4af21115365f807943e2f549c04dd3a4cd7",
+          "asset_ref": "data/ins-mmbench/raw/claim/9/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-claim-0010",
+      "file": "raw/sources/raw-claim-0010.json",
+      "sha256": "c1586011a7342d50ebe1291202587f6b02064edd503f2f013b6a525d4231dcea",
+      "split": "claim",
+      "source_index": "10",
+      "record_id": "claim_10",
+      "records_line": 11,
+      "record_line_sha256": "3320c868bfe8890efc2ebd6d2efd2ebad8cee223292b991dc9f97aae5e3923f8",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 990,
+      "question_lines": 14,
+      "question_sha256": "49c1a5fc820319ab86cb7a1c6e9ba69440975ab5b4aace1a8b49349dd5e560c5",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/10/0.jpg",
+          "bytes": 19828,
+          "sha256": "b52ab9b70333293118c63b3dfa00cf799c560fe95a52763dd0447dbb8bac2042",
+          "asset_ref": "data/ins-mmbench/raw/claim/10/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-claim-0011",
+      "file": "raw/sources/raw-claim-0011.json",
+      "sha256": "2b3afbd4af6dc1b3fcc091bbb225254627d79128ca32cb0590286142d83efb47",
+      "split": "claim",
+      "source_index": "11",
+      "record_id": "claim_11",
+      "records_line": 12,
+      "record_line_sha256": "102ee063508e5b69ac6ed4854f5ebe493ddb1271413f3b597d57a4e81585f49b",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_claim_processing",
+      "question_chars": 988,
+      "question_lines": 14,
+      "question_sha256": "f88f4565a92312a1275b641d474c23eb629118e28dbff4b7fc97d2a59195fe78",
+      "labels_keys": [
+        "Cost_of_vehicle",
+        "Min_coverage",
+        "Expiry_date",
+        "Max_coverage",
+        "Condition",
+        "Amount",
+        "Severity",
+        "expired",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "claim/11/0.jpg",
+          "bytes": 11208,
+          "sha256": "95757aaa88d23cd93d15be91d477ab531c7553060095d5f5b2fc3c0049cd3461",
+          "asset_ref": "data/ins-mmbench/raw/claim/11/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0000",
+      "file": "raw/sources/raw-agri-0000.json",
+      "sha256": "6e250da72cf3953291ef79980303553d82761dde7f92eb5537343b8d449d46aa",
+      "split": "agri",
+      "source_index": "0",
+      "record_id": "agri_0",
+      "records_line": 1,
+      "record_line_sha256": "02bc4bdfc29877a3cfbaa9671ce02c22b3b5c62c9cd15902cc5fdb80b1fced77",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/0/0.jpg",
+          "bytes": 134717,
+          "sha256": "7952f94d21afe83e3765be653acb58e8cacfcfe0a2a44cd65bc9f6a26b2fee10",
+          "asset_ref": "data/ins-mmbench/raw/agri/0/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0001",
+      "file": "raw/sources/raw-agri-0001.json",
+      "sha256": "d17d2b88b559f6af34c4606fb7fdb3459b72794243c1487f68dadf82680b68b6",
+      "split": "agri",
+      "source_index": "1",
+      "record_id": "agri_1",
+      "records_line": 2,
+      "record_line_sha256": "214e345f479f8edea80d47daa3d9c15a5bf6a5cda69d6a9ecd5e238b954d5ece",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/1/0.jpg",
+          "bytes": 129323,
+          "sha256": "3f2003352490a7ba7550883363ef8836d8eda0bb8b5dab1ca0af3ea854438095",
+          "asset_ref": "data/ins-mmbench/raw/agri/1/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0002",
+      "file": "raw/sources/raw-agri-0002.json",
+      "sha256": "dca3cb506411de8107889320530274ab9b635078e8900fe92fab02fda281c487",
+      "split": "agri",
+      "source_index": "2",
+      "record_id": "agri_2",
+      "records_line": 3,
+      "record_line_sha256": "313cbd02870783fbc8673ec26eb3e8b31c4bf09951eeceeb885ca7a243a08225",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/2/0.jpg",
+          "bytes": 126286,
+          "sha256": "3fffde381ddf129b01956ee90e9a19becc2860311ac3e1b0aa5cc757dc5850b6",
+          "asset_ref": "data/ins-mmbench/raw/agri/2/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0003",
+      "file": "raw/sources/raw-agri-0003.json",
+      "sha256": "9efb52c2a80f6168feff708f278c0a36e2ed86bc992082dc9e0e22f959dfb965",
+      "split": "agri",
+      "source_index": "3",
+      "record_id": "agri_3",
+      "records_line": 4,
+      "record_line_sha256": "0b1d1aeada2c9765133f65f026894f674dba13c5546b6ebcceaebfd485228fb6",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/3/0.jpg",
+          "bytes": 127426,
+          "sha256": "1d0d90b8b2f5c720225abcfaa8bcaee67fcdb9304aaa36fc7253d97c78f78be5",
+          "asset_ref": "data/ins-mmbench/raw/agri/3/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0004",
+      "file": "raw/sources/raw-agri-0004.json",
+      "sha256": "86f16fff0f985fbcaa1dc96db96f52aefc657e175de787f509ee29dae5d31a22",
+      "split": "agri",
+      "source_index": "4",
+      "record_id": "agri_4",
+      "records_line": 5,
+      "record_line_sha256": "d6cce9fc4b65e78349be79edde4b6866ec49440f64560def35aabb4274eb63ed",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/4/0.jpg",
+          "bytes": 124921,
+          "sha256": "0625bbdfe5489121c7fdf3c82b5d89235b89e9d1bb9b27ebd0abe018e539f83f",
+          "asset_ref": "data/ins-mmbench/raw/agri/4/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0005",
+      "file": "raw/sources/raw-agri-0005.json",
+      "sha256": "f8194ea7ccc8cd2539b3c1644308b4a3e16ea48c1f610bdb17b545f102192585",
+      "split": "agri",
+      "source_index": "5",
+      "record_id": "agri_5",
+      "records_line": 6,
+      "record_line_sha256": "48b8c85bc52cb5e4aaeefc4ae653b530602bc261a621e161538ac44030262ee6",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/5/0.jpg",
+          "bytes": 125419,
+          "sha256": "f93dcfc693ab57c388eec74906ade300c69c242c71f2de53a014b24300e09f25",
+          "asset_ref": "data/ins-mmbench/raw/agri/5/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0006",
+      "file": "raw/sources/raw-agri-0006.json",
+      "sha256": "36ffe7517cbcba0ba50141fcb3eb61d452c5c95a9a7221bdfef8d92cf13d3aee",
+      "split": "agri",
+      "source_index": "6",
+      "record_id": "agri_6",
+      "records_line": 7,
+      "record_line_sha256": "eaf59378d94edbb96c3cac018198ba5aa9cfb053a16d0f7985a211aeae4a235f",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/6/0.jpg",
+          "bytes": 125646,
+          "sha256": "0b4ba7e01435c38b7a9a8f1a1ca224c1b35de863fb23327c445b0ba26a9f4aae",
+          "asset_ref": "data/ins-mmbench/raw/agri/6/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0007",
+      "file": "raw/sources/raw-agri-0007.json",
+      "sha256": "aafceaf55902e2c082b72aca2a0a810a495ea2eb1bb36f1d4b8339afbe3fbde6",
+      "split": "agri",
+      "source_index": "7",
+      "record_id": "agri_7",
+      "records_line": 8,
+      "record_line_sha256": "f38351df3c2d97aed21a9cbb3f9a23db89e71ce175e0a767469911ac278f3d52",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/7/0.jpg",
+          "bytes": 130954,
+          "sha256": "a8ed5a95108ada1173376dc096756727aef0320d6d9a685c911c9122e19db5db",
+          "asset_ref": "data/ins-mmbench/raw/agri/7/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0008",
+      "file": "raw/sources/raw-agri-0008.json",
+      "sha256": "7f426883481338d6eac2a42361bb7fd856cbc470bb5262c530c1fd4ab14f4939",
+      "split": "agri",
+      "source_index": "8",
+      "record_id": "agri_8",
+      "records_line": 9,
+      "record_line_sha256": "fc9d5ed5a696461e07b6b80e9b95448526a817caff04be821b74cd514dff06a0",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/8/0.jpg",
+          "bytes": 118645,
+          "sha256": "fd58056471edd7bc4938c9c0aa04fb547b604e55ea3313ef61b8fc1de6e18379",
+          "asset_ref": "data/ins-mmbench/raw/agri/8/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0009",
+      "file": "raw/sources/raw-agri-0009.json",
+      "sha256": "ef75756b00e1eab3918018b469133b2368dd981a2e7c8c4a1d0dd35c2f559917",
+      "split": "agri",
+      "source_index": "9",
+      "record_id": "agri_9",
+      "records_line": 10,
+      "record_line_sha256": "5ce0cd0ff4a69390ebcb95ea5a6d5185371b05905707e348348e36f16853e69f",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/9/0.jpg",
+          "bytes": 128670,
+          "sha256": "5c651ba947bf337630650f7d9ddb235375ebebc4660d7a4e010f4c0360b2651e",
+          "asset_ref": "data/ins-mmbench/raw/agri/9/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0010",
+      "file": "raw/sources/raw-agri-0010.json",
+      "sha256": "3cc0ed23b0179ceaa24f45a9b47e3ba3c4bba7c17caa5e786a5d19acdc4165c7",
+      "split": "agri",
+      "source_index": "10",
+      "record_id": "agri_10",
+      "records_line": 11,
+      "record_line_sha256": "55973e0fe17f9cd5943b172bca31a815a9807141bbead6deeae2b28e167a7b7b",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/10/0.jpg",
+          "bytes": 129929,
+          "sha256": "ef133ed88939734562df78ca12daa9cb84dca826ad419ed2856b53382235ce85",
+          "asset_ref": "data/ins-mmbench/raw/agri/10/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-agri-0011",
+      "file": "raw/sources/raw-agri-0011.json",
+      "sha256": "f1e22b16c97f75cdcc4a30deab93a49ca84f1944f61cb02b4b5e207d8311b63b",
+      "split": "agri",
+      "source_index": "11",
+      "record_id": "agri_11",
+      "records_line": 12,
+      "record_line_sha256": "c47c200eb0472763230feaedde713b7a7b7d69954359fed1f87cc554288e27d4",
+      "insurance_type": "agricultural",
+      "task_layer": "scenario",
+      "task_name": "agri_claim_processing",
+      "question_chars": 2287,
+      "question_lines": 17,
+      "question_sha256": "88bd16883d4ab374cf6053c6e4cf9479f3f5d9a37adadef7d1e35f45fa22584d",
+      "labels_keys": [
+        "species",
+        "count",
+        "infection",
+        "claim"
+      ],
+      "images": [
+        {
+          "path": "agri/11/0.jpg",
+          "bytes": 129839,
+          "sha256": "5d0ddb98339bceaf13642a1bee38b0a97bfa9671c2851773697c37a023010393",
+          "asset_ref": "data/ins-mmbench/raw/agri/11/0.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0000",
+      "file": "raw/sources/raw-health-0000.json",
+      "sha256": "241add4d14444503056af8b3f0d89f5709419da1c82118b5089a00b55cd82747",
+      "split": "health",
+      "source_index": "0",
+      "record_id": "health_0",
+      "records_line": 1,
+      "record_line_sha256": "e66c5878e90ddfd221e9126840e1cc9c3eb2ab11fb30a69e0ec872d707a37189",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1101,
+      "question_lines": 13,
+      "question_sha256": "7c9214f06a0177bee5196927b14ad5ef5fa86a098ec4d09b4e579f73146f29f3",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/0/0.png",
+          "bytes": 193954,
+          "sha256": "acc14168e454c9a43b64a07ec94ecd2ce32350e9b74bfcaef647c59c28109bc2",
+          "asset_ref": "data/ins-mmbench/raw/health/0/0.png"
+        },
+        {
+          "path": "health/0/1.png",
+          "bytes": 172352,
+          "sha256": "2584944c088f12a759933c59567912d37fff9c0cd78c48145018945022539205",
+          "asset_ref": "data/ins-mmbench/raw/health/0/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0001",
+      "file": "raw/sources/raw-health-0001.json",
+      "sha256": "f116985746b4a44fc870b63bc378b1e93b0aa4bff2f1e56664125bb9bf477dbd",
+      "split": "health",
+      "source_index": "1",
+      "record_id": "health_1",
+      "records_line": 2,
+      "record_line_sha256": "6bd11ddd528a12414fd1fb13f9e4c5c579facdf7cfdca3503cedf8c7407b2cb7",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1217,
+      "question_lines": 13,
+      "question_sha256": "b8258006198547216072cc0e99f7c615b74fc3c6900778d938609f743cd954a2",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/1/0.png",
+          "bytes": 115277,
+          "sha256": "311bad1ff0c154240903c4378dbf2500db5d109ea24432a410692ce0765aa8e5",
+          "asset_ref": "data/ins-mmbench/raw/health/1/0.png"
+        },
+        {
+          "path": "health/1/1.png",
+          "bytes": 225001,
+          "sha256": "27c38990301766e9ec522b1fdb0b9e9bd59d02c2c929bc6c394ab74a82efb980",
+          "asset_ref": "data/ins-mmbench/raw/health/1/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0002",
+      "file": "raw/sources/raw-health-0002.json",
+      "sha256": "88b8b5daa0d4f8a8ecfdda0a23d42e76c935f4cf3f96a25faa9c09d8cb04af2a",
+      "split": "health",
+      "source_index": "2",
+      "record_id": "health_2",
+      "records_line": 3,
+      "record_line_sha256": "fb3e50e063cf768fd830ca36c85347bd7137f55facb3f0ceb17f6033b2c319b8",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1395,
+      "question_lines": 13,
+      "question_sha256": "98ab3cff94845a96d8fd2818db44b49de639ea744650f970a0e5a6f72bec1701",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/2/0.png",
+          "bytes": 120114,
+          "sha256": "177ecfa78a8b2c98c622c6c7b472e67a01ab92756d5959c37fcaa6cfd837ebe2",
+          "asset_ref": "data/ins-mmbench/raw/health/2/0.png"
+        },
+        {
+          "path": "health/2/1.png",
+          "bytes": 132190,
+          "sha256": "6211e6298865074b82d7095a659354e622f2d1c3373c2eaec475c8d35767d8de",
+          "asset_ref": "data/ins-mmbench/raw/health/2/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0003",
+      "file": "raw/sources/raw-health-0003.json",
+      "sha256": "aa4d4c1fcfd349cb438697fa9e2b052a8071476bbf6474203258def38d5ed526",
+      "split": "health",
+      "source_index": "3",
+      "record_id": "health_3",
+      "records_line": 4,
+      "record_line_sha256": "8209adb72a54b2eeaa71d5279a07ac3a5b30cf471203dda8605ce3ee8739ca83",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1173,
+      "question_lines": 13,
+      "question_sha256": "2b96c47d7ddfc2b92aa067c162ebcdb979d2cc4f0db12705d9fb39ddb854d29c",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/3/0.png",
+          "bytes": 196199,
+          "sha256": "2beaa9a408c22b5a3b736b85ab54ebb7e72e4a6c1aa643e5f4d95455b3de6927",
+          "asset_ref": "data/ins-mmbench/raw/health/3/0.png"
+        },
+        {
+          "path": "health/3/1.png",
+          "bytes": 189560,
+          "sha256": "baeaf0fb94e697a4c86edff083a072a729adef2147fd59d635f61d776a07f5ec",
+          "asset_ref": "data/ins-mmbench/raw/health/3/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0004",
+      "file": "raw/sources/raw-health-0004.json",
+      "sha256": "f0ec375a5c5f5e9658cb72b38f90c50480e6e946bb34cad4aba7634f02334ba1",
+      "split": "health",
+      "source_index": "4",
+      "record_id": "health_4",
+      "records_line": 5,
+      "record_line_sha256": "b7bb4cad6621bbed8ec1d1aede0361f87af73204694f15718ad4a479832add26",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1513,
+      "question_lines": 13,
+      "question_sha256": "77bf7001ee5fa53171e927e7c184b79eac1278ec4e41fd667646f15fcf51f6aa",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/4/0.png",
+          "bytes": 144938,
+          "sha256": "a5ae9146a6c48cb63dedcf473451feb5fdcdb6e0856aa76606f16d6a512a64f4",
+          "asset_ref": "data/ins-mmbench/raw/health/4/0.png"
+        },
+        {
+          "path": "health/4/1.png",
+          "bytes": 146452,
+          "sha256": "243325d4449d6bde64b5e42525858f9a8ffae8f666e85173efce2ededbc43c38",
+          "asset_ref": "data/ins-mmbench/raw/health/4/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0005",
+      "file": "raw/sources/raw-health-0005.json",
+      "sha256": "e6a4a326ffeb382075bd5d6e36727a930bfc5952971f93e6e33dd25b463286b3",
+      "split": "health",
+      "source_index": "5",
+      "record_id": "health_5",
+      "records_line": 6,
+      "record_line_sha256": "5f75d2fbfaf8ab0fc3c46eafb29c848fa45311d99550bac939d302e6ba5d1a00",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1251,
+      "question_lines": 13,
+      "question_sha256": "78d7684dd921fee4a3e9b793161cad1062035e3569b3222867fc7555f651d8ad",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/5/0.png",
+          "bytes": 213145,
+          "sha256": "1dc7ae781eb77263aca988a77a867f151e6b4e7a87a087d9517a58304b894356",
+          "asset_ref": "data/ins-mmbench/raw/health/5/0.png"
+        },
+        {
+          "path": "health/5/1.png",
+          "bytes": 185645,
+          "sha256": "0ee32fac53e7e78360952b46249708d9581e9c75b40ea02682b65ae61e32cfa0",
+          "asset_ref": "data/ins-mmbench/raw/health/5/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0006",
+      "file": "raw/sources/raw-health-0006.json",
+      "sha256": "63bfc4b26b1df53f65d39119689c25a05d5d55410082a80bf0c1fb8832e53c21",
+      "split": "health",
+      "source_index": "6",
+      "record_id": "health_6",
+      "records_line": 7,
+      "record_line_sha256": "a8586680e8123aa2f7dd7783abb62cd9f39661b059a4afcc8399eb139f679753",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1101,
+      "question_lines": 13,
+      "question_sha256": "b672b14c05026aa71e02bda834c9927f61f78bfea29c88ad63b4ae238eb78995",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/6/0.png",
+          "bytes": 163523,
+          "sha256": "9bad2d6d2e8f0eeeff422c56003ef6bcc6939b1484d0107f995a903d2f911885",
+          "asset_ref": "data/ins-mmbench/raw/health/6/0.png"
+        },
+        {
+          "path": "health/6/1.png",
+          "bytes": 223281,
+          "sha256": "b4008919fd1889014ccbb831cc5242ce899b333679293b7d0eeb30c923a7c4f0",
+          "asset_ref": "data/ins-mmbench/raw/health/6/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0007",
+      "file": "raw/sources/raw-health-0007.json",
+      "sha256": "ae0d507959194ad85042bbe1a90b7de297c03b8d60eb04f0a6bb7ad89c1f546c",
+      "split": "health",
+      "source_index": "7",
+      "record_id": "health_7",
+      "records_line": 8,
+      "record_line_sha256": "ff47cd6127f573f3a8f1e52b912e6ad6f0b124d2b8cd6c4a3b9137449a0afab0",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1219,
+      "question_lines": 13,
+      "question_sha256": "d9cdc9f9bc9a75bec8b66f189fee15056f6ad4b6ffa23f83247510afb44780a0",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/7/0.png",
+          "bytes": 173770,
+          "sha256": "52dfd40d8824f5307240b33b64c54bb164e946e74ec68038d2d26ae7c580887d",
+          "asset_ref": "data/ins-mmbench/raw/health/7/0.png"
+        },
+        {
+          "path": "health/7/1.png",
+          "bytes": 225657,
+          "sha256": "ddf47deed65b540daa348d71724d535153733f5392075c40f4cce6079ac503b2",
+          "asset_ref": "data/ins-mmbench/raw/health/7/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0008",
+      "file": "raw/sources/raw-health-0008.json",
+      "sha256": "847e505d0c92f19794353f76551aecf0a6ffac05e019972eba9a98954f12955e",
+      "split": "health",
+      "source_index": "8",
+      "record_id": "health_8",
+      "records_line": 9,
+      "record_line_sha256": "52b7dc26c504a397c6202c67dc338f0091de6549d4b65164d7c936b3c31e836c",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1185,
+      "question_lines": 13,
+      "question_sha256": "66d7651403db4ebf45b153fe1bf2b4ed9217e357dc50389ecbfa13debf922d92",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/8/0.png",
+          "bytes": 149397,
+          "sha256": "6e56684ce0dec615e997418ad5fa129d4a3555f8b215558a74ab87cf0c82bb6b",
+          "asset_ref": "data/ins-mmbench/raw/health/8/0.png"
+        },
+        {
+          "path": "health/8/1.png",
+          "bytes": 192749,
+          "sha256": "45f7e2a65d46e37be648a339acbd16fadd76a556fab2e4f1355043802ec54238",
+          "asset_ref": "data/ins-mmbench/raw/health/8/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0009",
+      "file": "raw/sources/raw-health-0009.json",
+      "sha256": "26080f63ef461621dcd34a13a050be1b423ceb2d5ed02384546e5c8b7f22f48d",
+      "split": "health",
+      "source_index": "9",
+      "record_id": "health_9",
+      "records_line": 10,
+      "record_line_sha256": "f9fa49708681ac19b8da945cdb9b5e161083a5e13837b99e6675c870a92afd84",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1473,
+      "question_lines": 13,
+      "question_sha256": "a3e580d0e8a18bd021603b3397b17678c9016fd9f6b59406b0c7590203d6363b",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/9/0.png",
+          "bytes": 231276,
+          "sha256": "ed24f3ef6009ee1a71c28df56ec6c5728d75ba9f7a382694836c0de8b3843c1a",
+          "asset_ref": "data/ins-mmbench/raw/health/9/0.png"
+        },
+        {
+          "path": "health/9/1.png",
+          "bytes": 240009,
+          "sha256": "c9165073890a8a89fb95048e944af8d7715f7fe2f4b916e640683dad33bc9208",
+          "asset_ref": "data/ins-mmbench/raw/health/9/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0010",
+      "file": "raw/sources/raw-health-0010.json",
+      "sha256": "a29d1180797e071ef03fa46e24d581f3e9c62c573ed04f04ae2441782ce14e75",
+      "split": "health",
+      "source_index": "10",
+      "record_id": "health_10",
+      "records_line": 11,
+      "record_line_sha256": "7edced748a8c9164c5145673317de6024ad1f6fedc1fe88e2d94abe42fb9f299",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1256,
+      "question_lines": 13,
+      "question_sha256": "df0cef6b01c47f4e309b4c26d2f32c326c47a6d82df685416e90385380372116",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/10/0.png",
+          "bytes": 193584,
+          "sha256": "603b4e36a094d8418ebd2a87c9a8fbb9ea87bc1edae3ddb6aca8585e95cbbc4e",
+          "asset_ref": "data/ins-mmbench/raw/health/10/0.png"
+        },
+        {
+          "path": "health/10/1.png",
+          "bytes": 176562,
+          "sha256": "aba243545f801afd311722ebe55625b651cace364e2ea5581f250ef20a4e9e05",
+          "asset_ref": "data/ins-mmbench/raw/health/10/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-health-0011",
+      "file": "raw/sources/raw-health-0011.json",
+      "sha256": "6ebc7507f1111b097039ad1371b0b31f42366d3dc186e6b148d2940926c1989e",
+      "split": "health",
+      "source_index": "11",
+      "record_id": "health_11",
+      "records_line": 12,
+      "record_line_sha256": "a479056f78eed937b7a28a54fbb464eb09463910c9ddbd9363f5b1cf21110ce7",
+      "insurance_type": "health",
+      "task_layer": "scenario",
+      "task_name": "health_risk_assessment",
+      "question_chars": 1188,
+      "question_lines": 13,
+      "question_sha256": "308bdee16a120b09180a2644fbc1843d4d4dbb0a239645656e794a1afb2c7847",
+      "labels_keys": [
+        "part",
+        "original_report",
+        "adjusted_report",
+        "match",
+        "risk_level",
+        "underwriting_decision"
+      ],
+      "images": [
+        {
+          "path": "health/11/0.png",
+          "bytes": 120842,
+          "sha256": "c8e4c15500332fcf2020997ac523f8845ae44e936329127f8519ceb1450908af",
+          "asset_ref": "data/ins-mmbench/raw/health/11/0.png"
+        },
+        {
+          "path": "health/11/1.png",
+          "bytes": 158132,
+          "sha256": "fd076c1018416386359af11fdde1f4504c1fb76ac1a5c890ef68e55a29469954",
+          "asset_ref": "data/ins-mmbench/raw/health/11/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0000",
+      "file": "raw/sources/raw-liability-0000.json",
+      "sha256": "62e487f050b3485a4020b5f85d6c3f4ef482177e9db4e53084b4e6aee15e1808",
+      "split": "liability",
+      "source_index": "0",
+      "record_id": "liability_0",
+      "records_line": 1,
+      "record_line_sha256": "d274cc51cbdaae1dee2ed4f83e19a4138df7f6922ea3195ac8ff52ba0b92ac3d",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/0/0.jpg",
+          "bytes": 146298,
+          "sha256": "c76a554654c3755df0f2ffc5875427de90b1ee0ae73eefff52720cce78ea595c",
+          "asset_ref": "data/ins-mmbench/raw/liability/0/0.jpg"
+        },
+        {
+          "path": "liability/0/1.jpg",
+          "bytes": 137632,
+          "sha256": "525581d58af7514bdac60ca7f135fc5928a38a93f0f4c9ab4938ccd247d3f4c8",
+          "asset_ref": "data/ins-mmbench/raw/liability/0/1.jpg"
+        },
+        {
+          "path": "liability/0/2.jpg",
+          "bytes": 110816,
+          "sha256": "1306fa307b3a20e49ad15bc887c640d28fd66a9d847bb969529172a3d43fe02b",
+          "asset_ref": "data/ins-mmbench/raw/liability/0/2.jpg"
+        },
+        {
+          "path": "liability/0/3.jpg",
+          "bytes": 106656,
+          "sha256": "f764ddaf30627bd82fff7300982f8517a3efb9ea50df96fae27245b46cd1a3cc",
+          "asset_ref": "data/ins-mmbench/raw/liability/0/3.jpg"
+        },
+        {
+          "path": "liability/0/4.jpg",
+          "bytes": 134973,
+          "sha256": "d5fc5d44f12a60e8833929b60db1bfc6aff25d4148e9c1ceae531ec15cc9ec17",
+          "asset_ref": "data/ins-mmbench/raw/liability/0/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0001",
+      "file": "raw/sources/raw-liability-0001.json",
+      "sha256": "fb40ba9933446b0578bcb0b9c4deaf0eceae7df1940881c0e50f6f03e77cb019",
+      "split": "liability",
+      "source_index": "1",
+      "record_id": "liability_1",
+      "records_line": 2,
+      "record_line_sha256": "726441a04173000b1bdf5ea7430b79dcac1784cdffd0ae37aeac3561ecaad88c",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/1/0.jpg",
+          "bytes": 185792,
+          "sha256": "3b81cee67363050a89841fdbcc02737b53165571dda869b8d8a7efaf922a2372",
+          "asset_ref": "data/ins-mmbench/raw/liability/1/0.jpg"
+        },
+        {
+          "path": "liability/1/1.jpg",
+          "bytes": 177612,
+          "sha256": "1b64fcdd8902af3b6473e8e193e8df692a63bda91d0e59c2db6f1aeb47fa9666",
+          "asset_ref": "data/ins-mmbench/raw/liability/1/1.jpg"
+        },
+        {
+          "path": "liability/1/2.jpg",
+          "bytes": 172872,
+          "sha256": "d86a834afd759d130ec092a90718561f82a974247d9b4659d6bd72b769b8d116",
+          "asset_ref": "data/ins-mmbench/raw/liability/1/2.jpg"
+        },
+        {
+          "path": "liability/1/3.jpg",
+          "bytes": 169490,
+          "sha256": "03ce38a639f57230f1b0d496f006cf4c9cfe1f8269f3db9b64f1697bb6b14188",
+          "asset_ref": "data/ins-mmbench/raw/liability/1/3.jpg"
+        },
+        {
+          "path": "liability/1/4.jpg",
+          "bytes": 170637,
+          "sha256": "e1471e2774e12c9207deb98443a7f438b0b9b6c70d268eff8cfa5fece3771d00",
+          "asset_ref": "data/ins-mmbench/raw/liability/1/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0003",
+      "file": "raw/sources/raw-liability-0003.json",
+      "sha256": "3b9cfc8506607ffd0f167ec0e9ed27e88b4e94845a5a7edee6ffd0d1a8e50fc1",
+      "split": "liability",
+      "source_index": "3",
+      "record_id": "liability_3",
+      "records_line": 3,
+      "record_line_sha256": "f7032ac68aec764f6975208826e08fa2514f555187234d2090b29d02ecfdeb58",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/3/0.jpg",
+          "bytes": 106707,
+          "sha256": "aeb71af1d4aa46233e0b7cc210786ae0070a983b7350d3c7fb5d1deeffc40a17",
+          "asset_ref": "data/ins-mmbench/raw/liability/3/0.jpg"
+        },
+        {
+          "path": "liability/3/1.jpg",
+          "bytes": 108322,
+          "sha256": "4de0f92b040ce0523217e7a6ea358c1393890788c7697785ef5325c607d1c608",
+          "asset_ref": "data/ins-mmbench/raw/liability/3/1.jpg"
+        },
+        {
+          "path": "liability/3/2.jpg",
+          "bytes": 104165,
+          "sha256": "e42a61a86432692e4e4de524eeff0d3849a611247e62434056f71156f8ef3fbc",
+          "asset_ref": "data/ins-mmbench/raw/liability/3/2.jpg"
+        },
+        {
+          "path": "liability/3/3.jpg",
+          "bytes": 108393,
+          "sha256": "38ce54d3bf225d833bc15c5aff47c888c8d02e559d4be56c9fa8b3d5203fcc6e",
+          "asset_ref": "data/ins-mmbench/raw/liability/3/3.jpg"
+        },
+        {
+          "path": "liability/3/4.jpg",
+          "bytes": 109378,
+          "sha256": "31985169b6b4de0469e70d9d52b208cbe55ee90eee62b50e16387731c80a93b4",
+          "asset_ref": "data/ins-mmbench/raw/liability/3/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0004",
+      "file": "raw/sources/raw-liability-0004.json",
+      "sha256": "e7b2cfd00911e682193a8d556ed1fe9fd1351de234e603ccc2ef5a59ab31535a",
+      "split": "liability",
+      "source_index": "4",
+      "record_id": "liability_4",
+      "records_line": 4,
+      "record_line_sha256": "a103fb956a347c2e5d065fa679c4e7d08e5270e15f65f36528d6de9c759eb2da",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/4/0.jpg",
+          "bytes": 109518,
+          "sha256": "df82d7b391b828186b3d7d098ee5ffff4d3d7b76d1d06d8ec308344be8889d4e",
+          "asset_ref": "data/ins-mmbench/raw/liability/4/0.jpg"
+        },
+        {
+          "path": "liability/4/1.jpg",
+          "bytes": 118958,
+          "sha256": "e20d6a00c7ff8313c2fc266700ee93c33875bd267aec6e11b198676341ae7fdd",
+          "asset_ref": "data/ins-mmbench/raw/liability/4/1.jpg"
+        },
+        {
+          "path": "liability/4/2.jpg",
+          "bytes": 127804,
+          "sha256": "83099f10ce0f5839bc7ff38818823f4c89dbfcce99f39792b7b7420096b2f438",
+          "asset_ref": "data/ins-mmbench/raw/liability/4/2.jpg"
+        },
+        {
+          "path": "liability/4/3.jpg",
+          "bytes": 122133,
+          "sha256": "7fef823997875b8e1989bc50a1c1fd9219aa6dd7e3ece2dd6efdf2ac4d641b2c",
+          "asset_ref": "data/ins-mmbench/raw/liability/4/3.jpg"
+        },
+        {
+          "path": "liability/4/4.jpg",
+          "bytes": 116106,
+          "sha256": "6ac8245a3b9e9643f0f34c6e926d806696ecbb86cd786bfe6b2a70aa115ffb83",
+          "asset_ref": "data/ins-mmbench/raw/liability/4/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0006",
+      "file": "raw/sources/raw-liability-0006.json",
+      "sha256": "d9716fd4aae15d8fb715a8f819d00d8296973d68a897b0c1185a3ab6fb16980b",
+      "split": "liability",
+      "source_index": "6",
+      "record_id": "liability_6",
+      "records_line": 5,
+      "record_line_sha256": "2f89561bb78f5bc058dffe15da87f07e54a727877c9d4a89e33538ebb0a11222",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/6/0.jpg",
+          "bytes": 194737,
+          "sha256": "85a9b3d5d453861a961c8cbcff6ace92784bbb413e23bfe52a09d064b80d11be",
+          "asset_ref": "data/ins-mmbench/raw/liability/6/0.jpg"
+        },
+        {
+          "path": "liability/6/1.jpg",
+          "bytes": 194059,
+          "sha256": "2751a3a577f7a5af04491cb76f2f00e4d016d559fcfa40a6f52128dc329e11ec",
+          "asset_ref": "data/ins-mmbench/raw/liability/6/1.jpg"
+        },
+        {
+          "path": "liability/6/2.jpg",
+          "bytes": 199635,
+          "sha256": "bde1d27318481128426db7e50e666d6355ae6f2d6360208f2a0d4c66d71e4766",
+          "asset_ref": "data/ins-mmbench/raw/liability/6/2.jpg"
+        },
+        {
+          "path": "liability/6/3.jpg",
+          "bytes": 197839,
+          "sha256": "7d430e695c39ff0c5812be65aaadbdf09622bfab585c458dde26bea8f8edf6d0",
+          "asset_ref": "data/ins-mmbench/raw/liability/6/3.jpg"
+        },
+        {
+          "path": "liability/6/4.jpg",
+          "bytes": 198145,
+          "sha256": "8198ead9ec399dc953445cf499438bbf4e71e1c3bc522b4f333ace16cd41a5c2",
+          "asset_ref": "data/ins-mmbench/raw/liability/6/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0008",
+      "file": "raw/sources/raw-liability-0008.json",
+      "sha256": "fb44648ca4059e11ea75effb2ff6d2e796b70dbbe5c5edb0bc8154f56e031a5c",
+      "split": "liability",
+      "source_index": "8",
+      "record_id": "liability_8",
+      "records_line": 6,
+      "record_line_sha256": "0f7ce51ba27772f95de743c695b69aaa6249dac8f8e4434a5790210bdb299191",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/8/0.jpg",
+          "bytes": 179694,
+          "sha256": "f54d1a880f9b0fd4c8db58020da408215c3d2473e57cc3c2dfb6447868a627a7",
+          "asset_ref": "data/ins-mmbench/raw/liability/8/0.jpg"
+        },
+        {
+          "path": "liability/8/1.jpg",
+          "bytes": 187158,
+          "sha256": "71c402b835b8807533b45dd7945d270f21a35bde65491a1ad8d1e848fb01afb8",
+          "asset_ref": "data/ins-mmbench/raw/liability/8/1.jpg"
+        },
+        {
+          "path": "liability/8/2.jpg",
+          "bytes": 172942,
+          "sha256": "efe91f19f75d4b639b5f17e77583472966529aedfd904c5323e22144f817caa3",
+          "asset_ref": "data/ins-mmbench/raw/liability/8/2.jpg"
+        },
+        {
+          "path": "liability/8/3.jpg",
+          "bytes": 84982,
+          "sha256": "444b13298d4995a6fa5fe8461f6813b64433ed2e38aaff322efd1905e5f9d1f7",
+          "asset_ref": "data/ins-mmbench/raw/liability/8/3.jpg"
+        },
+        {
+          "path": "liability/8/4.jpg",
+          "bytes": 165418,
+          "sha256": "f3093dd5d3ab5ffd394cc583688fabfee6713f7defaf9218f665849bdb6730db",
+          "asset_ref": "data/ins-mmbench/raw/liability/8/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0010",
+      "file": "raw/sources/raw-liability-0010.json",
+      "sha256": "eb0b24d605eaaa5dcd8698f9de68c3eca1aa3f52cddc0c01c0074b2a5f5b9070",
+      "split": "liability",
+      "source_index": "10",
+      "record_id": "liability_10",
+      "records_line": 7,
+      "record_line_sha256": "986de049d145efe3f3dbeadc2a784920e2643cea72c01cbbef792654e3023f68",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/10/0.jpg",
+          "bytes": 276987,
+          "sha256": "de99d57c40fc353cddc317bb9e5e7caa4b0dc9edb798e48dc47641836917e892",
+          "asset_ref": "data/ins-mmbench/raw/liability/10/0.jpg"
+        },
+        {
+          "path": "liability/10/1.jpg",
+          "bytes": 254305,
+          "sha256": "623a004679799ad24191927ca7758b2cc569c0ae4ec5779fe8082ce423a17d77",
+          "asset_ref": "data/ins-mmbench/raw/liability/10/1.jpg"
+        },
+        {
+          "path": "liability/10/2.jpg",
+          "bytes": 224622,
+          "sha256": "e0e541519cd4a9ef1d64baa45364bb6e6ae5c1fc64e295f076f78073c8994e73",
+          "asset_ref": "data/ins-mmbench/raw/liability/10/2.jpg"
+        },
+        {
+          "path": "liability/10/3.jpg",
+          "bytes": 224596,
+          "sha256": "0959d2a9e08d17945788b21c451222f61e59dafb3e64c67f30cb30f318c600fd",
+          "asset_ref": "data/ins-mmbench/raw/liability/10/3.jpg"
+        },
+        {
+          "path": "liability/10/4.jpg",
+          "bytes": 203402,
+          "sha256": "449ee1034e59ca81d31fff4ba3a69fd3852a5c0dc168d03fb2ed232f6baec360",
+          "asset_ref": "data/ins-mmbench/raw/liability/10/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0012",
+      "file": "raw/sources/raw-liability-0012.json",
+      "sha256": "6084e746b3bbe1237e45c57c337520cc1803a9c5df80c3104e842f3492ba67a1",
+      "split": "liability",
+      "source_index": "12",
+      "record_id": "liability_12",
+      "records_line": 8,
+      "record_line_sha256": "4e4f5cc8c4a79c1ac62c486580399bc41cc737d5e331a6bc22fb10ed890236db",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/12/0.jpg",
+          "bytes": 200903,
+          "sha256": "5688f6f0e72bea518b66d9b949d4ff23db20cf1c126c759399f1317da4ec1077",
+          "asset_ref": "data/ins-mmbench/raw/liability/12/0.jpg"
+        },
+        {
+          "path": "liability/12/1.jpg",
+          "bytes": 211800,
+          "sha256": "02983a6c11d4996573d30dc6dcc7952f46fd9b2d2805c2072568f63ac62040c0",
+          "asset_ref": "data/ins-mmbench/raw/liability/12/1.jpg"
+        },
+        {
+          "path": "liability/12/2.jpg",
+          "bytes": 232076,
+          "sha256": "3a61eb14ef02727ac0446801df526d5dd3e25192eeb3665c4c6d307268c09ff0",
+          "asset_ref": "data/ins-mmbench/raw/liability/12/2.jpg"
+        },
+        {
+          "path": "liability/12/3.jpg",
+          "bytes": 237804,
+          "sha256": "1af71ccd0b518fa2218dd134fdcf6a2d5f5abc1852b5e99a8420802012a018a8",
+          "asset_ref": "data/ins-mmbench/raw/liability/12/3.jpg"
+        },
+        {
+          "path": "liability/12/4.jpg",
+          "bytes": 238857,
+          "sha256": "f2d65e712201c76b2eec4d695f38feaadbf9609c159488bf69a5492be77599f8",
+          "asset_ref": "data/ins-mmbench/raw/liability/12/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0016",
+      "file": "raw/sources/raw-liability-0016.json",
+      "sha256": "c47deffaeca57f9c7ccb64ee418768b9e8f369d67b736c4fe1c8000b620c2a6d",
+      "split": "liability",
+      "source_index": "16",
+      "record_id": "liability_16",
+      "records_line": 9,
+      "record_line_sha256": "352ac8fa74bed45fb1f4c08c8c45015d563cb23ebc12887bfd94a65ebf50d0db",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/16/0.jpg",
+          "bytes": 161805,
+          "sha256": "79d3f74d3b191e2d971c0a8d93f951a050bde9484b85edbbc48537e72f2910dd",
+          "asset_ref": "data/ins-mmbench/raw/liability/16/0.jpg"
+        },
+        {
+          "path": "liability/16/1.jpg",
+          "bytes": 155143,
+          "sha256": "46c0decb9619084d709a039489d087f4e61bdb2dd1e1b54173a2e65670777aa5",
+          "asset_ref": "data/ins-mmbench/raw/liability/16/1.jpg"
+        },
+        {
+          "path": "liability/16/2.jpg",
+          "bytes": 160397,
+          "sha256": "e49e27adc3257074163e3698b753922916794c3ebb1adf4c11a99ca95d48cf36",
+          "asset_ref": "data/ins-mmbench/raw/liability/16/2.jpg"
+        },
+        {
+          "path": "liability/16/3.jpg",
+          "bytes": 167535,
+          "sha256": "5c5dadd467b4582553e55f02fdb7cea9b09362b55b29e898a791ba077f03a09e",
+          "asset_ref": "data/ins-mmbench/raw/liability/16/3.jpg"
+        },
+        {
+          "path": "liability/16/4.jpg",
+          "bytes": 155475,
+          "sha256": "d8def32dc58147ed5b49955c9f202d3b867ed4214c7065dec5b03acd1d0e9cdc",
+          "asset_ref": "data/ins-mmbench/raw/liability/16/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0017",
+      "file": "raw/sources/raw-liability-0017.json",
+      "sha256": "7effccea77262974827aebb1aa10efaf4bf95e6bf79900bcb6cf6b3a92ea5fa7",
+      "split": "liability",
+      "source_index": "17",
+      "record_id": "liability_17",
+      "records_line": 10,
+      "record_line_sha256": "6d26e95facf0d17e33600851b66abd553d0f3d81ca441538130b0c6d2494d9c0",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/17/0.jpg",
+          "bytes": 79586,
+          "sha256": "41bdfea36e6b0255206ded16645a6d72f577d60f60696ce981fa465d42317c34",
+          "asset_ref": "data/ins-mmbench/raw/liability/17/0.jpg"
+        },
+        {
+          "path": "liability/17/1.jpg",
+          "bytes": 77801,
+          "sha256": "ba2b38a88bfb02782962477b3598f0398b15093d2f89e49e040787f4112907a6",
+          "asset_ref": "data/ins-mmbench/raw/liability/17/1.jpg"
+        },
+        {
+          "path": "liability/17/2.jpg",
+          "bytes": 70100,
+          "sha256": "b7a4f36ed1b2f964145fa16d033bba0c7053e9533ed4782db5e631bc0b687559",
+          "asset_ref": "data/ins-mmbench/raw/liability/17/2.jpg"
+        },
+        {
+          "path": "liability/17/3.jpg",
+          "bytes": 82608,
+          "sha256": "858359ee4e9ee12040df7950c6406bad32d58aba3f429f2fa964fed07969c5bf",
+          "asset_ref": "data/ins-mmbench/raw/liability/17/3.jpg"
+        },
+        {
+          "path": "liability/17/4.jpg",
+          "bytes": 77370,
+          "sha256": "6a3f20106ab961b1250b5af6491339aa754ce1d365f37f238abb7f341e794e6d",
+          "asset_ref": "data/ins-mmbench/raw/liability/17/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0019",
+      "file": "raw/sources/raw-liability-0019.json",
+      "sha256": "bf4d4ae69c35650a7a5eb6e931e447e632141600d72893263eda0eb2b66dc87f",
+      "split": "liability",
+      "source_index": "19",
+      "record_id": "liability_19",
+      "records_line": 11,
+      "record_line_sha256": "477964d63dd6e48a1495b5776a5aedc2c3a63f6fb2ac15cd5715a370031c4812",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/19/0.jpg",
+          "bytes": 162030,
+          "sha256": "31bc415ec8e164e232104be0a0533d330649c7702b66ac360e0f9517e2521da4",
+          "asset_ref": "data/ins-mmbench/raw/liability/19/0.jpg"
+        },
+        {
+          "path": "liability/19/1.jpg",
+          "bytes": 136991,
+          "sha256": "91cf79f4b9d1d23cdd0f4b73f0c39827c058e1df5889fbed234e3b61d25cd934",
+          "asset_ref": "data/ins-mmbench/raw/liability/19/1.jpg"
+        },
+        {
+          "path": "liability/19/2.jpg",
+          "bytes": 155093,
+          "sha256": "03d467ac42225a0a94ee902767d00be76558cda145b151c8785f4a36d204bdaf",
+          "asset_ref": "data/ins-mmbench/raw/liability/19/2.jpg"
+        },
+        {
+          "path": "liability/19/3.jpg",
+          "bytes": 108005,
+          "sha256": "0cf14243612e205a62833b64ab872e31469db4b88673412321e2aa5f66ccebec",
+          "asset_ref": "data/ins-mmbench/raw/liability/19/3.jpg"
+        },
+        {
+          "path": "liability/19/4.jpg",
+          "bytes": 153509,
+          "sha256": "2f878472fa11cab781435e5a981e429398dd6d239ec13b7ace0fed6e2f2641a4",
+          "asset_ref": "data/ins-mmbench/raw/liability/19/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-liability-0020",
+      "file": "raw/sources/raw-liability-0020.json",
+      "sha256": "3a659a99ba4afe63060025055469310e4bb680b860212362e150ba267af790e7",
+      "split": "liability",
+      "source_index": "20",
+      "record_id": "liability_20",
+      "records_line": 12,
+      "record_line_sha256": "bb785cab01d8ba4609df2c6e0abece6f79215a71439ddae88c615f5c9826a0fc",
+      "insurance_type": "auto",
+      "task_layer": "scenario",
+      "task_name": "auto_liability_determination",
+      "question_chars": 1164,
+      "question_lines": 15,
+      "question_sha256": "8edcc11145a996e2f9d2b792dd9edfd2b338fa877e71e8ed5767fcaf7622ffd9",
+      "labels_keys": [
+        "weather",
+        "light",
+        "scenes",
+        "linear",
+        "whether an accident occurred",
+        "causes",
+        "primary_responsibility"
+      ],
+      "images": [
+        {
+          "path": "liability/20/0.jpg",
+          "bytes": 159330,
+          "sha256": "32b7bbb5bb177e5096f5c07e19892b5a08dde7e8452fcc098d655363b2216ae0",
+          "asset_ref": "data/ins-mmbench/raw/liability/20/0.jpg"
+        },
+        {
+          "path": "liability/20/1.jpg",
+          "bytes": 149033,
+          "sha256": "5ae974a3daee16bcd7bae3b6aa02b7de43cdf404c7620b13986cec80557c4378",
+          "asset_ref": "data/ins-mmbench/raw/liability/20/1.jpg"
+        },
+        {
+          "path": "liability/20/2.jpg",
+          "bytes": 144323,
+          "sha256": "f26b41b54cbc26d6aa352f05bc957ff86229542d426c811297e7f6e1ee3face9",
+          "asset_ref": "data/ins-mmbench/raw/liability/20/2.jpg"
+        },
+        {
+          "path": "liability/20/3.jpg",
+          "bytes": 152733,
+          "sha256": "e93bd7b78f68bd0a17517adaca30f54ab588d330d3938dee509dd2ce8a948d92",
+          "asset_ref": "data/ins-mmbench/raw/liability/20/3.jpg"
+        },
+        {
+          "path": "liability/20/4.jpg",
+          "bytes": 149959,
+          "sha256": "2ea7f8592ee389eb0b61159e49a595fe142ef0449329c9893c4e94a8839626b3",
+          "asset_ref": "data/ins-mmbench/raw/liability/20/4.jpg"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-property-0000",
+      "file": "raw/sources/raw-property-0000.json",
+      "sha256": "2432da849e964e49db97bb96af99ba4f0ed5840ef1788265de68d086ceb954c0",
+      "split": "property",
+      "source_index": "0",
+      "record_id": "property_0",
+      "records_line": 1,
+      "record_line_sha256": "38c8ad24513e261cdb6c28b2929d8e1441a39b013242cdd50b87a3b72048302b",
+      "insurance_type": "property",
+      "task_layer": "scenario",
+      "task_name": "property_risk_management",
+      "question_chars": 1266,
+      "question_lines": 14,
+      "question_sha256": "0bc253ba1404236f0c2cba7c4a8e6f44baa5873a2647f567dd35772e0d33af6d",
+      "labels_keys": [
+        "disaster",
+        "type",
+        "number",
+        "damage_number",
+        "claim_decision"
+      ],
+      "images": [
+        {
+          "path": "property/0/0.png",
+          "bytes": 1561683,
+          "sha256": "1e7e0219b70c4fdd1dc5ba3e0a6993663a7db819efe29c04a5f55b557bd53933",
+          "asset_ref": "data/ins-mmbench/raw/property/0/0.png"
+        },
+        {
+          "path": "property/0/1.png",
+          "bytes": 1312248,
+          "sha256": "e601ee2978cc6d4ad30dfff45ded1da94c18b3deac1a4f496f7f86a2af3b3ce2",
+          "asset_ref": "data/ins-mmbench/raw/property/0/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-property-0001",
+      "file": "raw/sources/raw-property-0001.json",
+      "sha256": "dc4a6a54c374a9d106fdc79a2bfb6920bf5a5e255e5c0b4297e58870924dc0c9",
+      "split": "property",
+      "source_index": "1",
+      "record_id": "property_1",
+      "records_line": 2,
+      "record_line_sha256": "675807b3d219cc58ec793135f722e028a047bc1db2c2ec4f8b8300fdc97df8a0",
+      "insurance_type": "property",
+      "task_layer": "scenario",
+      "task_name": "property_risk_management",
+      "question_chars": 1266,
+      "question_lines": 14,
+      "question_sha256": "0bc253ba1404236f0c2cba7c4a8e6f44baa5873a2647f567dd35772e0d33af6d",
+      "labels_keys": [
+        "disaster",
+        "type",
+        "number",
+        "damage_number",
+        "claim_decision"
+      ],
+      "images": [
+        {
+          "path": "property/1/0.png",
+          "bytes": 1697136,
+          "sha256": "336327605585010dbce6bc2e6ca948d59a2f09407bd540f9cf3e6f3d0144e498",
+          "asset_ref": "data/ins-mmbench/raw/property/1/0.png"
+        },
+        {
+          "path": "property/1/1.png",
+          "bytes": 1460623,
+          "sha256": "7e5e43dcbac83a29455466263d2bff13184f1f5de641e9084e5f57d969e121c5",
+          "asset_ref": "data/ins-mmbench/raw/property/1/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-property-0002",
+      "file": "raw/sources/raw-property-0002.json",
+      "sha256": "52d5220c4d83bc22c69b71f43f79457420ccd976d03a295eb3b8cfcc04f4d2d6",
+      "split": "property",
+      "source_index": "2",
+      "record_id": "property_2",
+      "records_line": 3,
+      "record_line_sha256": "1d2621c5d31c055111767f161ad6457a6fa7972c0f622756d93bcdfc641e07e1",
+      "insurance_type": "property",
+      "task_layer": "scenario",
+      "task_name": "property_risk_management",
+      "question_chars": 1266,
+      "question_lines": 14,
+      "question_sha256": "0bc253ba1404236f0c2cba7c4a8e6f44baa5873a2647f567dd35772e0d33af6d",
+      "labels_keys": [
+        "disaster",
+        "type",
+        "number",
+        "damage_number",
+        "claim_decision"
+      ],
+      "images": [
+        {
+          "path": "property/2/0.png",
+          "bytes": 1358252,
+          "sha256": "1b0e69636b4b9729c2c74a8722fcdb3e6113a82495ed03066354f02fcacc9584",
+          "asset_ref": "data/ins-mmbench/raw/property/2/0.png"
+        },
+        {
+          "path": "property/2/1.png",
+          "bytes": 1365446,
+          "sha256": "e2cd0472260faa0f7f316d22279a0de29e84b5695590e1f6c3e43ee9bea1238b",
+          "asset_ref": "data/ins-mmbench/raw/property/2/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-property-0003",
+      "file": "raw/sources/raw-property-0003.json",
+      "sha256": "e4654a7037d576592f1385c208bec3edc9d5a8f09528d617dbaee03c2682e515",
+      "split": "property",
+      "source_index": "3",
+      "record_id": "property_3",
+      "records_line": 4,
+      "record_line_sha256": "21dd9f2928a1252bfbf0a442eeb8da6df4552417ef0341bfd4d643614ea0a8ea",
+      "insurance_type": "property",
+      "task_layer": "scenario",
+      "task_name": "property_risk_management",
+      "question_chars": 1266,
+      "question_lines": 14,
+      "question_sha256": "0bc253ba1404236f0c2cba7c4a8e6f44baa5873a2647f567dd35772e0d33af6d",
+      "labels_keys": [
+        "disaster",
+        "type",
+        "number",
+        "damage_number",
+        "claim_decision"
+      ],
+      "images": [
+        {
+          "path": "property/3/0.png",
+          "bytes": 1486159,
+          "sha256": "fbc771441561ced30418edaacc4ffdb1a8da65faeda751c4e86733ea4bf76dd7",
+          "asset_ref": "data/ins-mmbench/raw/property/3/0.png"
+        },
+        {
+          "path": "property/3/1.png",
+          "bytes": 1564838,
+          "sha256": "cc47a44cb65cc2309f5ba422549dea5deb4c9116ff06b809224c17302fae1ef3",
+          "asset_ref": "data/ins-mmbench/raw/property/3/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-property-0004",
+      "file": "raw/sources/raw-property-0004.json",
+      "sha256": "fa1b07ecff3b82a5d463bb76c607f02178b22f6949c6efd25191ee4daf7cdec5",
+      "split": "property",
+      "source_index": "4",
+      "record_id": "property_4",
+      "records_line": 5,
+      "record_line_sha256": "d40cabb02a0427d272349e65ac254e106e215e39fa94a642e6a8a0c3cde35409",
+      "insurance_type": "property",
+      "task_layer": "scenario",
+      "task_name": "property_risk_management",
+      "question_chars": 1266,
+      "question_lines": 14,
+      "question_sha256": "0bc253ba1404236f0c2cba7c4a8e6f44baa5873a2647f567dd35772e0d33af6d",
+      "labels_keys": [
+        "disaster",
+        "type",
+        "number",
+        "damage_number",
+        "claim_decision"
+      ],
+      "images": [
+        {
+          "path": "property/4/0.png",
+          "bytes": 1561733,
+          "sha256": "057d6b049246c1e509c8bdcaba5dad12c58d3c7d8a3101f62e67b9aa102c7007",
+          "asset_ref": "data/ins-mmbench/raw/property/4/0.png"
+        },
+        {
+          "path": "property/4/1.png",
+          "bytes": 1685750,
+          "sha256": "92549df333e168afb1e53dd3699cf468290814ff52d30ac84bc42006995d332d",
+          "asset_ref": "data/ins-mmbench/raw/property/4/1.png"
+        }
+      ]
+    },
+    {
+      "raw_id": "raw-property-0005",
+      "file": "raw/sources/raw-property-0005.json",
+      "sha256": "fa7a52e2e6f0aa517eec9302b13d2d7aba8b798b7508667fd28a641c8938968d",
+      "split": "property",
+      "source_index": "5",
+      "record_id": "property_5",
+      "records_line": 6,
+      "record_line_sha256": "0a39893b7676e7561f52a2073b142e0abd1715bd4a574f2aa5c99130f7340739",
+      "insurance_type": "property",
+      "task_layer": "scenario",
+      "task_name": "property_risk_management",
+      "question_chars": 1266,
+      "question_lines": 14,
+      "question_sha256": "0bc253ba1404236f0c2cba7c4a8e6f44baa5873a2647f567dd35772e0d33af6d",
+      "labels_keys": [
+        "disaster",
+        "type",
+        "number",
+        "damage_number",
+        "claim_decision"
+      ],
+      "images": [
+        {
+          "path": "property/5/0.png",
+          "bytes": 1462925,
+          "sha256": "4e886c01489306e9a8ad78112295968e92ee50f48e417f4b47509f5c929be530",
+          "asset_ref": "data/ins-mmbench/raw/property/5/0.png"
+        },
+        {
+          "path": "property/5/1.png",
+          "bytes": 1629540,
+          "sha256": "342ea23dca12fdba0bd0c1f1d88b1bddb185dff521287ab63784a2c1dfd0ce98",
+          "asset_ref": "data/ins-mmbench/raw/property/5/1.png"
+        }
+      ]
+    }
+  ]
+}

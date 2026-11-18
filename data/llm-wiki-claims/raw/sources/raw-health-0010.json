@@ -1,0 +1,94 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-health-0010",
+  "unit": {
+    "unit_id": "raw-health-0010",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 35
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "health",
+    "source_file": "multi_step_health.tsv",
+    "source_index": "10",
+    "record_id": "health_10",
+    "records_path": "data/ins-mmbench/raw/health/records.jsonl",
+    "records_line": 11,
+    "record_line_sha256": "7edced748a8c9164c5145673317de6024ad1f6fedc1fe88e2d94abe42fb9f299"
+  },
+  "sample": {
+    "insurance_type": "health",
+    "task_layer": "scenario",
+    "task_name": "health_risk_assessment",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in health insurance underwriting. Here is X-ray images and its associated radiology report.\nreport: The trachea is midline. The cardiomediastinal silhouette is normal. The lungs are clear, without evidence of acute infiltrate or effusion. There is no pneumothorax. The visualized bony structures reveal no acute abnormalities. Lateral view reveals degenerative changes of the thoracic spine.\nBased on the visual and textual information provided, please perform a step-by-step evaluation as follows:\n1. Scan Region: Determine the scanned region in the X-ray image.\n2. Scan Result Match: Determine whether the scan result (findings on the image) matches the findings described in the report (Yes/No). \n3. Health Risk Severity: Assess the overall health risk based on the X-ray image and report. Classify the risk as Low, Moderate, or High. \n4. Underwriting Evaluation: Based on your evaluation, decide the appropriate underwriting outcome (Declined, Standard, or Higher Premium). Provide a brief explanation.\n\nPlease strictly output in the following format:\n1. Scan Region: <Scan Region>\n2. Scan Result Match: Yes/No.\n3. Health Risk Severity: Low/Moderate/High.\n4. Underwriting Evaluation: Declined/Standard/Higher Premium. Reason: <Reason>",
+      "chars": 1256,
+      "lines": 13,
+      "sha256": "df0cef6b01c47f4e309b4c26d2f32c326c47a6d82df685416e90385380372116"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "part": "chest",
+    "original_report": "The trachea is midline. The cardiomediastinal silhouette is normal. The lungs are clear, without evidence of acute infiltrate or effusion. There is no pneumothorax. The visualized bony structures reveal no acute abnormalities. Lateral view reveals degenerative changes of the thoracic spine.",
+    "adjusted_report": "The trachea is midline. The cardiomediastinal silhouette is normal. The lungs are clear, without evidence of acute infiltrate or effusion. There is no pneumothorax. The visualized bony structures reveal no acute abnormalities. Lateral view reveals degenerative changes of the thoracic spine.",
+    "match": "yes",
+    "risk_level": "mild risk",
+    "underwriting_decision": "Higher Premium"
+  },
+  "images": [
+    {
+      "path": "health/10/0.png",
+      "bytes": 193584,
+      "sha256": "603b4e36a094d8418ebd2a87c9a8fbb9ea87bc1edae3ddb6aca8585e95cbbc4e",
+      "asset_ref": "data/ins-mmbench/raw/health/10/0.png",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "health/10/1.png",
+      "bytes": 176562,
+      "sha256": "aba243545f801afd311722ebe55625b651cace364e2ea5581f250ef20a4e9e05",
+      "asset_ref": "data/ins-mmbench/raw/health/10/1.png",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 13,
+      "char_start": 0,
+      "char_end": 1256
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.part",
+        "labels.original_report",
+        "labels.adjusted_report",
+        "labels.match",
+        "labels.risk_level",
+        "labels.underwriting_decision"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/health/10/0.png",
+        "data/ins-mmbench/raw/health/10/1.png"
+      ]
+    }
+  }
+}

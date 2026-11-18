@@ -1,0 +1,94 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-health-0003",
+  "unit": {
+    "unit_id": "raw-health-0003",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 28
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "health",
+    "source_file": "multi_step_health.tsv",
+    "source_index": "3",
+    "record_id": "health_3",
+    "records_path": "data/ins-mmbench/raw/health/records.jsonl",
+    "records_line": 4,
+    "record_line_sha256": "8209adb72a54b2eeaa71d5279a07ac3a5b30cf471203dda8605ce3ee8739ca83"
+  },
+  "sample": {
+    "insurance_type": "health",
+    "task_layer": "scenario",
+    "task_name": "health_risk_assessment",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in health insurance underwriting. Here is X-ray images and its associated radiology report.\nreport: The heart size is within normal limits. Prominent right paratracheal soft tissues XXXX representing adenopathy. No focal airspace consolidation, pleural effusions or pneumothorax. No acute bony abnormalities.\nBased on the visual and textual information provided, please perform a step-by-step evaluation as follows:\n1. Scan Region: Determine the scanned region in the X-ray image.\n2. Scan Result Match: Determine whether the scan result (findings on the image) matches the findings described in the report (Yes/No). \n3. Health Risk Severity: Assess the overall health risk based on the X-ray image and report. Classify the risk as Low, Moderate, or High. \n4. Underwriting Evaluation: Based on your evaluation, decide the appropriate underwriting outcome (Declined, Standard, or Higher Premium). Provide a brief explanation.\n\nPlease strictly output in the following format:\n1. Scan Region: <Scan Region>\n2. Scan Result Match: Yes/No.\n3. Health Risk Severity: Low/Moderate/High.\n4. Underwriting Evaluation: Declined/Standard/Higher Premium. Reason: <Reason>",
+      "chars": 1173,
+      "lines": 13,
+      "sha256": "2b96c47d7ddfc2b92aa067c162ebcdb979d2cc4f0db12705d9fb39ddb854d29c"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "part": "chest",
+    "original_report": "The heart size is within normal limits. Prominent right paratracheal soft tissues XXXX representing adenopathy. No focal airspace consolidation, pleural effusions or pneumothorax. No acute bony abnormalities.",
+    "adjusted_report": "The heart size is within normal limits. Prominent right paratracheal soft tissues XXXX representing adenopathy. No focal airspace consolidation, pleural effusions or pneumothorax. No acute bony abnormalities.",
+    "match": "yes",
+    "risk_level": "mild risk",
+    "underwriting_decision": "Higher Premium"
+  },
+  "images": [
+    {
+      "path": "health/3/0.png",
+      "bytes": 196199,
+      "sha256": "2beaa9a408c22b5a3b736b85ab54ebb7e72e4a6c1aa643e5f4d95455b3de6927",
+      "asset_ref": "data/ins-mmbench/raw/health/3/0.png",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "health/3/1.png",
+      "bytes": 189560,
+      "sha256": "baeaf0fb94e697a4c86edff083a072a729adef2147fd59d635f61d776a07f5ec",
+      "asset_ref": "data/ins-mmbench/raw/health/3/1.png",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 13,
+      "char_start": 0,
+      "char_end": 1173
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.part",
+        "labels.original_report",
+        "labels.adjusted_report",
+        "labels.match",
+        "labels.risk_level",
+        "labels.underwriting_decision"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/health/3/0.png",
+        "data/ins-mmbench/raw/health/3/1.png"
+      ]
+    }
+  }
+}

@@ -15,7 +15,13 @@ requires-python = ">=3.12"
 line-length = 100
 target-version = "py312"
 # 只检查项目代码；评测报告、轨迹、venv 不参与
-extend-exclude = [".venv", "traces", "wiki", "synthetic", "eval/report-*.md"]
+# `docs/research/evidence/` 是**第三方官方文档快照 + 证据探针**（20 份 .mdx、graph.py、
+# PyPI JSON、probe 脚本），sha256 登记在 evidence/MANIFEST.md；对本仓 lint 它们没有意义，
+# 且改一个字符就会让证据链对不上。故整目录排除（决策 A，见 docs/log/step-f5-ruff.md）。
+extend-exclude = [
+    ".venv", "traces", "wiki", "synthetic", "eval/report-*.md",
+    "docs/research/evidence",
+]
 
 [tool.ruff.lint]
 # E/F：pycodestyle/pyflakes 基础；I：import 排序；B：bugbear；UP：pyupgrade

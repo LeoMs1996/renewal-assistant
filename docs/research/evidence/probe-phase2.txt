@@ -1,0 +1,4 @@
+phase2 (fresh process) recovered next: ('review',)
+phase2 recovered state: {"claim_id": "C1", "policy_no": "P-1", "evidence_summary": "crash report + photos", "trace": ["intake"]}
+phase2 final state: {"claim_id": "C1", "policy_no": "P-1", "evidence_summary": "crash report + photos", "approved": true, "paid": true, "trace": ["intake", "review", "pay"]}
+phase2 intake ran again? ['intake', 'review', 'pay']

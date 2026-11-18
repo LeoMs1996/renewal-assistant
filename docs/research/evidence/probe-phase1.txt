@@ -1,0 +1,5 @@
+phase1 interrupts: [('Interrupt', '73ce11e00b61a70604ff73e7e7981e62', {'question': 'Approve claim payout?', 'claim_id': 'C1', 'evidence_summary': 'crash report + photos'})]
+phase1 next: ('review',)
+phase1 state: {"claim_id": "C1", "policy_no": "P-1", "evidence_summary": "crash report + photos", "trace": ["intake"]}
+phase1 checkpoint_id: 1f1e29a7-7ff3-6ad8-8001-0de7938e157f
+DB size: 4096

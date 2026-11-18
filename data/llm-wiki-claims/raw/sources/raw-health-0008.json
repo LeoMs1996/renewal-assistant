@@ -1,0 +1,94 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-health-0008",
+  "unit": {
+    "unit_id": "raw-health-0008",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 33
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "health",
+    "source_file": "multi_step_health.tsv",
+    "source_index": "8",
+    "record_id": "health_8",
+    "records_path": "data/ins-mmbench/raw/health/records.jsonl",
+    "records_line": 9,
+    "record_line_sha256": "52b7dc26c504a397c6202c67dc338f0091de6549d4b65164d7c936b3c31e836c"
+  },
+  "sample": {
+    "insurance_type": "health",
+    "task_layer": "scenario",
+    "task_name": "health_risk_assessment",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in health insurance underwriting. Here is X-ray images and its associated radiology report.\nreport: The lungs are clear. There is no pleural effusion or pneumothorax. There has been a XXXX XXXX sternotomy. The heart is not enlarged. Some atherosclerotic changes of the aorta are seen. The skeletal structures are normal.\nBased on the visual and textual information provided, please perform a step-by-step evaluation as follows:\n1. Scan Region: Determine the scanned region in the X-ray image.\n2. Scan Result Match: Determine whether the scan result (findings on the image) matches the findings described in the report (Yes/No). \n3. Health Risk Severity: Assess the overall health risk based on the X-ray image and report. Classify the risk as Low, Moderate, or High. \n4. Underwriting Evaluation: Based on your evaluation, decide the appropriate underwriting outcome (Declined, Standard, or Higher Premium). Provide a brief explanation.\n\nPlease strictly output in the following format:\n1. Scan Region: <Scan Region>\n2. Scan Result Match: Yes/No.\n3. Health Risk Severity: Low/Moderate/High.\n4. Underwriting Evaluation: Declined/Standard/Higher Premium. Reason: <Reason>",
+      "chars": 1185,
+      "lines": 13,
+      "sha256": "66d7651403db4ebf45b153fe1bf2b4ed9217e357dc50389ecbfa13debf922d92"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "part": "chest",
+    "original_report": "The lungs are clear. There is no pleural effusion or pneumothorax. There has been a XXXX XXXX sternotomy. The heart is not enlarged. Some atherosclerotic changes of the aorta are seen. The skeletal structures are normal.",
+    "adjusted_report": "The lungs are clear. There is no pleural effusion or pneumothorax. There has been a XXXX XXXX sternotomy. The heart is not enlarged. Some atherosclerotic changes of the aorta are seen. The skeletal structures are normal.",
+    "match": "yes",
+    "risk_level": "mild risk",
+    "underwriting_decision": "Higher Premium"
+  },
+  "images": [
+    {
+      "path": "health/8/0.png",
+      "bytes": 149397,
+      "sha256": "6e56684ce0dec615e997418ad5fa129d4a3555f8b215558a74ab87cf0c82bb6b",
+      "asset_ref": "data/ins-mmbench/raw/health/8/0.png",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "health/8/1.png",
+      "bytes": 192749,
+      "sha256": "45f7e2a65d46e37be648a339acbd16fadd76a556fab2e4f1355043802ec54238",
+      "asset_ref": "data/ins-mmbench/raw/health/8/1.png",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 13,
+      "char_start": 0,
+      "char_end": 1185
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.part",
+        "labels.original_report",
+        "labels.adjusted_report",
+        "labels.match",
+        "labels.risk_level",
+        "labels.underwriting_decision"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/health/8/0.png",
+        "data/ins-mmbench/raw/health/8/1.png"
+      ]
+    }
+  }
+}

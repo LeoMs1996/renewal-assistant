@@ -1,0 +1,4 @@
+durability='sync': accepted, interrupts=True
+durability='async': accepted, interrupts=True
+durability='exit': accepted, interrupts=True
+durability='bogus': accepted, interrupts=True

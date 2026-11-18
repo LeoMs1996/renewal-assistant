@@ -1,0 +1,94 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-health-0011",
+  "unit": {
+    "unit_id": "raw-health-0011",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 36
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "health",
+    "source_file": "multi_step_health.tsv",
+    "source_index": "11",
+    "record_id": "health_11",
+    "records_path": "data/ins-mmbench/raw/health/records.jsonl",
+    "records_line": 12,
+    "record_line_sha256": "a479056f78eed937b7a28a54fbb464eb09463910c9ddbd9363f5b1cf21110ce7"
+  },
+  "sample": {
+    "insurance_type": "health",
+    "task_layer": "scenario",
+    "task_name": "health_risk_assessment",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in health insurance underwriting. Here is X-ray images and its associated radiology report.\nreport: Frontal and lateral views demonstrate the cardiomediastinal silhouette to be within normal limits. There is normal distribution of the pulmonary vascularity. The lungs are clear. No effusion, consolidation, or pneumothorax.\nBased on the visual and textual information provided, please perform a step-by-step evaluation as follows:\n1. Scan Region: Determine the scanned region in the X-ray image.\n2. Scan Result Match: Determine whether the scan result (findings on the image) matches the findings described in the report (Yes/No). \n3. Health Risk Severity: Assess the overall health risk based on the X-ray image and report. Classify the risk as Low, Moderate, or High. \n4. Underwriting Evaluation: Based on your evaluation, decide the appropriate underwriting outcome (Declined, Standard, or Higher Premium). Provide a brief explanation.\n\nPlease strictly output in the following format:\n1. Scan Region: <Scan Region>\n2. Scan Result Match: Yes/No.\n3. Health Risk Severity: Low/Moderate/High.\n4. Underwriting Evaluation: Declined/Standard/Higher Premium. Reason: <Reason>",
+      "chars": 1188,
+      "lines": 13,
+      "sha256": "308bdee16a120b09180a2644fbc1843d4d4dbb0a239645656e794a1afb2c7847"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "part": "chest",
+    "original_report": "Frontal and lateral views demonstrate the cardiomediastinal silhouette to be within normal limits. There is normal distribution of the pulmonary vascularity. The lungs are clear. No effusion, consolidation, or pneumothorax.",
+    "adjusted_report": "Frontal and lateral views demonstrate the cardiomediastinal silhouette to be within normal limits. There is normal distribution of the pulmonary vascularity. The lungs are clear. No effusion, consolidation, or pneumothorax.",
+    "match": "yes",
+    "risk_level": "no risk",
+    "underwriting_decision": "Standard"
+  },
+  "images": [
+    {
+      "path": "health/11/0.png",
+      "bytes": 120842,
+      "sha256": "c8e4c15500332fcf2020997ac523f8845ae44e936329127f8519ceb1450908af",
+      "asset_ref": "data/ins-mmbench/raw/health/11/0.png",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "health/11/1.png",
+      "bytes": 158132,
+      "sha256": "fd076c1018416386359af11fdde1f4504c1fb76ac1a5c890ef68e55a29469954",
+      "asset_ref": "data/ins-mmbench/raw/health/11/1.png",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 13,
+      "char_start": 0,
+      "char_end": 1188
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.part",
+        "labels.original_report",
+        "labels.adjusted_report",
+        "labels.match",
+        "labels.risk_level",
+        "labels.underwriting_decision"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/health/11/0.png",
+        "data/ins-mmbench/raw/health/11/1.png"
+      ]
+    }
+  }
+}

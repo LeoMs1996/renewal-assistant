@@ -1,0 +1,92 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-property-0003",
+  "unit": {
+    "unit_id": "raw-property-0003",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 52
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "property",
+    "source_file": "multi_step_property.tsv",
+    "source_index": "3",
+    "record_id": "property_3",
+    "records_path": "data/ins-mmbench/raw/property/records.jsonl",
+    "records_line": 4,
+    "record_line_sha256": "21dd9f2928a1252bfbf0a442eeb8da6df4552417ef0341bfd4d643614ea0a8ea"
+  },
+  "sample": {
+    "insurance_type": "property",
+    "task_layer": "scenario",
+    "task_name": "property_risk_management",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in property insurance assessment. Here are two satellite images of the same area. Based on the visual information provided by the images, please perform a step-by-step evaluation of the property damage and make an insurance claim decision.\nPlease follow these steps:\n1. Determine whether a disaster occurred: Analyze the before and after images to decide if a disaster has taken place (Yes/No).\n2. Identify the disaster type: If a disaster is detected, specify the type (e.g., flood, earthquake, hurricane, fire, tsunami, volcano etc.).\n3. Count the number of houses: Based on the satellite images, provide an concrete count of the houses.\n4. Estimate the number of damaged houses: Based on the changes observed in the satellite images, provide an concrete count of the houses that have suffered damage.\n5. Insurance Claim Decision: Based on your evaluation, decide the appropriate claim decision (No compensation, Partial compensation, or Full compensation). Provide a short and brief explanation.\n\nPlease strictly output in this format:\n1. Disaster Occurred: Yes/No\n2. Disaster Type: <type>\n3. House Count: <number>\n4. Damaged House Count: <number>\n5. Insurance Decision: <No Compensation/Partial Compensation/Full Compensation>. Reason: <Reason>",
+      "chars": 1266,
+      "lines": 14,
+      "sha256": "0bc253ba1404236f0c2cba7c4a8e6f44baa5873a2647f567dd35772e0d33af6d"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "disaster": "yes",
+    "type": "wildfire",
+    "number": "37",
+    "damage_number": "1",
+    "claim_decision": "Partial compensation"
+  },
+  "images": [
+    {
+      "path": "property/3/0.png",
+      "bytes": 1486159,
+      "sha256": "fbc771441561ced30418edaacc4ffdb1a8da65faeda751c4e86733ea4bf76dd7",
+      "asset_ref": "data/ins-mmbench/raw/property/3/0.png",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "property/3/1.png",
+      "bytes": 1564838,
+      "sha256": "cc47a44cb65cc2309f5ba422549dea5deb4c9116ff06b809224c17302fae1ef3",
+      "asset_ref": "data/ins-mmbench/raw/property/3/1.png",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 14,
+      "char_start": 0,
+      "char_end": 1266
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.disaster",
+        "labels.type",
+        "labels.number",
+        "labels.damage_number",
+        "labels.claim_decision"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/property/3/0.png",
+        "data/ins-mmbench/raw/property/3/1.png"
+      ]
+    }
+  }
+}

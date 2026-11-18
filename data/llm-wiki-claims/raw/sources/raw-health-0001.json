@@ -1,0 +1,94 @@
+{
+  "schema_version": "d2-raw-1.0",
+  "raw_id": "raw-health-0001",
+  "unit": {
+    "unit_id": "raw-health-0001",
+    "kind": "record",
+    "sub_units": [
+      "question",
+      "labels",
+      "images"
+    ],
+    "ingest_order": 26
+  },
+  "source": {
+    "dataset": "FDU-INS/INS-MMBench",
+    "revision": "b77ea65c18c61108a32b811ca344308941ff8046",
+    "license": "apache-2.0",
+    "split": "health",
+    "source_file": "multi_step_health.tsv",
+    "source_index": "1",
+    "record_id": "health_1",
+    "records_path": "data/ins-mmbench/raw/health/records.jsonl",
+    "records_line": 2,
+    "record_line_sha256": "6bd11ddd528a12414fd1fb13f9e4c5c579facdf7cfdca3503cedf8c7407b2cb7"
+  },
+  "sample": {
+    "insurance_type": "health",
+    "task_layer": "scenario",
+    "task_name": "health_risk_assessment",
+    "meta_task": null
+  },
+  "content": {
+    "question": {
+      "text": "You are an expert in health insurance underwriting. Here is X-ray images and its associated radiology report.\nreport: The heart size is upper limits of normal. Mediastinal contour appears normal and pulmonary vascularity is within normal limits. Otherwise, no focal consolidation, large pleural effusion, or pneumothorax. The visualized osseous structures appear intact.\nBased on the visual and textual information provided, please perform a step-by-step evaluation as follows:\n1. Scan Region: Determine the scanned region in the X-ray image.\n2. Scan Result Match: Determine whether the scan result (findings on the image) matches the findings described in the report (Yes/No). \n3. Health Risk Severity: Assess the overall health risk based on the X-ray image and report. Classify the risk as Low, Moderate, or High. \n4. Underwriting Evaluation: Based on your evaluation, decide the appropriate underwriting outcome (Declined, Standard, or Higher Premium). Provide a brief explanation.\n\nPlease strictly output in the following format:\n1. Scan Region: <Scan Region>\n2. Scan Result Match: Yes/No.\n3. Health Risk Severity: Low/Moderate/High.\n4. Underwriting Evaluation: Declined/Standard/Higher Premium. Reason: <Reason>",
+      "chars": 1217,
+      "lines": 13,
+      "sha256": "b8258006198547216072cc0e99f7c615b74fc3c6900778d938609f743cd954a2"
+    },
+    "options": null,
+    "answer": null
+  },
+  "answer_status": "absent_in_source",
+  "labels": {
+    "part": "chest",
+    "original_report": "The heart size is upper limits of normal. Mediastinal contour appears normal and pulmonary vascularity is within normal limits. Otherwise, no focal consolidation, large pleural effusion, or pneumothorax. The visualized osseous structures appear intact.",
+    "adjusted_report": "The heart size is upper limits of normal. Mediastinal contour appears normal and pulmonary vascularity is within normal limits. Otherwise, no focal consolidation, large pleural effusion, or pneumothorax. The visualized osseous structures appear intact.",
+    "match": "yes",
+    "risk_level": "mild risk",
+    "underwriting_decision": "Higher Premium"
+  },
+  "images": [
+    {
+      "path": "health/1/0.png",
+      "bytes": 115277,
+      "sha256": "311bad1ff0c154240903c4378dbf2500db5d109ea24432a410692ce0765aa8e5",
+      "asset_ref": "data/ins-mmbench/raw/health/1/0.png",
+      "asset_sha256_verified": true
+    },
+    {
+      "path": "health/1/1.png",
+      "bytes": 225001,
+      "sha256": "27c38990301766e9ec522b1fdb0b9e9bd59d02c2c929bc6c394ab74a82efb980",
+      "asset_ref": "data/ins-mmbench/raw/health/1/1.png",
+      "asset_sha256_verified": true
+    }
+  ],
+  "spans": {
+    "question": {
+      "scheme": "line",
+      "start_line": 1,
+      "end_line": 13,
+      "char_start": 0,
+      "char_end": 1217
+    },
+    "labels": {
+      "scheme": "json_path",
+      "paths": [
+        "labels.part",
+        "labels.original_report",
+        "labels.adjusted_report",
+        "labels.match",
+        "labels.risk_level",
+        "labels.underwriting_decision"
+      ]
+    },
+    "images": {
+      "scheme": "asset",
+      "refs": [
+        "data/ins-mmbench/raw/health/1/0.png",
+        "data/ins-mmbench/raw/health/1/1.png"
+      ]
+    }
+  }
+}
