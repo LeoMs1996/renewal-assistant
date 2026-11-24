@@ -74,3 +74,13 @@ docs/research/evidence/**/*.html.txt
 # 边界：claims/ 下的源码、SPEC、测试**必须入库**，所以用子路径 ^claims/data/ 而非 ^claims/。
 claims/data/**
 !claims/data/README.md
+
+# ---------- 2026-11-24 作业 5 收口 ----------
+# 打包产物（deliverables/ 下的分项 zip）可由源文件随时重新生成，入库只会重复 12MB；
+# IDE 配置与本地日志与交付无关。
+deliverables/
+*.zip
+.idea/
+.vscode/
+*.log
+.venv-*/
