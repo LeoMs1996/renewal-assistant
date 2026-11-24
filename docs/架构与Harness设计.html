@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>架构与 Harness 设计 — 车险续保助手</title>
+<style>
+:root{--pri:#1f3a5f;--pri-soft:#e8eef6;--line:#d9e1ea;--soft:#f5f8fb;--muted:#5b6b7c;--code-bg:#eef2f7;--gap-bg:#fdf3e1;--gap-bd:#e0a53a;--gap-ink:#8a4b00;--ok:#2f6b4f;--ok-bg:#eef6f1}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;color:#1d2b3a;background:#fff;line-height:1.65;font-size:15px}
+/* 顶部固定锚点导航 */
+#toc{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);border-bottom:1px solid var(--line)}
+#toc .toc-inner{max-width:1180px;margin:0 auto;padding:0 28px;display:flex;flex-wrap:wrap;align-items:center;gap:2px 14px;min-height:46px}
+#toc .toc-brand{font-weight:700;color:var(--pri);margin-right:8px;font-size:.95rem}
+#toc a{color:var(--muted);text-decoration:none;font-size:.86rem;padding:6px 2px;border-bottom:2px solid transparent;white-space:nowrap}
+#toc a:hover{color:var(--pri)}
+#toc a.active{color:var(--pri);border-bottom-color:var(--pri);font-weight:600}
+/* 标题区 */
+.hero{max-width:1180px;margin:0 auto;padding:36px 28px 8px}
+.hero h1{margin:0 0 6px;font-size:1.9rem;color:var(--pri);letter-spacing:.5px}
+.hero .sub{margin:0 0 14px;color:var(--muted);font-size:1rem}
+.hero .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0}
+.hero .meta span{font-size:.82rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px;background:var(--soft)}
+/* 正文 */
+main{max-width:1180px;margin:0 auto;padding:0 28px 60px}
+section{padding:26px 0 10px;border-top:1px solid var(--line);scroll-margin-top:60px}
+section:first-of-type{border-top:0}
+h2{margin:0 0 14px;font-size:1.35rem;color:var(--pri);display:flex;align-items:center;gap:10px}
+h2 .num{display:inline-block;min-width:30px;height:30px;line-height:30px;text-align:center;background:var(--pri);color:#fff;border-radius:6px;font-size:.9rem;font-weight:700}
+h3{margin:22px 0 8px;font-size:1.05rem;color:var(--pri)}
+p{margin:0 0 10px}
+ul,ol{margin:0 0 10px;padding-left:22px}
+li{margin:4px 0}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:.86em;background:var(--code-bg);color:#243a5e;padding:1px 5px;border-radius:4px;word-break:break-all}
+.gap{display:inline;background:var(--gap-bg);color:var(--gap-ink);border:1px solid var(--gap-bd);border-radius:4px;padding:0 5px;font-size:.8em;font-weight:700;line-height:1.5;white-space:nowrap;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+/* 说明块 */
+.note{border-left:4px solid var(--pri);background:var(--soft);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.93rem}
+.note p:last-child,.note ul:last-child{margin-bottom:0}
+.note.warn{border-left-color:var(--gap-bd);background:var(--gap-bg)}
+.note.ok{border-left-color:var(--ok);background:var(--ok-bg)}
+.note ul{margin:6px 0 0;padding-left:20px}
+.note li{margin:4px 0}
+/* 纠偏认知 */
+ol.fix{margin:12px 0 0;padding:0;list-style:none}
+ol.fix li{position:relative;padding:12px 14px 12px 76px;margin:10px 0;border:1px solid var(--line);border-radius:8px;background:#fff}
+ol.fix li .fx{position:absolute;left:14px;top:13px;font-weight:700;color:var(--pri);font-size:.85rem}
+/* 表格 */
+.tw{overflow-x:auto;margin:10px 0 16px}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th{background:var(--pri-soft);color:var(--pri);text-align:left;padding:8px 10px;border-bottom:2px solid var(--line);font-weight:700;white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(even):not(.group) td{background:var(--soft)}
+tr.group td{background:#fff;color:var(--pri);font-weight:700;padding-top:14px}
+td:first-child{min-width:150px}
+table.min td:first-child{min-width:110px}
+/* 分层框图 */
+.arch{display:grid;grid-template-columns:minmax(0,1fr) 236px;gap:14px;margin:14px 0 18px}
+.arch .col{display:flex;flex-direction:column}
+.flow{text-align:center;color:var(--pri);font-size:1.1rem;line-height:1.2;padding:2px 0}
+.layer{border:1px solid var(--line);border-radius:8px;background:#fff;box-shadow:0 1px 2px rgba(36,58,72,.05)}
+.layer>h4,.band>h4{margin:0;padding:8px 12px;font-size:.88rem;color:var(--pri);background:var(--pri-soft);border-radius:7px 7px 0 0}
+.band>h4{background:transparent}
+.lg{display:grid;gap:10px;padding:12px}
+.lg.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.lg.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.lg.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.box{border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fbfcfe;font-size:.82rem}
+.box b{display:block;font-size:.9rem;color:#1d2b3a;margin-bottom:2px}
+.box .ls{display:block;color:var(--muted);font-size:.76rem;margin-bottom:4px}
+.box .loc{display:block;margin:0 0 4px;line-height:1.7}
+.box small{display:block;color:var(--muted);line-height:1.45}
+.band{border:1px dashed var(--pri);border-radius:8px;background:var(--pri-soft);align-self:start}
+.band .lg{padding:10px 12px 12px;gap:8px}
+.band .box{background:#fff}
+.loop{margin:0 12px 12px;padding:6px 10px;border:1px dashed var(--gap-bd);border-radius:6px;background:var(--gap-bg);color:var(--gap-ink);font-size:.78rem}
+.legend{font-size:.8rem;color:var(--muted);margin:6px 0 0}
+@media (max-width:900px){.arch{grid-template-columns:1fr}.lg.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.lg.g3,.lg.g2{grid-template-columns:1fr}ol.fix li{padding-left:14px}ol.fix li .fx{position:static;display:block}}
+/* 页脚 */
+footer{max-width:1180px;margin:0 auto;padding:18px 28px 40px;border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}
+footer p{margin:4px 0}
+/* 打印 */
+@media print{#toc{display:none}.hero{padding-top:0}main{padding:0}body{font-size:12px}.tw{overflow:visible}h2{break-after:avoid}table,.layer,.note,.box{break-inside:avoid}.arch{grid-template-columns:minmax(0,1fr) 190px}a{color:inherit;text-decoration:none}}
+</style>
+</head>
+<body>
+<nav id="toc" aria-label="目录">
+  <div class="toc-inner">
+    <span class="toc-brand">架构与 Harness 设计</span>
+    <a href="#s0">0 读法</a>
+    <a href="#s1">1 架构落点</a>
+    <a href="#s2">2 执行循环</a>
+    <a href="#s3">3 上下文·记忆·轨迹</a>
+    <a href="#s4">4 安全与平台面</a>
+    <a href="#s5">5 培训对照</a>
+    <a href="#s6">6 超出要求</a>
+    <a href="#s7">7 遗留与未核实</a>
+  </div>
+</nav>
+<header class="hero">
+  <h1>架构与 Harness 设计</h1>
+  <p class="sub">车险续保助手 · 作业 §02 架构图逐框落点 + Harness 执行循环（续保 / 理赔两套）</p>
+  <p class="meta">
+    <span>取证日期 2026-11-24</span>
+    <span>HEAD <code>a81780d</code></span>
+    <span>项目根 <code>renewal-assistant/</code></span>
+    <span>证据 <code>docs/_架构_parts/evidence-1.md</code>（68 行，§1–§2）· <code>docs/_架构_parts/evidence-2.md</code>（74 行，§3–§4）· <code>docs/_架构_parts/evidence-3.md</code>（§5–§6，主上下文实查）</span>
+    <span>作业原文 <code>../课后作业-车险续保助手.html</code> §02（第 140–219 行）</span>
+  </p>
+</header>
+<main>
+<!-- 各节由证据文件逐节渲染；本文件零外链，CSS/JS 全内联 -->
+<section id="s0">
+<h2><span class="num">0</span>读法声明与纠偏认知</h2>
+<div class="note">
+<p><b>读法。</b>本文所有「<code>文件:行</code>」落点均来自 2026-11-24 对 HEAD <code>a81780d</code> 的 <code>grep -n</code> 取证（证据表一、二），<b>本文作者未读任何项目代码</b>；作业侧复述来自作业原文 §02（第 140–219 行）。所有「未找到 / 未读 / 未查 / 不能断言」一律用 <span class="gap">未核实</span> 类标记原样保留，<b>不补全、不推断</b>。行号形如 <code>:1386</code> 者沿用证据原文，指同一文件内行号；表格中的「HTML 行」指 <code>../课后作业-车险续保助手.html</code> 的行号。</p>
+</div>
+<ol class="fix">
+<li><span class="fx">纠偏 ①</span><b>续保域没有 LangGraph <code>interrupt()</code>。</b>闸门 = <code>server/graph.py:1391</code> <code>add_edge("clarify", END)</code> 走到图终点后靠会话存储续接（配合 <code>:1159</code> await_confirm_node）；<code>interrupt(</code> / <code>Command(resume</code> 在 <code>server/</code> 零命中。理赔域在 <code>claims/</code> 使用原生 <code>interrupt()</code> / <code>Command(resume)</code>（<code>claims/graph.py:381</code> / <code>claims/graph.py:637</code>）。</li>
+<li><span class="fx">纠偏 ②</span><b><code>mcp_servers/</code> 只有 <code>quote_server.py</code>。</b>保单读取走 HTTP 路由 <code>server/app.py:296</code> <code>/policy/{owner_id}</code>；<b>mcp_servers/ 下无 policy server</b>（证据原文，目录内唯一 server 文件为报价）。</li>
+<li><span class="fx">纠偏 ③</span><b>递归上限两域硬编码 40。</b><code>server/app.py:223</code> <code>config={"recursion_limit": 40}</code>；<code>claims/graph.py:620</code> / <code>claims/graph.py:636</code> 同样硬编码。<code>RENEWAL_RECURSION_LIMIT</code> 虽在 <code>server/graph.py:65</code> 定义，但 <code>app.py</code> 中零命中 → 在 <code>/chat</code> 入口<span class="gap">疑未生效</span>（证据原文用「疑」）。</li>
+<li><span class="fx">纠偏 ④</span><b><code>server/context_assembly.py</code> 不存在。</b>grep 报 <code>No such file or directory</code>；上下文装配实际落在 <code>server/memory.py:663–821</code> 段（<code>build_context_package</code> <code>memory.py:768</code> 等）。</li>
+</ol>
+<div class="note ok"><p><b>证据缺口已补齐（2026-11-24）。</b>证据表二 <code>docs/_架构_parts/evidence-2.md</code> 只含 §3、§4；§5「培训材料七项要素 / 九大模块对照」与 §6「超出作业要求 + 遗留项」原先留空，现已由 <code>docs/_架构_parts/evidence-3.md</code>（主上下文 grep 实查）填入，<b>未核实</b>的格子仍保留 <span class="gap">待核</span> 标记，不编造。</p></div>
+</section>
+
+<section id="s1">
+<h2><span class="num">1</span>作业架构图 → 代码落点</h2>
+<p>作业原文 §02（第 140 行 <code>&lt;h2&gt;02 整体架构&lt;/h2&gt;</code>）要求：「系统由交互入口、Harness 控制层、能力层和数据服务组成，可观测与评测贯穿运行过程。<b>各模块需有对应实现，调用关系与实际执行流程保持一致。</b>」SVG 图 desc（第 145 行，原文）：「自上而下为入口层、Harness 控制层、能力层与数据层；Harness 内部由计划、执行、观察构成执行循环，可回到计划重新执行；右侧可观测与评测层贯穿每一次运行。」循环回边说明（第 185 行，原文）：「循环：未达成或出现新信息 → 回到「计划」重新执行；受步数上限与无进展退出约束」。</p>
+<p>代码拓扑锚点（证据 §1）：<code>server/graph.py:1373</code> <code>StateGraph(RenewalState)</code> → 1374–1383 共 11 个 <code>add_node</code> → 1385–1402 固定边 / 条件边 → <code>:1403</code> <code>builder.compile(checkpointer=checkpointer)</code>。下图按作业 SVG 的层与框排列；每框给出作业子说明（灰字）与证据落点，<span class="gap">标记</span>表示证据未核实。</p>
+<div class="arch">
+<div class="col">
+  <div class="layer">
+    <h4>入口层 · 车主交互（任选其一）</h4>
+    <div class="lg g3">
+      <div class="box"><b>Web / H5 对话</b><span class="loc"><code>server/app.py:62</code> <code>@app.get("/", include_in_schema=False)</code></span><small>根路由且不入 API 文档，惯例为返回页面；返回体 <span class="gap">未读</span></small></div>
+      <div class="box"><b>命令行对话</b><span class="loc"><code>scripts/demo_chat.py</code></span><small>脚本文件存在（仅 ls 命中，内容 <span class="gap">未读</span>）；驱动方式 <span class="gap">未在本次 grep 范围</span></small></div>
+      <div class="box"><b>API 服务 + 脚本</b><span class="loc"><code>server/app.py:176</code> /chat · <code>:296</code> /policy/{owner_id} · <code>:309</code> /trace/{trace_id} · <code>:322</code> /confirm · <code>:352</code> /health · <code>:367</code> /metrics</span><small>FastAPI 六条业务 / 运维路由，覆盖对话→保单→轨迹→确认→健康→指标</small></div>
+    </div>
+  </div>
+  <div class="flow">↓</div>
+  <div class="layer">
+    <h4>Harness 控制层 · 计划、执行循环与闸门</h4>
+    <div class="lg g4">
+      <div class="box"><b>计划与任务分解</b><span class="ls">解析需求 · 拆解步骤</span><span class="loc"><code>server/graph.py:1374</code> intake · <code>:1376</code> parse_needs · <code>:1377</code> clarify · 条件边 <code>:1386</code> <code>:1389</code></span><small>入口分流→解析需求→缺信息追问；<b>确定性节点路由</b>，非模型自主规划</small></div>
+      <div class="box"><b>上下文装配</b><span class="ls">原保单 · 条款 · 报价</span><span class="loc"><code>:1375</code> get_policy · <code>:1378</code> retrieve_terms · <code>:1379</code> quote</span><small>三个节点把材料装进 State；预算 / 压缩逻辑见 §3（<code>server/memory.py:663–821</code>）</small></div>
+      <div class="box"><b>执行与工具调用</b><span class="ls">MCP · 超时重试</span><span class="loc"><code>:1375</code> get_policy_node · <code>:1379</code> quote_node · <code>server/mcp_bridge.py</code> · <code>mcp_servers/quote_server.py</code></span><small>工具在节点内显式调用；后两者仅 ls 命中；「超时重试」落点见 §2「LLM 降级」行</small></div>
+      <div class="box"><b>观察与结果判定</b><span class="ls">达成 / 未达成</span><span class="loc"><code>:1380</code> compare · 条件边 <code>:1394</code> route_after_quote</span><small>比较两方案、判定预算是否达成，决定继续 / 等待 / 转人工</small></div>
+      <div class="box"><b>状态与检查点</b><span class="ls">需求版本 · 任务进度</span><span class="loc"><code>:1403</code> compile(checkpointer=checkpointer) · <code>server/sessions.py</code></span><small>LangGraph checkpointer + 会话存储双轨；thread_id 落点见 §2</small></div>
+      <div class="box"><b>失败与人工升级</b><span class="ls">超范围 · 缺依据</span><span class="loc"><code>:1383</code> fallback · <code>:1402</code> add_edge("fallback", END) · <code>:149</code> RIDE_HAILING_WORDS</span><small>超范围（网约车）/ 缺依据 → fallback → END 转人工</small></div>
+      <div class="box"><b>停止与确认闸门</b><span class="ls">只认当前有效方案</span><span class="loc"><code>:1381</code> await_confirm · <code>:1382</code> confirm · <code>:1397</code> add_edge("compare","await_confirm") · 条件边 <code>:1398</code> <code>:1400</code> · <code>:143</code> CONFIRM_WORDS</span><small>确认只能经 confirm 节点，校验有效方案后才放行</small></div>
+      <div class="box"><b>循环与分支控制</b><span class="ls">继续 / 停止 / 转人工</span><span class="loc"><code>:1386</code> <code>:1389</code> <code>:1392</code> <code>:1394</code> <code>:1398</code> <code>:1400</code> 六条 add_conditional_edges · <code>:1391</code> add_edge("clarify", END)  # await_user 挂起</span><small>分支由 6 个 <code>route_after_*</code> 函数决定；「挂起」= 走到 END 后靠会话存储续接，<b>不是</b> LangGraph <code>interrupt()</code></small></div>
+    </div>
+    <div class="loop">作业循环回边（第 185 行）「未达成 / 新信息 → 回『计划』」：证据只给出 <code>server/graph.py:1391</code> clarify→END；固定边中无回到 intake 的边，跨轮由 /chat 每轮重新 invoke 承担；6 个 route_* 目标 <span class="gap">未读</span>，图内是否有回边 <span class="gap">不能断言</span></div>
+  </div>
+  <div class="flow">↓</div>
+  <div class="layer">
+    <h4>能力层 · 模型与工具（可替换）</h4>
+    <div class="lg g3">
+      <div class="box"><b>RAG 条款检索</b><span class="ls">片段 + 版本</span><span class="loc"><code>wiki/</code>（11 文件）· <code>server/wiki_search.py</code> · <code>server/graph.py:1378</code></span><small>annual-inspection / csx / deductible / dsx / index / jqx / log / rate-surcharge / README / ride-hailing / ywyw；检索算法 <span class="gap">未读</span></small></div>
+      <div class="box"><b>Skill 续保比较</b><span class="ls">组织比较步骤</span><span class="loc"><code>skills/renew_compare.md</code> · <code>server/graph.py:1380</code> compare</span><small>单一技能文件，由 compare 节点消费（仅 ls 命中）；加载方式 <span class="gap">未读</span></small></div>
+      <div class="box"><b>MCP 保单与报价</b><span class="ls">真实工具调用</span><span class="loc"><code>mcp_servers/quote_server.py</code>（目录内唯一 server 文件）· <code>server/mcp_bridge.py</code></span><small><b>只有报价 MCP server</b>；保单读取走 <code>server/app.py:296</code> HTTP 路由，<b>mcp_servers/ 下无 policy server</b></small></div>
+    </div>
+  </div>
+  <div class="flow">↓</div>
+  <div class="layer">
+    <h4>数据与外部服务 · 使用合成数据</h4>
+    <div class="lg g3">
+      <div class="box"><b>车主与原保单</b><span class="ls">身份已核验</span><span class="loc"><code>server/app.py:296</code> <code>@app.get("/policy/{owner_id}")</code> · <code>server/graph.py:1375</code></span><small>保单按 owner_id 经 HTTP 路由读取；合成数据文件 <span class="gap">未查</span></small></div>
+      <div class="box"><b>模拟报价服务</b><span class="ls">保费由服务计算</span><span class="loc"><code>mcp_servers/quote_server.py</code> · <code>server/graph.py:1379</code> quote_node</span><small>保费由报价服务计算，模型不编数</small></div>
+      <div class="box"><b>条款知识库</b><span class="ls">片段与版本管理</span><span class="loc"><code>wiki/</code>（含 <code>index.md</code>、<code>log.md</code>）</span><small>片段与版本由 wiki 目录管理；log.md 疑为版本日志，<span class="gap">未读</span></small></div>
+    </div>
+  </div>
+</div>
+<div class="band">
+  <h4>可观测 · 可评测 — 贯穿每一次运行</h4>
+  <div class="lg">
+    <div class="box"><b>执行轨迹 Trace</b><span class="ls">需求→报价→确认</span><span class="loc"><code>server/trace.py</code> · <code>server/app.py:309</code> /trace/{trace_id}</span><small>轨迹模块 + 按 trace_id 查询接口</small></div>
+    <div class="box"><b>日志与指标</b><span class="ls">版本 · 耗时 · 失败</span><span class="loc"><code>server/metrics.py</code> · <code>server/app.py:367</code> /metrics · <code>:352</code> /health</span><small>指标端点 + 健康检查</small></div>
+    <div class="box"><b>评测数据集</b><span class="ls">正常 + 边界样本</span><span class="loc"><code>eval/cases/</code> · <code>eval/baseline.json</code> · <code>eval/baseline-llm.json</code></span><small>固定样本目录 + 两份基线（ls 命中）</small></div>
+    <div class="box"><b>判定器</b><span class="ls">确定性断言 + 人工</span><span class="loc"><code>eval/dimensions.py</code> · <code>eval/lint_cases.py</code></span><small>评测维度与用例校验脚本（ls 命中，<span class="gap">未读</span>）</small></div>
+    <div class="box"><b>回归与对比</b><span class="ls">通过率 · 差异</span><span class="loc"><code>eval/report-*.md</code></span><small>多份按时间戳命名；每次评测落一份报告，可对比通过率</small></div>
+    <div class="box"><b>失败样本回流</b><span class="ls">持续补用例</span><span class="loc"><span class="gap">未找到</span></span><small>仅凭 eval/ 目录清单无法确认；<code>eval/cases/</code> 内容 <span class="gap">未查</span></small></div>
+  </div>
+</div>
+</div>
+<p class="legend">读图：实线框 = 作业图中的层；虚线框 = 作业图右侧贯穿的「可观测 · 可评测」带；灰字 = 作业 SVG 子说明；<span class="gap">标记</span> = 证据未核实。层间箭头按作业 SVG 自上而下的流向，不代表代码中的调用顺序。</p>
+
+<h3>1.1 证据 §1 全表：24 框逐条落点</h3>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>作业图中的框（HTML 行）</th><th>文件:行</th><th>一句话</th></tr></thead>
+<tbody>
+<tr class="group"><td colspan="4">入口层 · 车主交互（任选其一）</td></tr>
+<tr><td>1</td><td>Web / H5 对话（158）</td><td><code>server/app.py:62</code> <code>@app.get("/", include_in_schema=False)</code></td><td>根路由且不入 API 文档，惯例为返回页面；返回体 <span class="gap">未读</span></td></tr>
+<tr><td>2</td><td>命令行对话（159）</td><td><code>scripts/demo_chat.py</code>（仅 ls 命中，内容 <span class="gap">未读</span>）</td><td>脚本文件存在；驱动方式 <span class="gap">未在本次 grep 范围</span></td></tr>
+<tr><td>3</td><td>API 服务 + 脚本（160）</td><td><code>server/app.py:176</code> /chat、<code>:296</code> /policy/{owner_id}、<code>:309</code> /trace/{trace_id}、<code>:322</code> /confirm、<code>:352</code> /health、<code>:367</code> /metrics</td><td>FastAPI 六条业务 / 运维路由，覆盖对话→保单→轨迹→确认→健康→指标</td></tr>
+<tr class="group"><td colspan="4">Harness 控制层 · 计划、执行循环与闸门</td></tr>
+<tr><td>4</td><td>计划与任务分解（169）</td><td><code>server/graph.py:1374</code> intake、<code>:1376</code> parse_needs、<code>:1377</code> clarify；条件边 <code>:1386</code> <code>:1389</code></td><td>入口分流→解析需求→缺信息追问；是<b>确定性节点路由</b>，非模型自主规划</td></tr>
+<tr><td>5</td><td>上下文装配（170）</td><td><code>server/graph.py:1375</code> get_policy、<code>:1378</code> retrieve_terms、<code>:1379</code> quote</td><td>原保单、条款片段、报价三个节点把材料装进 State；预算 / 压缩逻辑不在本次 grep 范围（后由证据 §3 补：<code>server/memory.py:663–821</code>）</td></tr>
+<tr><td>6</td><td>执行与工具调用（MCP·超时重试）（171）</td><td><code>server/graph.py:1375</code> get_policy_node、<code>:1379</code> quote_node；<code>server/mcp_bridge.py</code>、<code>mcp_servers/quote_server.py</code>（均仅 ls 命中）</td><td>工具在节点内显式调用；「超时重试」落点见 §2「LLM 降级」行</td></tr>
+<tr><td>7</td><td>观察与结果判定（172）</td><td><code>server/graph.py:1380</code> compare；条件边 <code>:1394</code> route_after_quote</td><td>比较两方案、判定预算是否达成，决定继续 / 等待 / 转人工</td></tr>
+<tr><td>8</td><td>状态与检查点（173）</td><td><code>server/graph.py:1403</code> <code>compile(checkpointer=checkpointer)</code>；<code>server/sessions.py</code>（ls 命中）</td><td>LangGraph checkpointer + 会话存储双轨；thread_id 落点见 §2</td></tr>
+<tr><td>9</td><td>失败与人工升级（174）</td><td><code>server/graph.py:1383</code> fallback、<code>:1402</code> <code>add_edge("fallback", END)</code>、<code>:149</code> RIDE_HAILING_WORDS</td><td>超范围（网约车）/ 缺依据 → fallback → END 转人工</td></tr>
+<tr><td>10</td><td>停止与确认闸门（175）</td><td><code>server/graph.py:1381</code> await_confirm、<code>:1382</code> confirm、<code>:1397</code> <code>add_edge("compare","await_confirm")</code>、条件边 <code>:1398</code> <code>:1400</code>、<code>:143</code> CONFIRM_WORDS</td><td>确认只能经 confirm 节点，校验有效方案后才放行</td></tr>
+<tr><td>11</td><td>循环与分支控制（176）</td><td><code>server/graph.py:1386</code> <code>:1389</code> <code>:1392</code> <code>:1394</code> <code>:1398</code> <code>:1400</code> 六条 <code>add_conditional_edges</code>；<code>:1391</code> <code>add_edge("clarify", END)  # await_user 挂起</code></td><td>分支由 6 个 <code>route_after_*</code> 函数决定；「挂起」= 走到 END 后靠会话存储续接，<b>不是</b> LangGraph <code>interrupt()</code>（§1 第 3 条 grep 零命中）</td></tr>
+<tr><td>12</td><td>循环回边：未达成 / 新信息 → 回「计划」（185）</td><td><code>server/graph.py:1391</code> clarify→END；固定边中无回到 intake 的边</td><td>跨轮回到起点由 <code>/chat</code> 每轮重新 invoke 承担；6 个 <code>route_*</code> 目标 <span class="gap">未读</span>，<span class="gap">不能断言</span>图内是否有回边</td></tr>
+<tr class="group"><td colspan="4">能力层 · 模型与工具（可替换）</td></tr>
+<tr><td>13</td><td>RAG 条款检索（194）</td><td><code>wiki/</code> 11 文件（annual-inspection / csx / deductible / dsx / index / jqx / log / rate-surcharge / README / ride-hailing / ywyw）；<code>server/wiki_search.py</code>；<code>server/graph.py:1378</code></td><td>条款语料目录 + 检索模块 + retrieve_terms 节点；检索算法 <span class="gap">未读</span></td></tr>
+<tr><td>14</td><td>Skill 续保比较（195）</td><td><code>skills/renew_compare.md</code>（ls 命中）；<code>server/graph.py:1380</code> compare</td><td>单一技能文件，由 compare 节点消费；加载方式 <span class="gap">未读</span></td></tr>
+<tr><td>15</td><td>MCP 保单与报价（196）</td><td><code>mcp_servers/quote_server.py</code>（目录内<b>唯一</b> server 文件）；<code>server/mcp_bridge.py</code></td><td>只有报价 MCP server；保单读取走 <code>server/app.py:296</code> HTTP 路由，<b>mcp_servers/ 下无 policy server</b></td></tr>
+<tr class="group"><td colspan="4">数据与外部服务 · 使用合成数据</td></tr>
+<tr><td>16</td><td>车主与原保单（205）</td><td><code>server/app.py:296</code> <code>@app.get("/policy/{owner_id}")</code>；<code>server/graph.py:1375</code></td><td>保单按 owner_id 经 HTTP 路由读取；合成数据文件 <span class="gap">未查</span></td></tr>
+<tr><td>17</td><td>模拟报价服务（206）</td><td><code>mcp_servers/quote_server.py</code>；<code>server/graph.py:1379</code> quote_node</td><td>保费由报价服务计算，模型不编数</td></tr>
+<tr><td>18</td><td>条款知识库（207）</td><td><code>wiki/</code>（含 <code>index.md</code>、<code>log.md</code>）</td><td>片段与版本由 wiki 目录管理（log.md 疑为版本日志，<span class="gap">未读</span>）</td></tr>
+<tr class="group"><td colspan="4">可观测 · 可评测（贯穿每一次运行）</td></tr>
+<tr><td>19</td><td>执行轨迹 Trace（213）</td><td><code>server/trace.py</code>（ls 命中）；<code>server/app.py:309</code> /trace/{trace_id}</td><td>轨迹模块 + 按 trace_id 查询接口</td></tr>
+<tr><td>20</td><td>日志与指标（214）</td><td><code>server/metrics.py</code>（ls 命中）；<code>server/app.py:367</code> /metrics、<code>:352</code> /health</td><td>指标端点 + 健康检查</td></tr>
+<tr><td>21</td><td>评测数据集（215）</td><td><code>eval/cases/</code>、<code>eval/baseline.json</code>、<code>eval/baseline-llm.json</code>（ls 命中）</td><td>固定样本目录 + 两份基线</td></tr>
+<tr><td>22</td><td>判定器（216）</td><td><code>eval/dimensions.py</code>、<code>eval/lint_cases.py</code>（ls 命中，<span class="gap">未读</span>）</td><td>评测维度与用例校验脚本</td></tr>
+<tr><td>23</td><td>回归与对比（217）</td><td><code>eval/report-*.md</code>（多份按时间戳命名，ls 命中）</td><td>每次评测落一份报告，可对比通过率</td></tr>
+<tr><td>24</td><td>失败样本回流（218）</td><td><span class="gap">未找到</span></td><td>仅凭 eval/ 目录清单无法确认；<code>eval/cases/</code> 内容 <span class="gap">未查</span></td></tr>
+</tbody>
+</table></div>
+<div class="note"><p>证据 §1 第 3 条 grep（<code>interrupt\(</code> / <code>Command\(resume</code> 于 <code>server/</code>，排除 test）<b>返回 0 行</b>。含义：续保域没有 LangGraph 原生中断 / 恢复调用；「闸门」靠 <code>server/graph.py:1391</code> clarify→END + <code>await_confirm</code> 节点 + 会话存储实现。理赔域的中断 / 恢复调用在 <code>claims/</code>，见 §2。</p></div>
+</section>
+
+<section id="s2">
+<h2><span class="num">2</span>Harness 执行循环（两套）</h2>
+<div class="note warn">
+<p><b>取证说明（证据 §2 原文纪律）。</b></p>
+<ul>
+<li>规定 grep（<code>server/graph.py server/app.py server/llm.py</code>，<code>head -40</code>）打满 40 行且全是 graph.py（止于 1413），app.py / llm.py 被截断 → 证据作者已对两文件分别补跑同一模式（各 <code>head -25</code>，未截断）。</li>
+<li>§1 第 3 条在 <code>server/</code> 零命中，但理赔代码实际位于 <code>claims/</code>（含 <code>graph.py</code> / <code>api.py</code> / <code>deep_agents/</code>），故<b>扩展</b>：对 <code>claims/ --include='*.py'</code> 跑同一模式 + <code>interrupt\(</code> / <code>Command\(resume</code>，排除 test，<code>head -40</code>（命中 30 行，未截断）。</li>
+<li>「无进展退出」不在本次 grep 模式内，两域均 <span class="gap">未查</span>。</li>
+</ul>
+</div>
+<h3>2.1 八项机制 × 续保 / 理赔落点</h3>
+<div class="tw"><table>
+<thead><tr><th>机制</th><th>续保域落点（文件:行）</th><th>理赔域落点（文件:行）</th></tr></thead>
+<tbody>
+<tr><td>计划 / 路由</td><td><code>server/graph.py:1373</code> StateGraph → <code>:1374–1383</code> 11 节点；条件边 <code>:1386</code> <code>:1389</code> <code>:1392</code> <code>:1394</code> <code>:1398</code> <code>:1400</code>；<code>:1357</code> route_after_await_confirm；<code>:1345</code> <code>return "confirm"</code>  # 跨轮确认</td><td><code>claims/graph.py:595</code> <code>compile(checkpointer=self.checkpointer)</code>（图入口；节点 / 边定义行不在本次模式内，<span class="gap">未查</span>）</td></tr>
+<tr><td>执行 / 工具调用</td><td><code>server/graph.py:1375</code> get_policy_node、<code>:1379</code> quote_node（§1 拓扑 grep）</td><td><span class="gap">未查</span>（本次模式不含 add_node / 工具调用）</td></tr>
+<tr><td>观察 / 判定</td><td><code>server/graph.py:1394</code> route_after_quote（compare 1380 后分流）；<code>:1159–1175</code> await_confirm_node 输出待确认项并 <code>_emit("await_confirm")</code></td><td><code>claims/graph.py:126</code> 人工审核决策节点 docstring；<code>:315</code> <code>degraded = mode=="rules_fallback"</code>；<code>:320–334</code> 写入 <code>analysis_degraded</code></td></tr>
+<tr><td>循环上限 / durability</td><td><code>server/graph.py:65</code> <code>RECURSION_LIMIT=int(config.env("RENEWAL_RECURSION_LIMIT","40"))</code>；<code>:60</code> 注释 recursion_limit / superstep / GraphRecursionError；<b><code>server/app.py:223</code> <code>config={"recursion_limit": 40}</code> 硬编码</b>，app.py 中 <code>RENEWAL_RECURSION_LIMIT</code> 零命中 → 环境变量在 /chat 入口<span class="gap">疑未生效</span>；<code>server/graph.py:62</code> <code>GRAPH_DURABILITY=config.env("RENEWAL_GRAPH_DURABILITY","sync")</code>。「无进展退出」<span class="gap">未查</span></td><td><code>claims/graph.py:620</code> <code>:636</code> <code>"recursion_limit": 40</code>（同样硬编码）；<code>:637</code> <code>durability="sync"</code> 硬编码于 resume；<code>:612</code> docstring「durability 与 recursion_limit 都是顶层 config 键」。「无进展退出」<span class="gap">未查</span></td></tr>
+<tr><td>interrupt 闸门</td><td><span class="gap">未找到</span>（<code>interrupt(</code> / <code>Command(resume</code> 于 server/ 零命中）。实际闸门 = <code>:1391</code> clarify→END + <code>:1159</code> await_confirm_node：图走完后靠会话续接；<code>:10</code> <code>:12</code> 注释自称「挂起」「跨轮实现」</td><td><code>claims/graph.py:381</code> <code>decision = interrupt(</code>（<code>:380</code> 注释：第一行且唯一一处，不得 try/except）；<code>:637</code> <code>Command(resume=decision)</code>；<code>claims/api.py:22–23</code> Context7 要点：同一 thread_id + 被中断节点从头重跑</td></tr>
+<tr><td>checkpointer / thread_id</td><td><code>server/graph.py:1403</code> <code>compile(checkpointer=checkpointer)</code>；<code>:77</code> <code>_make_checkpointer()</code>；<code>:1372</code> docstring「None 时不持久化」；<code>:36–42</code> 注释（官方 checkpointer，Context7 查证）；<code>:42</code> thread_id 为 checkpoint 主键；<code>:114</code> 从 tup.config 取 thread_id；<code>:1413</code> docstring「注入 checkpointer 主键——app.py 的 config 不带 configurable.thread_id」（app.py 中 thread_id 零命中）</td><td><code>claims/graph.py:161</code> <code>SqliteSaver(self._conn)</code>；<code>:145</code> 持有 sqlite checkpointer；<code>:600</code> <code>:628</code> <code>:640</code> <code>get_state({"configurable":{"thread_id":…}})</code>；<code>claims/api.py:215</code>「thread_id 必须等于 claim_id」；<code>:208</code> claim_id 确定性复算可作 thread_id；<code>:660</code> 默认取 claim_id</td></tr>
+<tr><td>失败升级 / 转人工</td><td><code>server/graph.py:1383</code> fallback 节点 + <code>:1402</code> <code>add_edge("fallback", END)</code>；<code>:149</code> RIDE_HAILING_WORDS（§1 拓扑 grep）；<code>handoff</code> 三文件零命中</td><td><code>claims/graph.py:126</code> 人工审核决策（interrupt 等 reviewer）；<code>:605</code> <code>:633</code> 终态 / 无挂起中断 → <code>CLAIM_STATE_INVALID</code>；<code>handoff</code> 零命中</td></tr>
+<tr><td>LLM 降级</td><td><code>server/llm.py:27</code> <code>class LLMUnavailableError</code>；<code>:51</code> <code>degraded: bool</code>；<code>:90–98</code> 严格模式抛异常；<code>:103</code> <code>_degraded_text</code>；<code>:165–167</code> <code>:219</code> <code>:259–263</code> 返回 <code>degraded=True</code>；<code>server/graph.py:33</code> 导入、<code>:167</code> State.llm_degraded、<code>:242–243</code> <code>:265</code> <code>:275–278</code> <code>_emit("llm_degraded")</code>、<code>:844</code> <code>:1155</code> <code>:1310</code> 并入 State；<code>server/app.py:34</code> 导入、<code>:276</code> done 帧 <code>degraded</code>、<code>:277</code> <code>except LLMUnavailableError</code>、<code>:359</code> /health <code>llm_degraded_total</code></td><td><code>claims/graph.py:11</code> 注释 <code>claims.llm_degraded</code>；<code>:315–334</code> <code>analysis_degraded</code>（rules_fallback）；<code>claims/api.py:102</code> <code>rules_only_degraded</code>、<code>:182</code> 输出 <code>analysis_degraded</code>；<code>LLMUnavailableError</code> 在 claims/ 零命中（理赔用字段标记，续保用异常类 + 字段双轨）</td></tr>
+</tbody>
+</table></div>
+<h3>2.2 两域设计差异（由上表行号直接推出，非推测；证据 §2 原文）</h3>
+<ol>
+<li><b>闸门实现相反</b>：理赔用 LangGraph 原生 <code>interrupt()</code> / <code>Command(resume)</code>（<code>claims/graph.py:381</code> / <code>:637</code>）；续保用 <code>clarify→END</code>（<code>server/graph.py:1391</code>）+ 会话存储，无原生中断。</li>
+<li><b>递归上限两域都硬编码 40</b>（<code>server/app.py:223</code>；<code>claims/graph.py:620</code> / <code>:636</code>）；续保虽定义 <code>RENEWAL_RECURSION_LIMIT</code> 环境变量（<code>server/graph.py:65</code>），但 /chat 入口未引用。</li>
+<li><b>降级留痕</b>：续保 = <code>LLMUnavailableError</code> 异常（严格模式）+ <code>llm_degraded</code> 列表双轨；理赔 = <code>analysis_degraded</code> / <code>rules_only_degraded</code> 布尔字段，无异常类。</li>
+</ol>
+<h3>2.3 一次对话经过哪些节点（只列证据确证的 add_node / 边）</h3>
+<div class="note ok">
+<p><b>确证事实。</b>下列只依据证据 §1 / §2 的 add_node 与边行号；<b>add_node 的登记顺序 ≠ 执行顺序</b>，本文不据此臆造流转。</p>
+<ul>
+<li><b>图定义</b>：<code>server/graph.py:1373</code> <code>StateGraph(RenewalState)</code>；<code>:1374–1383</code> 共 11 个 <code>add_node</code>，证据具名 10 个：intake <code>:1374</code>、get_policy <code>:1375</code>、parse_needs <code>:1376</code>、clarify <code>:1377</code>、retrieve_terms <code>:1378</code>、quote <code>:1379</code>、compare <code>:1380</code>、await_confirm <code>:1381</code>、confirm <code>:1382</code>、fallback <code>:1383</code>（第 11 个 <span class="gap">证据未具名</span>）；<code>:1403</code> <code>builder.compile(checkpointer=checkpointer)</code>。</li>
+<li><b>固定边（证据原文）</b>：<code>:1391</code> <code>add_edge("clarify", END)  # await_user 挂起</code>；<code>:1397</code> <code>add_edge("compare","await_confirm")</code>；<code>:1402</code> <code>add_edge("fallback", END)</code>。</li>
+<li><b>条件边</b>：六条 <code>add_conditional_edges</code> 位于 <code>:1386</code> <code>:1389</code> <code>:1392</code> <code>:1394</code> <code>:1398</code> <code>:1400</code>；证据具名的路由函数只有 <code>:1394</code> route_after_quote 与 <code>:1357</code> route_after_await_confirm（<code>:1345</code> <code>return "confirm"</code>  # 跨轮确认）。</li>
+<li><b>每轮入口</b>：<code>/chat</code>（<code>server/app.py:176</code>）每轮重新 invoke，每请求新建 <code>TraceRecorder(trace_id=…, session_id=…)</code>（<code>server/app.py:181</code>），递归上限 <code>server/app.py:223</code>；固定边中没有回到 intake 的边，跨轮回到起点由每轮重新 invoke 承担。</li>
+<li><b>等待车主</b>：图走到 END（clarify <code>:1391</code>）或 await_confirm_node（<code>:1159–1175</code>，<code>_emit("await_confirm")</code>）后，下一轮靠会话存储续接；续保 <code>interrupt(</code> / <code>Command(resume</code> 零命中。</li>
+<li><b>理赔域对照</b>：<code>claims/graph.py:381</code> <code>decision = interrupt(</code> 挂起 → <code>:637</code> <code>Command(resume=decision)</code> 恢复，<code>:600</code> <code>:628</code> <code>:640</code> 以 thread_id <code>get_state</code>；<code>claims/api.py:215</code> thread_id 必须等于 claim_id。</li>
+</ul>
+</div>
+<div class="note warn">
+<p><b>不能断言（证据未读，本文不补）。</b>起始节点（entry point 行）<span class="gap">未查</span>；六条条件边各自的挂载节点与目标 <span class="gap">未读</span>；图内是否存在回边 <span class="gap">不能断言</span>；「无进展退出」两域 <span class="gap">未查</span>；理赔域节点 / 边定义行与工具调用 <span class="gap">未查</span>。</p>
+</div>
+</section>
+
+<section id="s3">
+<h2><span class="num">3</span>上下文装配 / 记忆 / 轨迹</h2>
+<div class="note warn">
+<p><b>取证说明（证据 §3 原文纪律）。</b>规定命令：<code>grep -n -E '^def |^async def |^class |BUDGET|budget|compress|invalidat|archive|profile' server/context_assembly.py server/memory.py server/trace.py | head -40</code></p>
+<ul>
+<li><code>server/context_assembly.py</code> <span class="gap">未找到</span>（grep 报 <code>No such file or directory</code>）。上下文装配逻辑实际落在 <code>server/memory.py:663-821</code> 段。</li>
+<li>规定命令输出恰 40 行、止于 <code>memory.py:503</code>（被 <code>head -40</code> 截断）：<code>memory.py</code> 503 行之后与 <code>trace.py</code> 的匹配不在其输出内。下表这两段取自补充 grep（同一正则去掉 <code>profile</code>，或按行号段过滤）。</li>
+<li>关键词 <code>compress</code> <span class="gap">未找到</span>（补充 grep <code>server/</code> + <code>claims/</code> 的 <code>*.py</code>，排除 memory.py / trace.py，34 行未截断、零命中）；压缩由 <code>summarize_turns</code> 承担。<code>archive</code> 仅命中 <code>memory.py:14</code> 注释，两文件内无同名函数。<code>profile</code> 仅命中 docstring / 注释（<code>memory.py:7</code>、<code>:433</code>），指 LangChain「profile」记忆形态。</li>
+<li>「<span class="gap">未读</span>」= 只见函数签名 / docstring，未读函数体。</li>
+</ul>
+</div>
+<h3>3.1 落点表（证据 §3）</h3>
+<div class="tw"><table>
+<thead><tr><th>模块</th><th>关键函数（文件:行）</th><th>职责一句话</th><th>对应作业要求</th></tr></thead>
+<tbody>
+<tr><td><code>server/memory.py</code>（上下文装配段 663–821）</td><td><code>build_context_package</code> <code>memory.py:768</code></td><td>memory manager：为当前轮组装 context package（recent / summary / long_term / brief + 各项 token 明细），据 read 768–815</td><td>上下文预算 / 压缩 / 记忆</td></tr>
+<tr><td><code>server/memory.py</code></td><td><code>prompt_context</code> <code>memory.py:798</code></td><td>编排层唯一入口，返回（附加 system 文本, 历史消息）；记忆关闭时退回固定尾部 <code>legacy_tail</code> 条；调用点 <code>graph.py:738</code>、<code>:1134</code>、<code>:1275</code></td><td>上下文预算</td></tr>
+<tr><td><code>server/memory.py</code></td><td><code>context_report</code> <code>memory.py:812</code></td><td>写入 node_end.output 的轻量预算摘要，不新增轨迹 record_type；调用点 <code>graph.py:823</code></td><td>上下文预算（可观测）</td></tr>
+<tr><td><code>server/memory.py</code></td><td><code>estimate_tokens</code> <code>memory.py:687</code></td><td>保守 token 估算：CJK 每字 1 token、其余每 4 字符 1 token，不用真实分词器（离线可复现）</td><td>上下文预算</td></tr>
+<tr><td><code>server/memory.py</code></td><td><code>trim_turns</code> <code>memory.py:699</code></td><td>按 token 预算从新到旧保留消息，返回（保留, 被裁, 已用 tokens）；docstring 称旧实现按固定条数裁剪且无压缩</td><td>上下文预算</td></tr>
+<tr><td><code>server/memory.py</code></td><td><code>summarize_turns</code> <code>memory.py:729</code></td><td>确定性滚动摘要：从被裁轮次抽取含业务关键词 / 数字的句子（非 LLM 摘要），显式标注「已压缩」</td><td>压缩</td></tr>
+<tr><td><code>server/memory.py</code></td><td><code>render_brief</code> <code>memory.py:663</code></td><td>长期记忆简报渲染（<span class="gap">未读</span>；签名 <code>limit: int = 8</code>，由 build_context_package 调用）</td><td>记忆</td></tr>
+<tr><td><code>server/config.py</code></td><td><code>memory_prompt_budget</code> <code>config.py:161</code>、<code>memory_chat_budget</code> <code>config.py:168</code></td><td>两档历史预算：<code>RENEWAL_MEMORY_PROMPT_BUDGET</code> 默认 1000（下限 200）、<code>RENEWAL_MEMORY_CHAT_BUDGET</code> 默认 600（下限 120）</td><td>上下文预算</td></tr>
+<tr><td><code>server/graph.py</code>（调用点）</td><td><code>graph.py:739</code>、<code>:1135</code>、<code>:1276</code></td><td>739 传 prompt 档预算（<code>config.py:158</code> 注释：需求解析类 prompt）；1135、1276 传 chat 档预算且 <code>legacy_tail=6</code></td><td>上下文预算</td></tr>
+<tr><td><code>server/memory.py</code>（长期记忆读写）</td><td><code>put</code> <code>:277</code>、<code>_upsert</code> <code>:248</code>、<code>active_items</code> <code>:304</code>、<code>get</code> <code>:325</code>、<code>search</code> <code>:339</code>、<code>superseded_items</code> <code>:332</code></td><td>按字段 / 关键词的长期记忆写入与召回（<span class="gap">未读</span>；据函数名与模块 docstring：profile 单文档持续更新、未接稠密通道）</td><td>记忆</td></tr>
+<tr><td><code>server/memory.py</code></td><td><code>_expire</code> <code>:218</code>、<code>_prune</code> <code>:232</code></td><td>过期与修剪（<span class="gap">未读</span>；据函数名；docstring：用 active / superseded / rejected / archived 标记代替早删）</td><td>记忆</td></tr>
+<tr><td><code>server/memory.py</code></td><td><code>facts_from_state</code> <code>:429</code>、<code>record_turn</code> <code>:473</code></td><td>从 state 抽结构化事实写入长期记忆，对话原文不进长期记忆（<code>memory.py:433</code>）；record_turn 返回 written / superseded / refreshed / invalidated（<code>memory.py:488</code>）</td><td>记忆 / 记忆撤回</td></tr>
+<tr><td><code>server/memory.py</code></td><td><code>recall_needs</code> <code>:582</code></td><td>需求记忆召回（<span class="gap">未读</span>）；调用点 <code>graph.py:766</code></td><td>记忆</td></tr>
+<tr><td><code>server/memory.py</code>（记忆撤回）</td><td><code>forget</code> <code>:381</code>、<code>_mirror_invalidations</code> <code>:509</code></td><td><code>forget</code> = 硬删除（遗忘权）：整车主连审计账本一起清、只留时间戳墓碑（read 381–399）；<code>_mirror_invalidations</code> = 把编排层 state.invalidated 落到长期记忆并附审计理由（<code>memory.py:510</code>）</td><td>记忆撤回</td></tr>
+<tr><td><code>server/graph.py</code>（记忆撤回编排）</td><td><code>graph.py:777–786</code>、<code>:826</code>、<code>:836</code></td><td>同事实多版本只留最新，旧值移入 <code>invalidated</code>（777 注释；537 注释称在 parse_needs 记录）；按 needs_version 过滤后随 state 下发（826、836）</td><td>记忆撤回</td></tr>
+<tr><td><code>server/sessions.py</code>（会话存储）</td><td><code>load</code> <code>:75</code>、<code>save</code> <code>:86</code>、<code>append_history</code> <code>:107</code>、<code>_safe</code> <code>:71</code></td><td>跨轮会话存储 → 官方 checkpointer 兼容层：docstring 称 SqliteSaver（<code>traces/checkpoints.sqlite</code>）、thread_id = sessions._safe(session_id)、history 裁剪尾部 20 条（均<span class="gap">未读</span>函数体）</td><td>重启继续</td></tr>
+<tr><td><code>server/graph.py</code>（checkpointer）</td><td><code>build_graph</code> <code>:1371</code>、<code>get_graph</code> <code>:1487</code>、<code>compile(checkpointer=...)</code> <code>:1403</code></td><td>优先 SqliteSaver（<code>:94</code>）、缺包降级 InMemorySaver（<code>:78</code> docstring）；checkpointer=None 不持久化（<code>:1372</code>）</td><td>重启继续</td></tr>
+<tr><td><code>server/trace.py</code>（轨迹写入）</td><td><code>TraceRecorder</code> <code>trace.py:40</code>、<code>now_iso</code> <code>trace.py:36</code></td><td>一个 trace_id 一个实例，写 <code>traces/&lt;trace_id&gt;.jsonl</code>，文件权限 0600；字段严格按 SPEC §5、11 类 record_type 枚举；在唯一写入点 <code>record()</code> 补缺省 latency_ms（read 1–34、40–75）</td><td>轨迹可程序读取</td></tr>
+<tr><td><code>server/trace.py</code>（轨迹读取）</td><td><code>read_trace</code> <code>trace.py:160</code></td><td>读整条轨迹返回 list[dict]，不存在返回 None；读端逐行 <code>security.redact_row</code> 兜底脱敏（read 160–172）；调用点 <code>app.py:311</code></td><td>轨迹可程序读取</td></tr>
+<tr><td><code>server/app.py</code>（轨迹入口）</td><td><code>app.py:181</code>、<code>app.py:311</code></td><td>181 每请求建 <code>TraceRecorder(trace_id=…, session_id=…)</code>；311 调 <code>read_trace(trace_id)</code></td><td>轨迹可程序读取</td></tr>
+<tr><td><code>server/middleware.py</code>（轨迹读授权）</td><td><code>trace_owner_allowed</code> <code>middleware.py:395</code>、<code>_collect_owner_ids</code> <code>:382</code></td><td>轨迹读取前核对请求者 owner（<span class="gap">未读</span>，据函数名）</td><td>轨迹可程序读取</td></tr>
+</tbody>
+</table></div>
+<h3>3.2 两条必须说清的事实</h3>
+<div class="note ok">
+<ul>
+<li><b>压缩由 <code>summarize_turns</code> 承担，无 <code>compress</code> 关键词。</b><code>server/memory.py:729</code>：确定性滚动摘要，从被裁轮次抽取含业务关键词 / 数字的句子（非 LLM 摘要），显式标注「已压缩」；<code>compress</code> 在 <code>server/</code> + <code>claims/</code> 的 <code>*.py</code> 零命中。</li>
+<li><b>长期记忆写入唯一调用点 <code>server/sessions.py:102</code>。</b><code>memory_mod.record_turn(state)</code>，位于 <code>save</code>（<code>:86</code>–106）内；<code>memory.record_turn(</code> 在 graph.py / app.py 内未命中——长期记忆写入挂在会话保存路径，不在 graph.py / app.py（证据补注，后补 grep 于 <code>server/</code> + <code>claims/</code>）。</li>
+</ul>
+</div>
+<h3>3.3 §3 未找到 / 未查（证据原文）</h3>
+<ul>
+<li><code>server/context_assembly.py</code>：<span class="gap">未找到</span>（文件不存在）→ 已改记 memory.py 落点。</li>
+<li>关键词 <code>compress</code>：<span class="gap">未找到</span>（零命中）。</li>
+<li><code>TraceRecorder.record()</code> 行号：<span class="gap">未查</span>（缩进方法，<code>^def</code> 正则不命中）→ 补注已补：<code>record</code> <code>trace.py:91</code>。</li>
+<li><code>memory.record_turn(</code> 在 graph.py / app.py 内未命中（grep <code>memory\.(record_turn|recall_needs|render_brief|prompt_context|context_report|…)\(</code> 仅返回 prompt_context×3、recall_needs、context_report）；其他文件见补注 → 补注：<code>server/sessions.py:102</code>。</li>
+</ul>
+<h3>3.4 补注（证据表二后补 grep，供 §3 / §4 引用）</h3>
+<ul>
+<li><code>TraceRecorder</code> 方法行号（<code>grep -n -E '^    def ' server/trace.py</code>）：<code>__init__</code> <code>trace.py:43</code>、<code>_fill_latency</code> <code>:62</code>、<code>record</code> <code>:91</code>、<code>seq</code> <code>:156</code>。</li>
+<li><code>record_turn(</code> 调用点（grep <code>server/</code> + <code>claims/</code> 的 <code>*.py</code>）：仅 <code>server/sessions.py:102</code>（<code>memory_mod.record_turn(state)</code>，位于 <code>save</code> 86–106 内）与定义 <code>memory.py:473</code>。</li>
+</ul>
+</section>
+
+<section id="s4">
+<h2><span class="num">4</span>安全与平台面</h2>
+<div class="note warn">
+<p><b>取证说明（证据 §4 原文纪律）。</b>规定命令：<code>grep -n -E 'untrusted_user_input|authorize_tool_args|rate_limit|RateLimit|CSP|X-Frame|PII|mask|redact|REVIEWER|api_key|429|403' server/security.py server/middleware.py | head -40</code></p>
+<ul>
+<li>输出恰 40 行：security.py 26 处（1–243，该文件匹配已完整）+ middleware.py 前 14 处（止于 283，被 <code>head -40</code> 截断）。补 grep <code>middleware.py</code> 行号 ≥284 再得 9 处（300、319、325、348、352、360、361、370、373），合计 49 处。</li>
+<li><code>REVIEWER</code>：两文件零命中。<code>X-Frame</code>：区分大小写零命中，实际写法为小写 <code>x-frame-options</code>（<code>middleware.py:271</code>，补充 grep）。401 不在规定正则内，取自补充 grep（162、211）。</li>
+<li>「<span class="gap">未读</span>」= 只见签名 / docstring，未读函数体。</li>
+</ul>
+</div>
+<h3>4.1 能力 → 文件:行 → 否决情形（证据 §4）</h3>
+<div class="tw"><table>
+<thead><tr><th>能力</th><th>文件:行</th><th>否决情形（被拒绝 / 脱敏 / 限流的请求）</th></tr></thead>
+<tbody>
+<tr><td>PII 保形脱敏</td><td><code>_PII_KEYS</code> <code>security.py:45</code>、<code>_mask_text</code> <code>:58</code>、<code>redact_text</code> <code>:67</code>、<code>redact_obj</code> <code>:76</code>、<code>redact_row</code> <code>:107</code></td><td>任意字符串先过值正则（身份证 / 手机号 / 车牌 / VIN / 邮箱，<code>security.py:28–57</code> 窗口，行号 <span class="gap">未 grep</span>）→ 保形脱敏、保留首尾；字段名命中 <code>_PII_KEYS</code>（id_number、phone、plate_no、vin、email、owner_name 等）→ 整体替换 <code>***</code>；<code>name</code> 仅在含车主标记键的对象内脱敏，险种名（如「交强险」）不动（read 28–57；77 docstring）</td></tr>
+<tr><td>脱敏开关</td><td><code>pii_mode</code> <code>security.py:98</code>（docstring 99、return 104）</td><td>默认 <code>redact</code>；仅 <code>RENEWAL_TRACE_PII=keep</code>（本机调试）时轨迹落原文。写入点为 <code>trace.record()</code>（<code>security.py:16</code>），读端 <code>read_trace</code> 逐行 <code>redact_row</code> 兜底（见 §3，<code>trace.py:160</code>）</td></tr>
+<tr><td>输入清洗与限长</td><td><code>max_message_chars</code> <code>security.py:177</code>、<code>sanitize_input</code> <code>:186</code></td><td>入模型文本去控制字符 / 零宽字符（LLM01 混淆载体），超出 <code>max_message_chars()</code> 的部分被截断——清洗 / 截断而非拒绝（read 186–212）</td></tr>
+<tr><td>不可信内容定界</td><td>常量 <code>security.py:159–160</code>、<code>neutralize_delimiters</code> <code>:195</code>、<code>wrap_untrusted</code> <code>:201</code>、<code>guard_system_prompt</code> <code>:206</code></td><td>外部内容包进 <code>&lt;untrusted_user_input&gt;</code> 块；用户文本里出现同名开 / 闭标签时改写为 <code>&lt;untrusted_user_input_&gt;</code>（防闭合逃逸，非拒绝）；系统提示幂等追加安全约束（read 186–212）</td></tr>
+<tr><td>注入检测</td><td><code>scan_untrusted</code> <code>security.py:213</code></td><td>返回 score / level / signals；docstring 明言「只做标记，不做拒绝」→ 本函数无否决（read 213–260）。调用方是否据 level=high 拒绝：<span class="gap">未查</span></td></tr>
+<tr><td>工具调用授权</td><td><code>SecurityViolation</code> <code>security.py:234</code>、<code>authorize_tool_args</code> <code>:243</code>、<code>TOOL_OWNER_BOUND</code>（213–260 窗口内，行号 <span class="gap">未 grep</span>）</td><td>车主绑定工具（当前仅 <code>get_policy</code> 的 <code>owner_id</code>）：无会话车主身份 → 抛 <code>TOOL_FORBIDDEN</code>「无会话车主身份」；入参 owner_id ≠ 会话车主 → <code>TOOL_FORBIDDEN</code>「与会话车主不一致」；入参缺该键（None）则跳过不校验。docstring 称现有调用点入参均由服务端构造，本函数是纵深防御第二道锁（read 213–260）</td></tr>
+<tr><td>API-Key 鉴权</td><td><code>AuthMiddleware</code> <code>middleware.py:157</code>、<code>key_fingerprint</code> <code>:84</code>、<code>lookup_key</code> <code>:89</code>、<code>config.api_keys()</code> <code>:184</code></td><td>X-API-Key 缺失或不在 RENEWAL_API_KEYS → 401 <code>UNAUTHORIZED</code> + <code>WWW-Authenticate: ApiKey</code>（<code>:211</code>），日志 <code>auth_rejected</code> 只记密钥指纹；密钥对应 owner 与请求 owner_id 不符 → 403（<code>:162</code> docstring、<code>:235</code>），日志不记 claimed（<code>:232</code>）。<b>非否决</b>：未配置密钥表 = 演示模式放行并加 <code>X-Auth-Mode: demo</code> 头；<code>exempt_paths(demo)</code>（<code>:59</code>）内路径免鉴权（read 157–216）</td></tr>
+<tr><td>trace_id 白名单</td><td><code>AuthMiddleware</code> 内，<code>middleware.py:157–216</code> 窗口（行号 <span class="gap">未 grep</span>）</td><td><code>/trace/{trace_id}</code> 不匹配 <code>TRACE_ID_RE</code> → 400 <code>TRACE_ID_INVALID</code>（防路径穿越；演示 / 强制模式一视同仁）（read 157–216）</td></tr>
+<tr><td>轨迹读授权</td><td><code>_collect_owner_ids</code> <code>middleware.py:382</code>、<code>trace_owner_allowed</code> <code>:395</code></td><td><span class="gap">未读</span>函数体（位于「trace 内容 owner 校验」小节）；据函数名推断为轨迹内出现非请求者 owner_id 时拒绝，返回码 <span class="gap">未核实</span></td></tr>
+<tr><td>安全响应头</td><td><code>_CSP</code> <code>middleware.py:257</code>、CSP 头 <code>:276</code>、<code>x-frame-options: DENY</code> <code>:271</code>（补充 grep）、<code>SecurityHeadersMiddleware</code> <code>:280</code></td><td>非否决（加固）：CSP 以 <code>default-src 'self'</code> 起、因单文件内联 JS / CSS 保留 <code>unsafe-inline</code> 其余收紧（13–16）；X-Frame-Options DENY；PII 端点响应禁缓存（注释 54、300）；挂最外层使 401 / 403 / 429 响应同样带安全头（283）</td></tr>
+<tr><td>限流</td><td><code>reset_rate_limiter</code> <code>middleware.py:319</code>、<code>RateLimitMiddleware</code> <code>:325</code>、<code>rate_limit_disabled()</code> <code>:348</code></td><td>每 IP 60s 滑动窗口，默认 60 次 / 分钟（<code>RENEWAL_RATE_LIMIT_PER_MIN</code>，docstring）；<code>/chat</code> 单独计数桶与阈值（<code>chat_rate_limit_per_min()</code>，360–361）；窗口内超限 → 429 <code>RATE_LIMITED</code> + <code>Retry-After</code>（373–376）+ <code>rate_limited</code> 日志（370）。开关：<code>RENEWAL_RATE_LIMIT_DISABLED=1</code> 整体关闭并记 <code>rate_limit_disabled</code>（352）。内存实现，docstring 自述多副本需换 Redis（read 325–384）</td></tr>
+</tbody>
+</table></div>
+<h3>4.2 两条必须说清的事实</h3>
+<div class="note ok">
+<ul>
+<li><b><code>scan_untrusted</code>（<code>server/security.py:213</code>）只做标记不拒绝。</b>返回 score / level / signals；docstring 明言「只做标记，不做拒绝」。调用方是否据 level=high 拒绝：<span class="gap">未查</span>。</li>
+<li><b>未配置 <code>RENEWAL_API_KEYS</code> 时匿名放行 + <code>X-Auth-Mode: demo</code>。</b><code>AuthMiddleware</code>（<code>server/middleware.py:157–216</code>）：未配置密钥表 = 演示模式放行并加 <code>X-Auth-Mode: demo</code> 头；<code>exempt_paths(demo)</code>（<code>:59</code>）内路径免鉴权（<code>config.api_keys()</code> <code>:184</code>）。配置了密钥表后：缺失 / 不在表 → 401（<code>:211</code>）；owner 不符 → 403（<code>:235</code>）。</li>
+</ul>
+</div>
+<h3>4.3 §4 未找到 / 未查（证据原文）</h3>
+<ul>
+<li><code>REVIEWER</code>：<span class="gap">未找到</span>（security.py / middleware.py 零命中；其他目录 <span class="gap">未查</span>）。</li>
+<li><code>X-Frame</code>（规定的大小写写法）：<span class="gap">未找到</span>；小写形式在 <code>middleware.py:271</code>。</li>
+<li><code>scan_untrusted</code> 调用方是否拒绝：<span class="gap">未查</span>。</li>
+<li><code>trace_owner_allowed</code> 函数体：<span class="gap">未读</span>，否决情形 <span class="gap">未核实</span>。</li>
+<li>限流阈值、消息长度上限的 config 默认值：<span class="gap">未读</span>（限流 60 次 / 分钟取自 docstring）。</li>
+</ul>
+</section>
+
+<section id="s5">
+<h2><span class="num">5</span>培训材料《七项要素》《九大模块》对照</h2>
+<div class="note">
+<p>本节取自 <code>docs/_架构_parts/evidence-3.md</code> §5（主上下文取证 2026-11-24 14:55–15:00）。取证方式：培训材料只取标题 / 要点行（剥标签 grep），<span class="gap">未读正文</span>；行号复用 evidence-1/2（grep 真实返回）；标「待核」者为未查证。材料位置：<code>../培训的html/Harness 架构设计七项要素-下午场-04.html</code>、<code>../培训的html/运行时架构与九大模块-上午-03.html</code>。</p>
+<p>七项要素的课程定义（原文）：「一份方案能不能上，不看它有多少组件，而看这<b>七类契约</b>是否齐备、每个不变量是否有对应的检查点」；每项要素必须给出三件事：<b>契约落在哪、拿什么证据验收、什么情况直接否决</b>。</p>
+</div>
+<h3>5.1 表 A：七项要素（七类契约）× 本项目</h3>
+<div class="tw"><table class="min">
+<thead><tr><th>要素（原文）</th><th>契约落点</th><th>验收证据</th><th>否决情形</th></tr></thead>
+<tbody>
+<tr><td>任务范围与完成标准</td><td><code>SPEC.md</code> §7 验收清单 19 条；<code>eval/cases/AC-01..14 + SEC-01..05</code></td><td><code>eval/run.py</code> 一键跑 + <code>--diff</code> 回归</td><td>hard 断言失败（越权/编造）→ 整轮 FAIL</td></tr>
+<tr><td>三层责任与组件调用图</td><td><code>server/graph.py:1373–1403</code>（StateGraph + 11 add_node + 边）；<code>server/app.py</code> 7 条路由（62/176/296/309/322/352/367）；<code>mcp_servers/quote_server.py</code></td><td>AC-14 轨迹节点链可回放</td><td>保费数字非来自报价服务（SPEC 硬规矩）</td></tr>
+<tr><td>阶段状态与产物依赖</td><td><code>graph.py:1403 compile(checkpointer=)</code>；理赔 <code>claims/graph.py:161</code> SqliteSaver；闸门 <code>graph.py:1391 clarify→END</code> + 会话续接</td><td>AC-13 报价版本校验；checkpointer 重启继续（1C 批次验证）</td><td>版本陈旧 → 409 <code>QUOTE_VERSION_STALE</code>（1A [08] 实测）</td></tr>
+<tr><td>工具与授权契约</td><td><code>server/security.py authorize_tool_args</code>；<code>server/middleware.py:157–216</code> 鉴权；<code>quote_server.py</code> 唯一 MCP server</td><td>AC-13 a4 → 422 <code>OWNER_MISMATCH</code>（hard，1A [08] 实测）</td><td>跨车主确认 = 硬失败防线</td></tr>
+<tr><td>门控与失败分支</td><td><code>graph.py:1159 await_confirm_node</code>；理赔 <code>claims/graph.py:381 interrupt()</code> / <code>:637 Command(resume)</code>；LLM 降级 SPEC §4.6</td><td>AC-09 JQX_REQUIRED 不询价（1A [07]）；<code>done.degraded</code> 字段</td><td>删交强险 → 纠正 + 不报价；LLM 不可用 → 降级事件</td></tr>
+<tr><td>版本升级与恢复策略</td><td>durability：续保 <code>graph.py:62</code> 读环境变量；理赔 <code>:637</code> 硬编码 <code>"sync"</code>；递归上限硬编码 40（<code>app.py:223</code>）</td><td>SPEC 非破坏性追加（v1.0.4→v1.0.6 可选字段）</td><td><b>X-03</b> 状态双真源未合并（见 §7.1）</td></tr>
+<tr><td>评测与回滚证据</td><td><code>eval/run.py</code>（<code>--baseline eval/baseline.json</code>，McNemar 成对检验）；<code>traces/</code>；<code>reviews/INDEX.md</code></td><td>三轮评审 6→13→14 演进</td><td>相对基线显著退化 → <code>--fail-on-regression</code> 退出码 1</td></tr>
+</tbody>
+</table></div>
+<h3>5.2 表 B：九大模块 × 本项目</h3>
+<div class="tw"><table class="min">
+<thead><tr><th>模块（原文）</th><th>落点</th><th>证据 / 备注</th></tr></thead>
+<tbody>
+<tr><td>① 状态存储与 Checkpoint</td><td><code>graph.py:1403</code>；<code>claims/graph.py:161</code></td><td>AC-14 PASS（seq 连续 + <code>/trace</code> 回放）；X-03 双真源</td></tr>
+<tr><td>② 上下文与记忆管理</td><td><code>server/memory.py:663–821</code>（<code>build_context_package</code> 768 / <code>trim_turns</code> 699 / <code>summarize_turns</code> 729）；预算 <code>config.py:161/168</code></td><td><code>server/context_assembly.py</code> <b>不存在</b>；长期记忆写入唯一调用点 <code>sessions.py:102</code></td></tr>
+<tr><td>③ 执行循环与终止控制</td><td>11 节点条件边 <code>graph.py:1385–1402</code>；<code>recursion_limit=40</code> 硬编码 <code>app.py:223</code></td><td><code>RENEWAL_RECURSION_LIMIT</code> 入口未生效（<span class="gap">待核</span>）</td></tr>
+<tr><td>④ 任务规划与动态调整</td><td>6 个 <code>route_after_*</code> 函数（<span class="gap">未读，不能断言</span>）；选择键归一化 <code>SPEC.md:206</code>（v1.0.2）</td><td>相同 coverage_selection 复用报价不重算</td></tr>
+<tr><td>⑤ 异常恢复与人工接管</td><td><code>server/llm.py LLMUnavailableError</code> → 规则降级；SPEC §4.6 <code>llm_degraded</code>；理赔人工决策 <code>claims/graph.py:637</code></td><td><b>X-05</b> 无节点级超时</td></tr>
+<tr><td>⑥ 工具与 Skill 管理</td><td><code>skills/renew_compare.md</code>（加载方式<span class="gap">未读</span>）；<code>mcp_servers/quote_server.py</code></td><td>「组织比较流程，不等于拥有定价权」——保费只来自报价服务</td></tr>
+<tr><td>⑦ 执行隔离与权限控制</td><td><code>security.py authorize_tool_args</code>；<code>middleware.py</code> 鉴权；<code>scan_untrusted</code>（<code>security.py:213</code>）<b>只标记不拒绝</b></td><td>未配置 <code>RENEWAL_API_KEYS</code> = 演示模式匿名放行（<code>middleware.py:157–216</code>）</td></tr>
+<tr><td>⑧ 生命周期钩子与门控</td><td><code>graph.py:1159</code> + <code>:1391</code>（续保无 <code>interrupt()</code>）；理赔 <code>claims/graph.py:381</code> 原生中断</td><td><b>X-04</b> 未采用官方 HITL（续保域）</td></tr>
+<tr><td>⑨ 可观测与评测接口</td><td><code>trace.py:91 TraceRecorder.record</code>（0600）/ <code>:160 read_trace</code> 再脱敏；<code>/metrics</code> 14 指标（1A [04]）</td><td><code>eval/run.py --diff</code>；OTel 导出（<code>otel_export.py</code>，<span class="gap">待核行号</span>）</td></tr>
+</tbody>
+</table></div>
+</section>
+
+<section id="s6">
+<h2><span class="num">6</span>超出作业要求的能力</h2>
+<div class="note">
+<p>本节取自 <code>docs/_架构_parts/evidence-3.md</code> §6 表 A（依据 <code>SPEC.md:5</code> 版本摘要 + evidence-1 §1 的 24 框清单），2026-11-24 主上下文取证。「作业是否要求」列为证据作者对照作业原文的判断；标「待核」者未查证。</p>
+<p>可确认的只有作业原文本身的边界（来自 §02，第 140–219 行）：作业图含「失败样本回流」框（第 218 行），而代码侧 <span class="gap">未找到</span> 对应落点（§1 #24）；作业图要求「MCP 保单与报价」（第 196 行），而代码侧 <code>mcp_servers/</code> 只有报价 server，保单走 HTTP 路由（§1 #15）。这两条是<b>作业要求 vs 实际落点</b>的差异，不是「超出要求」，列此仅供对照。</p>
+</div>
+<h3>6.1 表 A：作业原文未要求、项目已落地的能力</h3>
+<div class="tw"><table class="min">
+<thead><tr><th>能力</th><th>引入版本</th><th>落点</th><th>作业是否要求</th></tr></thead>
+<tbody>
+<tr><td>API-Key 鉴权 / owner 由凭证派生 / trace_id 白名单</td><td>v1.0.4（2026-11-13）SPEC §4.5 安全契约</td><td><code>middleware.py:157–216</code>（鉴权放行分支）</td><td><b>否</b>（24 框中无鉴权框）→ <strong>超出</strong></td></tr>
+<tr><td>限流 + 安全响应头（CSP / x-frame-options / …）</td><td>v1.0.4</td><td><code>middleware.py:271</code>（x-frame-options，小写）；其余行号见 evidence-2 §4</td><td><b>否</b> → <strong>超出</strong></td></tr>
+<tr><td>SEC-01~05 对抗用例（验收清单扩为 19 条）</td><td>v1.0.4</td><td><code>eval/cases/SEC-01..05.json</code></td><td>作业只要求 14 验收场景 → <strong>超出</strong></td></tr>
+<tr><td>官方 checkpointer 持久化</td><td>v1.0.4</td><td><code>graph.py:1403</code></td><td>作业要求「重启后继续」→ <b>是</b>（非超出）</td></tr>
+<tr><td>LLM 降级可观测（<code>llm_degraded</code> 事件 / <code>done.degraded</code> / 轨迹 <code>mode,degraded</code>）</td><td>v1.0.5</td><td>SPEC §4.6；<code>server/llm.py</code></td><td><b>否</b> → <strong>超出</strong></td></tr>
+<tr><td>严格模式（LLM 不可用即 503 而非静默降级）</td><td>v1.0.6（2026-11-17）</td><td>SPEC §4.1 / §5；<code>/health llm_strict</code></td><td><b>否</b> → <strong>超出</strong></td></tr>
+<tr><td>§4.5.1 安全增强</td><td>v1.0.6</td><td>SPEC §4.5.1（内容<span class="gap">未读</span>）</td><td><span class="gap">待核</span></td></tr>
+<tr><td>评测回归检验（McNemar 成对 / <code>--fail-on-regression</code>）</td><td><span class="gap">待核</span></td><td><code>eval/run.py</code> CLI</td><td>作业要求「回归对比」→ <b>是</b>（检验方法超出）</td></tr>
+</tbody>
+</table></div>
+</section>
+
+<section id="s7">
+<h2><span class="num">7</span>遗留项与本文未核实清单</h2>
+<h3>7.1 遗留项 X-03 / X-04 / X-05 / X-07</h3>
+<div class="note"><p>本表取自 <code>docs/_架构_parts/evidence-3.md</code> §6 表 B（原文 <code>reviews/INDEX.md:221–225</code>，均「未闭环」）。</p></div>
+<div class="tw"><table class="min">
+<thead><tr><th>编号</th><th>一句话</th><th>来源域</th><th>证据</th></tr></thead>
+<tbody>
+<tr><td>X-03</td><td>状态双真源（checkpointer vs <code>sessions.json</code>）未合并；只有 <code>memory_tool divergence</code> 对账工具</td><td>编排 P1 / 记忆 F6</td><td><code>reviews/INDEX.md:221</code></td></tr>
+<tr><td>X-04</td><td>未采用官方 HITL <code>interrupt()</code> / <code>Command(resume=)</code>（续保域）</td><td>编排 P1（需 SPEC 升版 + 前端 + eval）</td><td><code>reviews/INDEX.md:222</code></td></tr>
+<tr><td>X-05</td><td>无节点级超时（<code>TimeoutPolicy</code> 仅支持 async 节点，本项目 11 节点全 sync）；现以工具重试 + provider 超时兜底</td><td>编排 P1</td><td><code>reviews/INDEX.md:223</code></td></tr>
+<tr><td>X-07</td><td><code>retrieve_terms</code> 在 <code>evidence_coverage==0</code> 时应路由到 <code>clarify</code>；需改 20 条边快照 + SPEC §6.2 + eval 断言</td><td>知识 §7.4 + 编排 §7.5</td><td><code>reviews/INDEX.md:225</code></td></tr>
+<tr><td colspan="4"><small>补充：X-02（记忆域未登记 SPEC，<code>grep memory_ SPEC.md</code>=0）、X-06（轨迹 schema 缺 model/provider）、X-08（7 条 stale 条款待业务方）同表相邻行，未在本任务范围。</small></td></tr>
+</tbody>
+</table></div>
+
+<h3>7.2 「未找到 / 未读 / 未查 / 不能断言」汇总（从 evidence-1/2 逐条抄；evidence-3 新增的待核项见 §7.1 与 <code>docs/实现过程复盘.md §7</code>）</h3>
+<p>下表汇总证据表一、二中所有未核实项，按来源节分组；「证据原文 / 后补」列记录证据作者在同一文件补注中已补上的行号，<b>未标「已补」的即仍为缺口</b>。</p>
+<div class="tw"><table class="min">
+<thead><tr><th>#</th><th>来源</th><th>项</th><th>状态</th><th>证据原文 / 后补</th></tr></thead>
+<tbody>
+<tr class="group"><td colspan="5">证据表一 · §1 作业架构图 → 代码落点</td></tr>
+<tr><td>1</td><td>§1 #1</td><td>Web / H5 对话 <code>server/app.py:62</code> 根路由返回体</td><td><span class="gap">未读</span></td><td>根路由且不入 API 文档，惯例为返回页面；返回体未读</td></tr>
+<tr><td>2</td><td>§1 #2</td><td><code>scripts/demo_chat.py</code></td><td><span class="gap">未读</span></td><td>仅 ls 命中，内容未读；驱动方式未在本次 grep 范围</td></tr>
+<tr><td>3</td><td>§1 #6</td><td><code>server/mcp_bridge.py</code>、<code>mcp_servers/quote_server.py</code></td><td><span class="gap">仅 ls 命中</span></td><td>—</td></tr>
+<tr><td>4</td><td>§1 #8</td><td><code>server/sessions.py</code></td><td><span class="gap">仅 ls 命中</span></td><td>§3 补：load <code>:75</code> / save <code>:86</code> / append_history <code>:107</code> / _safe <code>:71</code>（函数体未读）</td></tr>
+<tr><td>5</td><td>§1 #11</td><td>6 个 <code>route_after_*</code> 的分支目标</td><td><span class="gap">未读</span></td><td>分支由 6 个 route_after_* 函数决定；目标未读</td></tr>
+<tr><td>6</td><td>§1 #12</td><td>图内是否存在循环回边</td><td><span class="gap">不能断言</span></td><td>固定边中无回到 intake 的边；跨轮由 /chat 每轮重新 invoke 承担</td></tr>
+<tr><td>7</td><td>§1 #13</td><td>RAG 检索算法 <code>server/wiki_search.py</code></td><td><span class="gap">未读</span></td><td>—</td></tr>
+<tr><td>8</td><td>§1 #14</td><td><code>skills/renew_compare.md</code> 加载方式</td><td><span class="gap">未读</span></td><td>仅 ls 命中；由 compare 节点消费</td></tr>
+<tr><td>9</td><td>§1 #16</td><td>合成数据文件（车主与原保单）</td><td><span class="gap">未查</span></td><td>保单按 owner_id 经 HTTP 路由读取</td></tr>
+<tr><td>10</td><td>§1 #18</td><td><code>wiki/log.md</code></td><td><span class="gap">未读</span></td><td>疑为版本日志</td></tr>
+<tr><td>11</td><td>§1 #19</td><td><code>server/trace.py</code></td><td><span class="gap">仅 ls 命中</span></td><td>§3 补：<code>trace.py:40</code> TraceRecorder、<code>:160</code> read_trace；补注：<code>record</code> <code>:91</code></td></tr>
+<tr><td>12</td><td>§1 #20</td><td><code>server/metrics.py</code></td><td><span class="gap">仅 ls 命中</span></td><td>—</td></tr>
+<tr><td>13</td><td>§1 #22</td><td><code>eval/dimensions.py</code>、<code>eval/lint_cases.py</code></td><td><span class="gap">未读</span></td><td>仅 ls 命中</td></tr>
+<tr><td>14</td><td>§1 #24</td><td>失败样本回流</td><td><span class="gap">未找到</span></td><td>仅凭 eval/ 目录清单无法确认；<code>eval/cases/</code> 内容 <span class="gap">未查</span></td></tr>
+<tr><td>15</td><td>§1 注</td><td>续保域 <code>interrupt(</code> / <code>Command(resume</code></td><td><span class="gap">未找到</span></td><td>于 <code>server/</code>（排除 test）零命中；闸门 = clarify→END <code>:1391</code> + 会话续接</td></tr>
+<tr class="group"><td colspan="5">证据表一 · §2 Harness 执行循环</td></tr>
+<tr><td>16</td><td>§2</td><td>「无进展退出」机制</td><td><span class="gap">未查</span></td><td>不在本次 grep 模式内，两域均未查</td></tr>
+<tr><td>17</td><td>§2</td><td>理赔域节点 / 边定义行</td><td><span class="gap">未查</span></td><td>只有 <code>claims/graph.py:595</code> compile 入口</td></tr>
+<tr><td>18</td><td>§2</td><td>理赔域执行 / 工具调用</td><td><span class="gap">未查</span></td><td>本次模式不含 add_node / 工具调用</td></tr>
+<tr><td>19</td><td>§2</td><td><code>RENEWAL_RECURSION_LIMIT</code> 在 /chat 入口是否生效</td><td><span class="gap">疑未生效</span></td><td><code>server/graph.py:65</code> 定义；app.py 零命中；<code>server/app.py:223</code> 硬编码 40</td></tr>
+<tr><td>20</td><td>§2</td><td>app.py 中 thread_id</td><td><span class="gap">零命中</span></td><td><code>server/graph.py:1413</code> docstring：app.py 的 config 不带 configurable.thread_id</td></tr>
+<tr><td>21</td><td>§2</td><td><code>handoff</code> 关键词</td><td><span class="gap">未找到</span></td><td>续保三文件零命中、claims 零命中；升级靠 fallback 节点 / 人工审核决策</td></tr>
+<tr class="group"><td colspan="5">证据表二 · §3 上下文装配 / 记忆 / 轨迹</td></tr>
+<tr><td>22</td><td>§3</td><td><code>server/context_assembly.py</code></td><td><span class="gap">未找到</span></td><td>文件不存在（No such file or directory）→ 改记 <code>server/memory.py:663-821</code></td></tr>
+<tr><td>23</td><td>§3</td><td>关键词 <code>compress</code></td><td><span class="gap">未找到</span></td><td>server/ + claims/ 零命中；压缩由 summarize_turns <code>memory.py:729</code> 承担</td></tr>
+<tr><td>24</td><td>§3</td><td><code>TraceRecorder.record()</code> 行号</td><td><span class="gap">未查</span> → 已补</td><td>缩进方法 ^def 不命中；补注：<code>record</code> <code>trace.py:91</code></td></tr>
+<tr><td>25</td><td>§3</td><td><code>memory.record_turn(</code> 在 graph.py / app.py</td><td><span class="gap">未命中</span> → 已补</td><td>补注：唯一调用点 <code>server/sessions.py:102</code></td></tr>
+<tr><td>26</td><td>§3</td><td>规定 grep 被 <code>head -40</code> 截断（memory.py 503 之后、trace.py）</td><td><span class="gap">截断</span> → 已补</td><td>补充 grep 同一正则去掉 profile / 按行号段过滤</td></tr>
+<tr><td>27</td><td>§3</td><td>未读函数体：render_brief <code>:663</code>；put <code>:277</code>、_upsert <code>:248</code>、active_items <code>:304</code>、get <code>:325</code>、search <code>:339</code>、superseded_items <code>:332</code>；_expire <code>:218</code>、_prune <code>:232</code>；recall_needs <code>:582</code>；sessions load <code>:75</code> / save <code>:86</code> / append_history <code>:107</code> / _safe <code>:71</code>；trace_owner_allowed <code>middleware.py:395</code> / _collect_owner_ids <code>:382</code></td><td><span class="gap">未读</span></td><td>只见签名 / docstring</td></tr>
+<tr class="group"><td colspan="5">证据表二 · §4 安全与平台面</td></tr>
+<tr><td>28</td><td>§4</td><td><code>REVIEWER</code></td><td><span class="gap">未找到</span></td><td>security.py / middleware.py 零命中；其他目录 <span class="gap">未查</span></td></tr>
+<tr><td>29</td><td>§4</td><td><code>X-Frame</code>（规定的大小写写法）</td><td><span class="gap">未找到</span></td><td>小写形式 <code>x-frame-options</code> 在 <code>middleware.py:271</code></td></tr>
+<tr><td>30</td><td>§4</td><td><code>scan_untrusted</code> 调用方是否据 level=high 拒绝</td><td><span class="gap">未查</span></td><td>函数本身只做标记，不做拒绝</td></tr>
+<tr><td>31</td><td>§4</td><td><code>trace_owner_allowed</code> 函数体与返回码</td><td><span class="gap">未读</span> / <span class="gap">未核实</span></td><td>据函数名推断为轨迹内出现非请求者 owner_id 时拒绝</td></tr>
+<tr><td>32</td><td>§4</td><td>限流阈值、消息长度上限的 config 默认值</td><td><span class="gap">未读</span></td><td>限流 60 次 / 分钟取自 docstring</td></tr>
+<tr><td>33</td><td>§4</td><td>行号未 grep：PII 值正则（28–57 窗口）、<code>TOOL_OWNER_BOUND</code>（213–260 窗口）、trace_id 白名单（157–216 窗口）</td><td><span class="gap">未 grep</span></td><td>取自 read 窗口</td></tr>
+<tr class="group"><td colspan="5">本次渲染发现的证据缺口（证据表二不含 §5 / §6）</td></tr>
+<tr><td>34</td><td>本文</td><td>§5 培训材料《七项要素》《九大模块》对照</td><td><span class="gap">证据缺失</span> → 已补</td><td>evidence-2.md（74 行）止于 §4 补注，无 §5 节（已由 evidence-3 补齐）</td></tr>
+<tr><td>35</td><td>本文</td><td>§6 超出作业要求的能力</td><td><span class="gap">证据缺失</span> → 已补</td><td>同上，无 §6 节（已由 evidence-3 补齐）</td></tr>
+<tr><td>36</td><td>本文</td><td>§6 遗留项 X-03 / X-04 / X-05 / X-07</td><td><span class="gap">证据缺失</span> → 已补</td><td>同上，无 §6 节（已由 evidence-3 补齐）</td></tr>
+<tr><td>37</td><td>本文 §2.3</td><td>第 11 个 <code>add_node</code> 的名称；起始节点（entry point 行）；六条条件边各自的挂载节点</td><td><span class="gap">未查</span> / <span class="gap">未读</span></td><td>证据称 1374–1383 共 11 个 add_node，具名 10 个</td></tr>
+</tbody>
+</table></div>
+</section>
+
+</main>
+<footer>
+<p><b>证据文件</b>：<code>docs/_架构_parts/evidence-1.md</code>（68 行，§1–§2）· <code>docs/_架构_parts/evidence-2.md</code>（74 行，§3–§4 + 补注）· <code>docs/_架构_parts/evidence-3.md</code>（§5–§6，2026-11-24 补齐）</p>
+<p><b>作业原文</b>：<code>../课后作业-车险续保助手.html</code> §02「整体架构」，第 140–219 行（架构 SVG，24 框行号已逐行核对）</p>
+<p><b>生成</b>：2026-11-24 · HEAD <code>a81780d</code> · 单文件 HTML，零外链（CSS / JS 全内联）· 作者未读任何项目代码，全部落点来自证据表</p>
+<p><b>未改动</b>：业务代码、<code>docs/验收验证/</code>、<code>docs/_复盘_parts/</code>、<code>traces/</code>、<code>wiki/</code>、<code>docs/_架构_parts/</code></p>
+</footer>
+<script>
+(function(){
+  var links=Array.prototype.slice.call(document.querySelectorAll('#toc a[href^="#"]'));
+  var secs=Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
+  var map={};
+  links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a;});
+  function setActive(id){
+    links.forEach(function(a){a.classList.remove('active');});
+    if(map[id]){map[id].classList.add('active');}
+  }
+  if(!('IntersectionObserver' in window)){return;}
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){setActive(e.target.id);}});
+  },{rootMargin:'-60px 0px -65% 0px',threshold:0});
+  secs.forEach(function(s){io.observe(s);});
+  if(secs.length){setActive(secs[0].id);}
+})();
+</script>
+</body>
+</html>
